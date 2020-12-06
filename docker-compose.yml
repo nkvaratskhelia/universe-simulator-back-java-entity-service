@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    container_name: universe-simulator-entity-service-postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=${US_ES_POSTGRES_DB}
+      - POSTGRES_USER=${US_ES_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${US_ES_POSTGRES_PASSWORD}
+    ports:
+      - ${US_ES_POSTGRES_PORT}:5432
+    volumes:
+      - entity-service-postgres:/var/lib/postgresql/data
+
+volumes:
+  entity-service-postgres:
