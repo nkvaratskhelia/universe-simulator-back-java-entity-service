@@ -1,0 +1,20 @@
+= Project setup
+
+== Java
+`Java 11` is the current version of java for the project.
+
+== Gradle
+`Gradle Wrapper` is used as a build tool for the project. You don't need to install gradle on
+your machine, it will be installed automatically by gradle wrapper. Gradle-related properties
+can be found in the `gradle-wrapper.properties` file in the `gradle/wrapper` directory.
+
+== Spring Boot
+The project is built with the `Spring Boot v 2.4.x` framework.
+
+== Docker
+You need to have `docker` and `docker-compose` installed on your machine. All software
+dependencies for the project can be found in the `docker-compose.yml` file.
+
+== Database
+`Postgres` is used to store the project model entities. You can install it as a `docker-compose`
+service with the following command: `docker-compose -p universe-simulator up -d postgres`.
