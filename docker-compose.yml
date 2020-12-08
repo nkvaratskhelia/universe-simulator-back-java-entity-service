@@ -13,20 +13,21 @@ services:
       - ${US_ES_POSTGRES_PORT}:5432
     volumes:
       - entity-service-postgres:/var/lib/postgresql/data
+
   mysql:
     image: mysql
-    container_name: entity-service-mysql
+    container_name: universe-simulator-entity-service-mysql
     restart: always
     environment:
-      - MYSQL_DATABASE=${MYSQL_DB}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${US_ES_MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${US_ES_MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${US_ES_MYSQL_USER}
+      - MYSQL_PASSWORD=${US_ES_MYSQL_PASSWORD}
     ports:
-      - ${MYSQL_PORT}:3306
+      - ${US_ES_MYSQL_PORT}:3306
     volumes:
-      - entity-service--mysql-volume:/var/lib/mysql/data
+      - entity-service-mysql:/var/lib/mysql/data
 
 volumes:
   entity-service-postgres:
-  entity-service--mysql-volume:
+  entity-service-mysql:
