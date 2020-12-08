@@ -16,9 +16,13 @@ You need to have `docker` and `docker-compose` installed on your machine. All so
 dependencies for the project can be found in the `docker-compose.yml` file.
 
 == Database
-`Postgres` is used to store the project model entities. You can install it as a `docker-compose`
-service with the following command: `docker-compose -p universe-simulator up -d postgres`. Don't
-forget to supply env variables to the docker-compose file.
+`Postgres` is used to store the project model entities. 
+`Mysql` is added for supplementary purpose.
+You can deploy it as a `docker-compose` service and first start with the following command: 
+`docker-compose -p universe-simulator up -d SERVICE...`.
+And later manage it with:
+`docker-compose start/stop/restart SERVICE...`.
+Don't forget to supply env variables to the docker-compose file.
 
 === Migration
 `Liquibase` is used to handle database migratons. Liquibase config is described in the
