@@ -6,7 +6,7 @@ services:
     container_name: universe-simulator-entity-service-postgres
     restart: always
     environment:
-      - POSTGRES_DB=${US_ES_POSTGRES_DB}
+      - POSTGRES_DB=entity-service
       - POSTGRES_USER=${US_ES_POSTGRES_USER}
       - POSTGRES_PASSWORD=${US_ES_POSTGRES_PASSWORD}
     ports:
@@ -19,7 +19,7 @@ services:
     container_name: universe-simulator-entity-service-mysql
     restart: always
     environment:
-      - MYSQL_DATABASE=${US_ES_MYSQL_DATABASE}
+      - MYSQL_DATABASE=entity-service
       - MYSQL_ROOT_PASSWORD=${US_ES_MYSQL_ROOT_PASSWORD}
       - MYSQL_USER=${US_ES_MYSQL_USER}
       - MYSQL_PASSWORD=${US_ES_MYSQL_PASSWORD}
