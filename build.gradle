@@ -1,11 +1,12 @@
 plugins {
+    id 'java'
     id 'org.springframework.boot' version '2.4.0'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-    id 'java'
 }
 
 group = 'com.example.universe.simulator'
 version = '0.0.1-SNAPSHOT'
+
 sourceCompatibility = '11'
 
 configurations {
@@ -14,25 +15,34 @@ configurations {
     }
 }
 
+test {
+    useJUnitPlatform()
+}
+
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.0-M6'
+    }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.liquibase:liquibase-core'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    runtimeOnly 'org.springframework.cloud:spring-cloud-starter-vault-config'
     runtimeOnly 'org.postgresql:postgresql'
-	runtimeOnly 'mysql:mysql-connector-java'
+    runtimeOnly 'mysql:mysql-connector-java'
+    runtimeOnly 'org.liquibase:liquibase-core'
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
-}
-
-test {
-    useJUnitPlatform()
+    testRuntimeOnly 'com.h2database:h2'
 }
