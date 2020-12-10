@@ -28,6 +28,37 @@ services:
     volumes:
       - entity-service-mysql:/var/lib/mysql
 
+  vault:
+    image: vault
+    container_name: universe-simulator-vault
+    restart: always
+    cap_add:
+      - IPC_LOCK
+    command: server
+    environment:
+      - 'VAULT_LOCAL_CONFIG=
+        {
+          "storage": {
+            "file": {
+              "path": "/vault/file"
+            }
+          },
+          "listener": {
+            "tcp": {
+              "address": "0.0.0.0:${US_VAULT_PORT}",
+              "tls_disable": true
+            }
+          },
+          "ui": true
+        }'
+    ports:
+      - ${US_VAULT_PORT}:8200
+    volumes:
+      - vault-logs:/vault/logs
+      - vault-file:/vault/file
+
 volumes:
   entity-service-postgres:
   entity-service-mysql:
+  vault-logs:
+  vault-file:
