@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.entities;
 
-import com.example.universe.simulator.entityservice.entities.abstraction.SpaceEntity;
+import com.example.universe.simulator.entityservice.entities.abstraction.SpaceEntityInhabitable;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,13 +9,11 @@ import java.util.Set;
 
 @Entity
 @Data
-public class Planet extends SpaceEntity {
+public class Planet extends SpaceEntityInhabitable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long population;
 
     @ManyToMany
     @JoinTable(
@@ -25,6 +23,6 @@ public class Planet extends SpaceEntity {
     )
     private Set<Race> races = new HashSet<>();
 
-    // other fields
+    // other planet related fields
 
 }
