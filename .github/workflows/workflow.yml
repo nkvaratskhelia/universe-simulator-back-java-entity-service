@@ -10,10 +10,11 @@ jobs:
           java-version: 11
       - uses: actions/cache@v2
         with:
-          path:
+          path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: ${{ runner.os }}-gradle-
       - run: chmod +x gradlew
       - run: ./gradlew assemble --info
+
