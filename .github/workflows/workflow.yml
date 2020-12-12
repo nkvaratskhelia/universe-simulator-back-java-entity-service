@@ -16,5 +16,5 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: ${{ runner.os }}-gradle-
       - run: chmod +x gradlew
-      - run: ./gradlew assemble --info
+      - run: ./gradlew assemble --build-cache --info
 
