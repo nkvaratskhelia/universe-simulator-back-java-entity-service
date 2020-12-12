@@ -19,4 +19,4 @@ jobs:
         with:
           java-version: 11
       - run: chmod +x gradlew
-      - run: ./gradlew test
+      - run: ./gradlew test --info
