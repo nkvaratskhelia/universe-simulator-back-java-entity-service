@@ -10,16 +10,4 @@ jobs:
           java-version: 11
       - uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: assemble --watch-fs --info
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - uses: burrunan/gradle-cache-action@v1
-        with:
-          arguments: test --watch-fs --info
+          arguments: build --watch-fs --info
