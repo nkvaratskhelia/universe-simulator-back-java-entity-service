@@ -10,4 +10,4 @@ jobs:
           java-version: 11
       - uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: assemble --watch-fs --info
+          arguments: assemble --watch-fs --configuration-cache --info
