@@ -8,6 +8,8 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: burrunan/gradle-cache-action@v1
-        with:
-          arguments: build --watch-fs --info
+#      - uses: burrunan/gradle-cache-action@v1
+#        with:
+#          arguments: build --watch-fs --info
+      - run: chmod +x gradlew
+      - run: ./gradlew test --info
