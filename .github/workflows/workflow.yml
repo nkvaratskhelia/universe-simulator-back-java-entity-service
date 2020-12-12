@@ -8,12 +8,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: actions/cache@v2
+      - uses: burrunan/gradle-cache-action@v1
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: ${{ runner.os }}-gradle-
-      - run: chmod +x gradlew
-      - run: ./gradlew assemble --build-cache --info
+          arguments: assemble
