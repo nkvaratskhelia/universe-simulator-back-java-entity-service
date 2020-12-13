@@ -38,3 +38,8 @@ When vault is up and running, go to vault ui at `localhost:8200` and follow the 
 After logging in, enable a new `KV` engine with `universe-simulator` as path. In the new engine
 create a secret with `entity-service` as path. Now you can add all your application secrets and
 config in the vault's `universe-simulator/entity-service` directory.
+
+== CI/CD
+`Github Actions` is used for automating the project workflow. The workflow file can be found in the
+`.github/workflows` directory. Currently, the file contains only CI part of the workflow, with CD
+to be added later. 
