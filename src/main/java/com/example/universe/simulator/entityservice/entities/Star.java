@@ -16,5 +16,4 @@ public class Star extends SpaceEntity {
 
     @OneToMany(mappedBy = "star")
     private Set<Planet> planets;
-
 }

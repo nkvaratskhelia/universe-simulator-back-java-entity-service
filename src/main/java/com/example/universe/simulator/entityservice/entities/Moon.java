@@ -8,12 +8,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class Moon extends SpaceEntity {
 
     @ManyToOne
     @JoinColumn(name = "planet_id", referencedColumnName = "id", nullable = false)
     private Planet planet;
-
 }
