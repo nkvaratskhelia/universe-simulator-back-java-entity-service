@@ -18,11 +18,9 @@ You need to have `docker` and `docker-compose` installed on your machine. All so
 dependencies for the project can be found in the `docker-compose.yml` file.
 
 == Database
-`Postgres` is currently used to store the project model entities. `Mysql` can also be used
-instead. You can swap datasources for the app by commenting/uncommenting them in the
-`application.properties` file. To run a database service locally, use the following command:
-`docker-compose -p universe-simulator up -d xxx`, where xxx is the name of a db service
-(postgres/mysql). Don't forget to supply env variables to the docker-compose file.
+`Postgres` is currently used to store the project model entities. To run a database service locally,
+use the following command: `docker-compose -p universe-simulator up -d postgres`. Don't forget to
+supply env variables to the docker-compose file.
 
 === Migration
 `Liquibase` is used to handle database migratons. Liquibase config is described in the
