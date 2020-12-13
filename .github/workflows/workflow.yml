@@ -11,5 +11,3 @@ jobs:
       - uses: burrunan/gradle-cache-action@v1
         with:
           arguments: build --watch-fs --info
-      - run: chmod +x gradlew
-      - run: ./gradlew test --info
