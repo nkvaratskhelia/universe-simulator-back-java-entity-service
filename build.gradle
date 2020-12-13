@@ -37,7 +37,6 @@ dependencies {
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-vault-config'
     runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly 'mysql:mysql-connector-java'
     runtimeOnly 'org.liquibase:liquibase-core'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
