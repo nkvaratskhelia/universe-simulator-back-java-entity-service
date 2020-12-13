@@ -10,8 +10,7 @@ import javax.persistence.OneToMany;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class Planet extends SpaceEntity {
 
     @ManyToOne
@@ -20,5 +19,4 @@ public class Planet extends SpaceEntity {
 
     @OneToMany(mappedBy = "planet")
     private Set<Moon> moons;
-
 }
