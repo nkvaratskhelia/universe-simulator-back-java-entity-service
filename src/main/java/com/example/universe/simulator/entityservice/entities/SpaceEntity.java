@@ -3,7 +3,6 @@ package com.example.universe.simulator.entityservice.entities;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,5 +26,4 @@ public abstract class SpaceEntity {
 
     @Version
     private long version;
-
 }

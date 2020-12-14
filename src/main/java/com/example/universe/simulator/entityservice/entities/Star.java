@@ -3,7 +3,6 @@ package com.example.universe.simulator.entityservice.entities;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,7 +14,7 @@ import java.util.Set;
 public class Star extends SpaceEntity {
 
     @ManyToOne
-    @JoinColumn(name = "galaxy_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(nullable = false)
     private Galaxy galaxy;
 
     @OneToMany(mappedBy = "star")

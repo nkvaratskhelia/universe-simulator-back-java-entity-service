@@ -1,10 +1,7 @@
-CREATE TABLE public.planet
+create table planet
 (
-    id        uuid         NOT NULL,
-    "name"    varchar(255) NOT NULL,
-    "version" int8         NOT NULL,
-    star_id   uuid         NOT NULL,
-    CONSTRAINT planet_pkey PRIMARY KEY (id),
-    CONSTRAINT uk_dhelj2sd5e5spyo2flmdhxo6o UNIQUE (name),
-    CONSTRAINT fkc4fuaxedn05182lfgl6jadaqi FOREIGN KEY (star_id) REFERENCES star (id)
+    id      uuid         not null constraint planet_pkey primary key,
+    name    varchar(255) not null constraint uk_dhelj2sd5e5spyo2flmdhxo6o unique,
+    version bigint       not null,
+    star_id uuid         not null constraint fkc4fuaxedn05182lfgl6jadaqi references star
 );
