@@ -18,7 +18,7 @@ You can have as many spring boot profiles as needed. Profiles usually map to env
 staging, prod). If you need to override some properties for an environment, add a new
 `bootstrap-xxx.properties` or `application-xxx.properties` file where xxx is the name of your
 profile. Keep in mind that the `test` profile is used for testing purposes. For local development
-you can use the `local` profile. `bootstrap-local.properties` and `application-local-properties`
+you can use the `local` profile. `bootstrap-local.properties` and `application-local.properties`
 are excluded from git.
 
 == Docker
