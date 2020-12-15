@@ -13,6 +13,14 @@ update the gradle wrapper version with the following command: `./gradlew wrapper
 == Spring Boot
 The project is built with the `Spring Boot v 2.4.x` framework.
 
+=== Profiles
+You can have as many spring boot profiles as needed. Profiles usually map to environments (dev,
+staging, prod). If you need to override some properties for an environment, add a new
+`bootstrap-xxx.properties` or `application-xxx.properties` file where xxx is the name of your
+profile. Keep in mind that the `test` profile is used for testing purposes. For local development
+you can use the `local` profile. `bootstrap-local.properties` and `application-local-properties`
+are excluded from git.
+
 == Docker
 You need to have `docker` and `docker-compose` installed on your machine. All software
 dependencies for the project can be found in the `docker-compose.yml` file.
@@ -35,9 +43,13 @@ gets sealed and you'll need to unseal it to be able to use it again.
 
 === Configuration
 When vault is up and running, go to vault ui at `localhost:8200` and follow the setup instructions.
-After logging in, enable a new `KV` engine with `universe-simulator` as path. In the new engine
-create a secret with `entity-service` as path. Now you can add all your application secrets and
-config in the vault's `universe-simulator/entity-service` directory.
+After logging in, enable a new `KV` engine with `universe-simulator` as path. This root path maps
+to the `spring.cloud.vault.kv.backend` property in `bootstrap.properties`. In the new engine create
+a secret with `entity-service` as path. This path maps to the `spring.application.name` property
+in `bootstrap.properties`. Additionally, you can add as many profile-specific paths as needed.
+These paths map to spring boot profiles (e.g. dev, staging, prod). Now you can add secrets and
+config in vault's `universe-simulator/entity-service/xxx` directory, where xxx maps to spring boot
+profiles.
 
 == CI/CD
 `Github Actions` is used for automating the project workflow. The workflow file can be found in the
