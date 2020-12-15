@@ -14,7 +14,7 @@ import java.util.Set;
 public class Planet extends SpaceEntity {
 
     @ManyToOne
-    @JoinColumn(name = "star_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(nullable = false)
     private Star star;
 
     @OneToMany(mappedBy = "planet")

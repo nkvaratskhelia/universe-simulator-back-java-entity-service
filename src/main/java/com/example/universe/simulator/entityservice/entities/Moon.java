@@ -12,6 +12,6 @@ import javax.persistence.ManyToOne;
 public class Moon extends SpaceEntity {
 
     @ManyToOne
-    @JoinColumn(name = "planet_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(nullable = false)
     private Planet planet;
 }
