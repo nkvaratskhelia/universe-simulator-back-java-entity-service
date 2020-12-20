@@ -1,7 +1,10 @@
 package com.example.universe.simulator.entityservice.entities;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -15,6 +18,9 @@ import java.util.UUID;
  */
 @MappedSuperclass
 @Getter @Setter
+@NoArgsConstructor
+@EqualsAndHashCode
+@SuperBuilder
 public abstract class SpaceEntity {
 
     @Id
