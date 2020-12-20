@@ -3,7 +3,6 @@ package com.example.universe.simulator.entityservice.services;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +12,6 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class GalaxyService {
 
     private final GalaxyRepository repository;
