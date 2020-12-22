@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
-public abstract class AbstractWebMvcUnitTest {
+public abstract class AbstractWebMvcTest {
 
     @Autowired
     protected MockMvc mockMvc;
