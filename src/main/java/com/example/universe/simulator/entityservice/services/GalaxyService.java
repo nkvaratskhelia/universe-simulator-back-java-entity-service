@@ -1,6 +1,8 @@
 package com.example.universe.simulator.entityservice.services;
 
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.exception.AppException;
+import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,21 +22,21 @@ public class GalaxyService {
         return repository.findAll();
     }
 
-    public Galaxy get(UUID id) {
-        return repository.findById(id).orElseThrow();
+    public Galaxy get(UUID id) throws AppException {
+        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
     }
 
     public Galaxy add(Galaxy entity) {
         return repository.save(entity);
     }
 
-    public Galaxy update(Galaxy entity) {
+    public Galaxy update(Galaxy entity) throws AppException {
         get(entity.getId());
 
         return repository.save(entity);
     }
 
-    public void delete(UUID id) {
+    public void delete(UUID id) throws AppException {
         get(id);
         repository.deleteById(id);
     }

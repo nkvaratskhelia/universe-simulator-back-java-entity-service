@@ -1,6 +1,8 @@
 package com.example.universe.simulator.entityservice.unit.services;
 
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.exception.AppException;
+import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import org.junit.jupiter.api.Test;
@@ -10,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,12 +51,14 @@ public class GalaxyServiceUnitTest {
         UUID id = UUID.randomUUID();
         given(repository.findById(any())).willReturn(Optional.empty());
         //then
-        assertThrows(NoSuchElementException.class, () -> service.get(id));
+        AppException exception = assertThrows(AppException.class, () -> service.get(id));
+
         then(repository).should().findById(id);
+        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
-    void testGet_successfulGet() {
+    void testGet_successfulGet() throws AppException {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().name("name").build();
@@ -86,13 +89,15 @@ public class GalaxyServiceUnitTest {
         Galaxy entity = Galaxy.builder().id(id).name("name").build();
         given(repository.findById(any())).willReturn(Optional.empty());
         //then
-        assertThrows(NoSuchElementException.class, () -> service.update(entity));
+        AppException exception = assertThrows(AppException.class, () -> service.update(entity));
+
+        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
         then(repository).should().findById(id);
         then(repository).should(never()).save(any());
     }
 
     @Test
-    void testUpdate_successfulUpdate() {
+    void testUpdate_successfulUpdate() throws AppException {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().id(id).name("name").build();
@@ -112,13 +117,15 @@ public class GalaxyServiceUnitTest {
         UUID id = UUID.randomUUID();
         given(repository.findById(any())).willReturn(Optional.empty());
         //then
-        assertThrows(NoSuchElementException.class, () -> service.delete(id));
+        AppException exception = assertThrows(AppException.class, () -> service.delete(id));
+
         then(repository).should().findById(id);
         then(repository).should(never()).delete(any());
+        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
-    void testDelete_successfulDelete() {
+    void testDelete_successfulDelete() throws AppException {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().name("name").build();

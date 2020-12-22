@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.controllers;
 
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +29,7 @@ public class GalaxyController {
     }
 
     @GetMapping("get/{id}")
-    public Galaxy get(@PathVariable UUID id) {
+    public Galaxy get(@PathVariable UUID id) throws AppException {
         return service.get(id);
     }
 
@@ -38,12 +39,12 @@ public class GalaxyController {
     }
 
     @PutMapping("update")
-    public Galaxy update(@RequestBody Galaxy entity) {
+    public Galaxy update(@RequestBody Galaxy entity) throws AppException {
         return service.update(entity);
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable UUID id) {
+    public void delete(@PathVariable UUID id) throws AppException {
         service.delete(id);
     }
 }
