@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(GalaxyController.class)
-public class GalaxyControllerUnitTest extends AbstractWebMvcUnitTest {
+public class GalaxyControllerTest extends AbstractWebMvcUnitTest {
 
     @MockBean
     private GalaxyService service;

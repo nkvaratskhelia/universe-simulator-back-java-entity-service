@@ -23,7 +23,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
-public class GalaxyServiceUnitTest {
+public class GalaxyServiceTest {
 
     @Mock
     private GalaxyRepository repository;

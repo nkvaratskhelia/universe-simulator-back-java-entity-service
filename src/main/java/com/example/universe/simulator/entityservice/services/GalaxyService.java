@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class GalaxyService {
 
@@ -26,16 +25,19 @@ public class GalaxyService {
         return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
     }
 
+    @Transactional
     public Galaxy add(Galaxy entity) {
         return repository.save(entity);
     }
 
+    @Transactional
     public Galaxy update(Galaxy entity) throws AppException {
         get(entity.getId());
 
         return repository.save(entity);
     }
 
+    @Transactional
     public void delete(UUID id) throws AppException {
         get(id);
         repository.deleteById(id);
