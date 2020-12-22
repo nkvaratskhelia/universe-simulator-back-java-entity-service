@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.unit.controller;
+package com.example.universe.simulator.entityservice.unit.controllers;
 
 import com.example.universe.simulator.entityservice.controllers.GalaxyController;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
