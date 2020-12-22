@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @ActiveProfiles("test")
 @WebMvcTest(GalaxyController.class)
-public class GalaxyControllerUnitTest {
+public class GalaxyControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
