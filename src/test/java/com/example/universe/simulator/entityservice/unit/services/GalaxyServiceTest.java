@@ -41,8 +41,8 @@ public class GalaxyServiceTest {
         //when
         List<Galaxy> result = service.getList();
         //then
-        then(repository).should().findAll();
         assertEquals(list, result);
+        then(repository).should().findAll();
     }
 
     @Test
@@ -52,9 +52,9 @@ public class GalaxyServiceTest {
         given(repository.findById(any())).willReturn(Optional.empty());
         //then
         AppException exception = assertThrows(AppException.class, () -> service.get(id));
+        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
 
         then(repository).should().findById(id);
-        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
@@ -66,8 +66,8 @@ public class GalaxyServiceTest {
         //when
         Galaxy result = service.get(id);
         //then
-        then(repository).should().findById(id);
         assertEquals(entity, result);
+        then(repository).should().findById(id);
     }
 
     @Test
@@ -78,8 +78,8 @@ public class GalaxyServiceTest {
         //when
         Galaxy result = service.add(entity);
         //then
-        then(repository).should().save(entity);
         assertEquals(entity, result);
+        then(repository).should().save(entity);
     }
 
     @Test
@@ -90,8 +90,8 @@ public class GalaxyServiceTest {
         given(repository.findById(any())).willReturn(Optional.empty());
         //then
         AppException exception = assertThrows(AppException.class, () -> service.update(entity));
-
         assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
+
         then(repository).should().findById(id);
         then(repository).should(never()).save(any());
     }
@@ -106,9 +106,9 @@ public class GalaxyServiceTest {
         //when
         Galaxy result = service.update(entity);
         //then
+        assertEquals(entity, result);
         then(repository).should().findById(id);
         then(repository).should().save(entity);
-        assertEquals(entity, result);
     }
 
     @Test
@@ -118,10 +118,10 @@ public class GalaxyServiceTest {
         given(repository.findById(any())).willReturn(Optional.empty());
         //then
         AppException exception = assertThrows(AppException.class, () -> service.delete(id));
+        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
 
         then(repository).should().findById(id);
         then(repository).should(never()).delete(any());
-        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test

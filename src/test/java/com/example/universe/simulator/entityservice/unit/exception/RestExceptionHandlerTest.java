@@ -29,8 +29,8 @@ public class RestExceptionHandlerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
         //then
-        then(service).should(never()).getList();
         verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.WRONG_HTTP_METHOD);
+        then(service).should(never()).getList();
     }
 
     @Test

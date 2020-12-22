@@ -42,9 +42,9 @@ public class GalaxyControllerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
         //then
-        then(service).should().getList();
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(objectMapper.writeValueAsString(list), response.getContentAsString());
+        then(service).should().getList();
     }
 
     @Test
@@ -55,8 +55,8 @@ public class GalaxyControllerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
         //then
-        then(service).should().get(id);
         verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        then(service).should().get(id);
     }
 
     @Test
@@ -68,9 +68,9 @@ public class GalaxyControllerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
         //then
-        then(service).should().get(id);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(objectMapper.writeValueAsString(entity), response.getContentAsString());
+        then(service).should().get(id);
     }
 
     @Test
@@ -84,9 +84,9 @@ public class GalaxyControllerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(entity))
         ).andReturn().getResponse();
         //then
-        then(service).should().add(entity);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(objectMapper.writeValueAsString(entity), response.getContentAsString());
+        then(service).should().add(entity);
     }
 
     @Test
@@ -101,8 +101,8 @@ public class GalaxyControllerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(entity))
         ).andReturn().getResponse();
         //then
-        then(service).should().update(entity);
         verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        then(service).should().update(entity);
     }
 
     @Test
@@ -117,9 +117,9 @@ public class GalaxyControllerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(entity))
         ).andReturn().getResponse();
         //then
-        then(service).should().update(entity);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(objectMapper.writeValueAsString(entity), response.getContentAsString());
+        then(service).should().update(entity);
     }
 
     @Test
@@ -130,8 +130,8 @@ public class GalaxyControllerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
-        then(service).should().delete(id);
         verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        then(service).should().delete(id);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class GalaxyControllerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
-        then(service).should().delete(id);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
+        then(service).should().delete(id);
     }
 }
