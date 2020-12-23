@@ -2,6 +2,8 @@ package com.example.universe.simulator.entityservice.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,9 +28,18 @@ class RestExceptionHandler {
         return buildErrorResponse(ErrorCodeType.WRONG_HTTP_METHOD);
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({
+            HttpMediaTypeNotSupportedException.class,
+            HttpMessageNotReadableException.class,
+            MethodArgumentTypeMismatchException.class
+    })
     private ResponseEntity<RestErrorResponse> handleBadRequestException() {
         return buildErrorResponse(ErrorCodeType.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    private ResponseEntity<RestErrorResponse> handleObjectOptimisticLockingFailureException() {
+        return buildErrorResponse(ErrorCodeType.ENTITY_MODIFIED);
     }
 
     @ExceptionHandler(Exception.class)

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCodeType {
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST),
+    ENTITY_MODIFIED(HttpStatus.CONFLICT),
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND),
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
     WRONG_HTTP_METHOD(HttpStatus.METHOD_NOT_ALLOWED);
