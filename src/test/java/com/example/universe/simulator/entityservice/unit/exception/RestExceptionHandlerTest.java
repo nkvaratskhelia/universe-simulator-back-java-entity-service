@@ -4,7 +4,7 @@ import com.example.universe.simulator.entityservice.controllers.GalaxyController
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
-import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
+import com.example.universe.simulator.entityservice.unit.AbstractMockMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,19 +26,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * Generic RestExceptionHandler cases are tested using GalaxyController.
  */
 @WebMvcTest(GalaxyController.class)
-public class RestExceptionHandlerTest extends AbstractWebMvcTest {
+public class RestExceptionHandlerTest extends AbstractMockMvcTest {
 
     @MockBean
     private GalaxyService service;
-
-    @Test
-    void testWrongHttpMethod() throws Exception {
-        //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
-        //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.WRONG_HTTP_METHOD);
-        then(service).should(never()).getList();
-    }
 
     @Test
     void testHttpMediaTypeNotSupported() throws Exception {
@@ -49,7 +40,7 @@ public class RestExceptionHandlerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(entity))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.BAD_REQUEST);
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_CONTENT_TYPE);
         then(service).should(never()).add(entity);
     }
 
@@ -58,7 +49,16 @@ public class RestExceptionHandlerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.BAD_REQUEST);
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_REQUEST_BODY);
+    }
+
+    @Test
+    void testHttpRequestMethodNotSupported() throws Exception {
+        //when
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_HTTP_METHOD);
+        then(service).should(never()).getList();
     }
 
     @Test
@@ -68,7 +68,7 @@ public class RestExceptionHandlerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.BAD_REQUEST);
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_REQUEST_PARAMETER);
     }
 
     @Test

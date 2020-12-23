@@ -8,11 +8,13 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCodeType {
 
-    BAD_REQUEST(HttpStatus.BAD_REQUEST),
     ENTITY_MODIFIED(HttpStatus.CONFLICT),
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND),
-    SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
-    WRONG_HTTP_METHOD(HttpStatus.METHOD_NOT_ALLOWED);
+    INVALID_CONTENT_TYPE(HttpStatus.BAD_REQUEST),
+    INVALID_HTTP_METHOD(HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST_PARAMETER(HttpStatus.BAD_REQUEST),
+    SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final HttpStatus httpStatus;
 }

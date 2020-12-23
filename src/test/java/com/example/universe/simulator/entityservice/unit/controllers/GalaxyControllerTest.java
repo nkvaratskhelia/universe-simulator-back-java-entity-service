@@ -5,7 +5,7 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
-import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
+import com.example.universe.simulator.entityservice.unit.AbstractMockMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(GalaxyController.class)
-public class GalaxyControllerTest extends AbstractWebMvcTest {
+public class GalaxyControllerTest extends AbstractMockMvcTest {
 
     @MockBean
     private GalaxyService service;

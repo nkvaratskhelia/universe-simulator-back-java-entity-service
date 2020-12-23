@@ -23,18 +23,24 @@ class RestExceptionHandler {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    private ResponseEntity<RestErrorResponse> handleHttpRequestMethodNotSupportedException() {
-        return buildErrorResponse(ErrorCodeType.WRONG_HTTP_METHOD);
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    private ResponseEntity<RestErrorResponse> handleHttpMediaTypeNotSupportedException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_CONTENT_TYPE);
     }
 
-    @ExceptionHandler({
-            HttpMediaTypeNotSupportedException.class,
-            HttpMessageNotReadableException.class,
-            MethodArgumentTypeMismatchException.class
-    })
-    private ResponseEntity<RestErrorResponse> handleBadRequestException() {
-        return buildErrorResponse(ErrorCodeType.BAD_REQUEST);
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    private ResponseEntity<RestErrorResponse> handleHttpMessageNotReadableException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_BODY);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    private ResponseEntity<RestErrorResponse> handleHttpRequestMethodNotSupportedException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_HTTP_METHOD);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    private ResponseEntity<RestErrorResponse> handleMethodArgumentTypeMismatchException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_PARAMETER);
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
