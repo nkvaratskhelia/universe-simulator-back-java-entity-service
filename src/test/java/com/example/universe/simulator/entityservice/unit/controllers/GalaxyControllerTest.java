@@ -2,25 +2,21 @@ package com.example.universe.simulator.entityservice.unit.controllers;
 
 import com.example.universe.simulator.entityservice.controllers.GalaxyController;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.exception.AppException;
+import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.util.NestedServletException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -30,15 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@ActiveProfiles("test")
 @WebMvcTest(GalaxyController.class)
-public class GalaxyControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+public class GalaxyControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private GalaxyService service;
@@ -53,20 +42,21 @@ public class GalaxyControllerTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
         //then
-        then(service).should().getList();
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(objectMapper.writeValueAsString(list), response.getContentAsString());
+        then(service).should().getList();
     }
 
     @Test
-    void testGet_idNotFound() {
+    void testGet_idNotFound() throws Exception {
         //given
         UUID id = UUID.randomUUID();
-        given(service.get(any())).willThrow(NoSuchElementException.class);
+        given(service.get(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
         //then
-        NestedServletException exception = assertThrows(NestedServletException.class, () -> mockMvc.perform(get("/galaxy/get/{id}", id)));
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
         then(service).should().get(id);
-        assertEquals(NoSuchElementException.class, exception.getCause().getClass());
     }
 
     @Test
@@ -78,9 +68,9 @@ public class GalaxyControllerTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
         //then
-        then(service).should().get(id);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(objectMapper.writeValueAsString(entity), response.getContentAsString());
+        then(service).should().get(id);
     }
 
     @Test
@@ -94,24 +84,25 @@ public class GalaxyControllerTest {
                 .content(objectMapper.writeValueAsString(entity))
         ).andReturn().getResponse();
         //then
-        then(service).should().add(entity);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(objectMapper.writeValueAsString(entity), response.getContentAsString());
+        then(service).should().add(entity);
     }
 
     @Test
-    void testUpdate_idNotFound() {
+    void testUpdate_idNotFound() throws Exception {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().id(id).name("name").build();
-        given(service.update(any())).willThrow(NoSuchElementException.class);
-        //then
-        NestedServletException exception = assertThrows(NestedServletException.class, () -> mockMvc.perform(put("/galaxy/update")
+        given(service.update(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
+        //when
+        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(entity))
-        ));
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
         then(service).should().update(entity);
-        assertEquals(NoSuchElementException.class, exception.getCause().getClass());
     }
 
     @Test
@@ -126,20 +117,21 @@ public class GalaxyControllerTest {
                 .content(objectMapper.writeValueAsString(entity))
         ).andReturn().getResponse();
         //then
-        then(service).should().update(entity);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(objectMapper.writeValueAsString(entity), response.getContentAsString());
+        then(service).should().update(entity);
     }
 
     @Test
-    void testDelete_idNotFound() {
+    void testDelete_idNotFound() throws Exception {
         //given
         UUID id = UUID.randomUUID();
-        willThrow(NoSuchElementException.class).given(service).delete(any());
+        willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND)).given(service).delete(any());
+        //when
+        MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
-        NestedServletException exception = assertThrows(NestedServletException.class, () -> mockMvc.perform(delete("/galaxy/delete/{id}", id)));
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
         then(service).should().delete(id);
-        assertEquals(NoSuchElementException.class, exception.getCause().getClass());
     }
 
     @Test
@@ -149,7 +141,7 @@ public class GalaxyControllerTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
-        then(service).should().delete(id);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
+        then(service).should().delete(id);
     }
 }
