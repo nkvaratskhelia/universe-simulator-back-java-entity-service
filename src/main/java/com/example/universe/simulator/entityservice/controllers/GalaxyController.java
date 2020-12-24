@@ -1,9 +1,12 @@
 package com.example.universe.simulator.entityservice.controllers;
 
+import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,26 +24,36 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GalaxyController {
 
+    private final ModelMapper modelMapper;
+
     private final GalaxyService service;
 
     @GetMapping("get-list")
-    public List<Galaxy> getList() {
-        return service.getList();
+    public List<GalaxyDto> getList() {
+        return modelMapper.map(service.getList(), new TypeToken<List<GalaxyDto>>() {}.getType());
     }
 
     @GetMapping("get/{id}")
-    public Galaxy get(@PathVariable UUID id) throws AppException {
-        return service.get(id);
+    public GalaxyDto get(@PathVariable UUID id) throws AppException {
+        return modelMapper.map(service.get(id), GalaxyDto.class);
     }
 
     @PostMapping("add")
-    public Galaxy add(@RequestBody Galaxy entity) {
-        return service.add(entity);
+    public GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
+        dto.validate(false);
+
+        Galaxy entity = modelMapper.map(dto, Galaxy.class);
+
+        return modelMapper.map(service.add(entity), GalaxyDto.class);
     }
 
     @PutMapping("update")
-    public Galaxy update(@RequestBody Galaxy entity) throws AppException {
-        return service.update(entity);
+    public GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
+        dto.validate(true);
+
+        Galaxy entity = modelMapper.map(dto, Galaxy.class);
+
+        return modelMapper.map(service.update(entity), GalaxyDto.class);
     }
 
     @DeleteMapping("delete/{id}")

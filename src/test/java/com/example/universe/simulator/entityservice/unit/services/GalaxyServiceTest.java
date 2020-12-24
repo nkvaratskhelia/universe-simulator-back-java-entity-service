@@ -23,7 +23,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
-public class GalaxyServiceTest {
+class GalaxyServiceTest {
 
     @Mock
     private GalaxyRepository repository;
@@ -62,6 +62,7 @@ public class GalaxyServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().name("name").build();
+
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         Galaxy result = service.get(id);
@@ -87,6 +88,7 @@ public class GalaxyServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().id(id).name("name").build();
+
         given(repository.findById(any())).willReturn(Optional.empty());
         //then
         AppException exception = assertThrows(AppException.class, () -> service.update(entity));
@@ -101,12 +103,14 @@ public class GalaxyServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().id(id).name("name").build();
+
         given(repository.findById(any())).willReturn(Optional.of(entity));
         given(repository.save(any())).willReturn(entity);
         //when
         Galaxy result = service.update(entity);
         //then
         assertEquals(entity, result);
+
         then(repository).should().findById(id);
         then(repository).should().save(entity);
     }
@@ -129,6 +133,7 @@ public class GalaxyServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().name("name").build();
+
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         service.delete(id);
