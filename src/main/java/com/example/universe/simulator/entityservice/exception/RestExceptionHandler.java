@@ -2,6 +2,8 @@ package com.example.universe.simulator.entityservice.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,14 +23,29 @@ class RestExceptionHandler {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    private ResponseEntity<RestErrorResponse> handleHttpRequestMethodNotSupportedException() {
-        return buildErrorResponse(ErrorCodeType.WRONG_HTTP_METHOD);
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    private ResponseEntity<RestErrorResponse> handleHttpMediaTypeNotSupportedException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_CONTENT_TYPE);
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
-    private ResponseEntity<RestErrorResponse> handleBadRequestException() {
-        return buildErrorResponse(ErrorCodeType.BAD_REQUEST);
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    private ResponseEntity<RestErrorResponse> handleHttpMessageNotReadableException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_BODY);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    private ResponseEntity<RestErrorResponse> handleHttpRequestMethodNotSupportedException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_HTTP_METHOD);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    private ResponseEntity<RestErrorResponse> handleMethodArgumentTypeMismatchException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_PARAMETER);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    private ResponseEntity<RestErrorResponse> handleObjectOptimisticLockingFailureException() {
+        return buildErrorResponse(ErrorCodeType.ENTITY_MODIFIED);
     }
 
     @ExceptionHandler(Exception.class)
