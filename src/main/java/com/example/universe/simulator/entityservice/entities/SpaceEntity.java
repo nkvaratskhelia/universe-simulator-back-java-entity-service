@@ -14,14 +14,14 @@ import javax.persistence.Version;
 import java.util.UUID;
 
 /**
- * parent for all space objects
+ * Parent for all space objects.
  */
 @MappedSuperclass
 @Getter @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
 @SuperBuilder
-public abstract class SpaceEntity {
+abstract class SpaceEntity {
 
     @Id
     @GeneratedValue

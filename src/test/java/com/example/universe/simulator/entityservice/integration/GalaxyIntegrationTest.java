@@ -1,7 +1,8 @@
 package com.example.universe.simulator.entityservice.integration;
 
-import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.utils.TestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -12,14 +13,14 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-public class GalaxyIntegrationTest extends AbstractIntegrationTest {
+class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
@@ -30,25 +31,83 @@ public class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //then
         assertEquals(HttpStatus.OK.value(), response.getStatus());
 
-        List<Galaxy> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        List<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertTrue(resultList.isEmpty());
 
-        //-----should add entity-----
+        //-----should throw missing parameter name error on add-----
 
         //given
-        Galaxy entity = Galaxy.builder().name("name").build();
+        GalaxyDto dto = TestUtils.buildSampleGalaxyDtoForAdd();
+        dto.setName(null);
         //when
         response = mockMvc.perform(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(entity))
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+
+        //-----should throw missing parameter name error on add-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForAdd();
+        dto.setName("");
+        //when
+        response = mockMvc.perform(post("/galaxy/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+
+        //-----should throw missing parameter name error on add-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForAdd();
+        dto.setName(" ");
+        //when
+        response = mockMvc.perform(post("/galaxy/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+
+        //-----should fix dirty fields and add entity-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForAdd();
+
+        //dirty input
+        UUID dirtyId = UUID.randomUUID();
+        dto.setId(dirtyId);
+        dto.setName(" name ");
+        dto.setVersion(1L);
+
+        //when
+        response = mockMvc.perform(post("/galaxy/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
         assertEquals(HttpStatus.OK.value(), response.getStatus());
 
-        Galaxy addedEntity = objectMapper.readValue(response.getContentAsString(), Galaxy.class);
-        assertNotNull(addedEntity.getId());
-        assertEquals(entity.getName(), addedEntity.getName());
-        assertEquals(0, addedEntity.getVersion());
+        GalaxyDto addedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        assertNotEquals(dirtyId, addedDto.getId());
+        assertEquals("name", addedDto.getName());
+        assertEquals(0, addedDto.getVersion());
+
+        //-----should throw entity exists error on add-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForAdd();
+        //when
+        response = mockMvc.perform(post("/galaxy/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_EXISTS);
 
         //-----should return list with 1 element-----
 
@@ -63,39 +122,114 @@ public class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----should return entity that was added-----
 
         //when
-        UUID id = addedEntity.getId();
-        response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
+        UUID addedDtoId = addedDto.getId();
+        response = mockMvc.perform(get("/galaxy/get/{id}", addedDtoId)).andReturn().getResponse();
         //then
         assertEquals(HttpStatus.OK.value(), response.getStatus());
 
-        Galaxy resultEntity = objectMapper.readValue(response.getContentAsString(), Galaxy.class);
-        assertEquals(addedEntity, resultEntity);
+        GalaxyDto resultDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        assertEquals(addedDto, resultDto);
 
-        //-----should update entity-----
+        //-----should throw missing parameter id error on update-----
 
         //given
-        entity = Galaxy.builder().id(id).name("newName").build();
+        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        dto.setId(null);
         //when
         response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(entity))
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_ID);
+
+        //-----should throw missing parameter name error on update-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        dto.setId(addedDtoId);
+        dto.setName(null);
+        //when
+        response = mockMvc.perform(put("/galaxy/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+
+        //-----should throw missing parameter name error on update-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        dto.setId(addedDtoId);
+        dto.setName("");
+        //when
+        response = mockMvc.perform(put("/galaxy/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+
+        //-----should throw missing parameter name error on update-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        dto.setId(addedDtoId);
+        dto.setName(" ");
+        //when
+        response = mockMvc.perform(put("/galaxy/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+
+        //-----should throw missing parameter version error on update-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        dto.setId(addedDtoId);
+        dto.setVersion(null);
+        //when
+        response = mockMvc.perform(put("/galaxy/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
+
+        //-----should fix dirty fields and update entity-----
+
+        //given
+        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        dto.setId(addedDtoId);
+
+        //dirty input
+        dto.setName(" newName ");
+
+        //when
+        response = mockMvc.perform(put("/galaxy/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
         assertEquals(HttpStatus.OK.value(), response.getStatus());
 
-        Galaxy updatedEntity = objectMapper.readValue(response.getContentAsString(), Galaxy.class);
-        assertEquals(id, updatedEntity.getId());
-        assertEquals(entity.getName(), updatedEntity.getName());
-        assertEquals(1, updatedEntity.getVersion());
+        GalaxyDto updatedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        assertEquals(addedDtoId, updatedDto.getId());
+        assertEquals("newName", updatedDto.getName());
+        assertEquals(1, updatedDto.getVersion());
 
-        //-----should throw entity modified exception on update-----
+        //-----should throw entity modified error on update-----
 
         //given
-        entity = Galaxy.builder().id(id).name("newName").build();
+        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        dto.setId(addedDtoId);
         //when
         response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(entity))
+                .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
         verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_MODIFIED);
@@ -103,7 +237,7 @@ public class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----should delete entity-----
 
         //when
-        response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
+        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedDtoId)).andReturn().getResponse();
         //then
         assertEquals(HttpStatus.OK.value(), response.getStatus());
 
@@ -116,30 +250,31 @@ public class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertTrue(resultList.isEmpty());
-        
-        //-----should throw entity not found exception on get-----
-        
+
+        //-----should throw entity not found error on get-----
+
         //when
-        response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
+        response = mockMvc.perform(get("/galaxy/get/{id}", addedDtoId)).andReturn().getResponse();
         //then
         verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
 
-        //-----should throw entity not found exception on update-----
+        //-----should throw entity not found error on update-----
 
         //given
-        entity = Galaxy.builder().id(id).build();
+        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        dto.setId(addedDtoId);
         //when
         response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(entity))
+                .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
         verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
 
-        //-----should throw entity not found exception on delete-----
+        //-----should throw entity not found error on delete-----
 
         //when
-        mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
+        mockMvc.perform(delete("/galaxy/delete/{id}", addedDtoId)).andReturn().getResponse();
         //then
         verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
     }

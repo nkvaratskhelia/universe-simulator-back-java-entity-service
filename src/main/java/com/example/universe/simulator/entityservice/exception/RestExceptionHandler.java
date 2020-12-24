@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -23,26 +24,37 @@ class RestExceptionHandler {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
+    //thrown when database unique field constraint is violated
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    private ResponseEntity<RestErrorResponse> handleDataIntegrityViolationException() {
+        return buildErrorResponse(ErrorCodeType.ENTITY_EXISTS);
+    }
+
+    //thrown when content type is not specified or is something other than json
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     private ResponseEntity<RestErrorResponse> handleHttpMediaTypeNotSupportedException() {
         return buildErrorResponse(ErrorCodeType.INVALID_CONTENT_TYPE);
     }
 
+    //thrown when request body is missing or cannot be deserialized
     @ExceptionHandler(HttpMessageNotReadableException.class)
     private ResponseEntity<RestErrorResponse> handleHttpMessageNotReadableException() {
         return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_BODY);
     }
 
+    //thrown when wrong http method is used
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     private ResponseEntity<RestErrorResponse> handleHttpRequestMethodNotSupportedException() {
         return buildErrorResponse(ErrorCodeType.INVALID_HTTP_METHOD);
     }
 
+    //thrown when request parameter cannot be processed
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     private ResponseEntity<RestErrorResponse> handleMethodArgumentTypeMismatchException() {
         return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_PARAMETER);
     }
 
+    //thrown when request entity version does not match db version
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     private ResponseEntity<RestErrorResponse> handleObjectOptimisticLockingFailureException() {
         return buildErrorResponse(ErrorCodeType.ENTITY_MODIFIED);
