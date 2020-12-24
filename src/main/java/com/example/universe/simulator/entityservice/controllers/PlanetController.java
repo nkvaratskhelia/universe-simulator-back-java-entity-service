@@ -22,31 +22,31 @@ public class PlanetController {
     private final PlanetService service;
 
     @GetMapping("/get/{id}")
-    public PlanetDto get(@PathVariable UUID id) throws AppException {
+    private PlanetDto get(@PathVariable UUID id) throws AppException {
         return modelMapper.map(service.get(id), PlanetDto.class);
     }
 
     @GetMapping("/get-list")
-    public List<PlanetDto> getList() {
+    private List<PlanetDto> getList() {
         return modelMapper.map(service.getList(), new TypeToken<List<PlanetDto>>() {}.getType());
     }
 
     @PostMapping("/add")
-    public PlanetDto add(@RequestBody PlanetDto planetDto) throws AppException {
+    private PlanetDto add(@RequestBody PlanetDto planetDto) throws AppException {
         planetDto.validate(false);
         Planet planet = modelMapper.map(planetDto, Planet.class);
         return modelMapper.map(service.add(planet), PlanetDto.class);
     }
 
     @PutMapping("/update")
-    public PlanetDto update(@RequestBody PlanetDto planetDto) throws AppException {
+    private PlanetDto update(@RequestBody PlanetDto planetDto) throws AppException {
         planetDto.validate(true);
         Planet planet = modelMapper.map(planetDto, Planet.class);
         return modelMapper.map(service.update(planet), PlanetDto.class);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable UUID id) throws AppException {
+    private void delete(@PathVariable UUID id) throws AppException {
         service.delete(id);
     }
 
