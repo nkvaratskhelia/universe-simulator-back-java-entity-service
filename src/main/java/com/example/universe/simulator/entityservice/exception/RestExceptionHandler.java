@@ -24,7 +24,7 @@ class RestExceptionHandler {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
-    //thrown when some db unique field constraint is violated
+    //thrown when database unique field constraint is violated
     @ExceptionHandler(DataIntegrityViolationException.class)
     private ResponseEntity<RestErrorResponse> handleDataIntegrityViolationException() {
         return buildErrorResponse(ErrorCodeType.ENTITY_EXISTS);

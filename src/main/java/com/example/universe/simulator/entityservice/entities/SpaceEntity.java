@@ -14,7 +14,7 @@ import javax.persistence.Version;
 import java.util.UUID;
 
 /**
- * parent for all space objects
+ * Parent for all space objects.
  */
 @MappedSuperclass
 @Getter @Setter

@@ -14,7 +14,7 @@ public class RestErrorResponse {
     private int status;
     private ErrorCodeType error;
 
-    public RestErrorResponse(ErrorCodeType errorCode) {
+    RestErrorResponse(ErrorCodeType errorCode) {
         this.error = errorCode;
         timestamp = Instant.now();
         status = errorCode.getHttpStatus().value();

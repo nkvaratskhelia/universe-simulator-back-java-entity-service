@@ -4,7 +4,7 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 
 import java.util.UUID;
 
-public class TestUtils {
+public final class TestUtils {
 
     private TestUtils() {}
 

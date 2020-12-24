@@ -29,17 +29,17 @@ public class GalaxyController {
     private final GalaxyService service;
 
     @GetMapping("get-list")
-    public List<GalaxyDto> getList() {
+    private List<GalaxyDto> getList() {
         return modelMapper.map(service.getList(), new TypeToken<List<GalaxyDto>>() {}.getType());
     }
 
     @GetMapping("get/{id}")
-    public GalaxyDto get(@PathVariable UUID id) throws AppException {
+    private GalaxyDto get(@PathVariable UUID id) throws AppException {
         return modelMapper.map(service.get(id), GalaxyDto.class);
     }
 
     @PostMapping("add")
-    public GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
+    private GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
         dto.validate(false);
 
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
@@ -48,7 +48,7 @@ public class GalaxyController {
     }
 
     @PutMapping("update")
-    public GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
+    private GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
         dto.validate(true);
 
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
@@ -57,7 +57,7 @@ public class GalaxyController {
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable UUID id) throws AppException {
+    private void delete(@PathVariable UUID id) throws AppException {
         service.delete(id);
     }
 }
