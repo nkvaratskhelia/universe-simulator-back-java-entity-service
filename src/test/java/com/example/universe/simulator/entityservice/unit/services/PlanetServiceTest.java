@@ -31,8 +31,8 @@ class PlanetServiceTest {
     @InjectMocks
     private PlanetService service;
 
-    private static Planet planet;
     private static UUID id;
+    private static Planet planet;
     private static List<Planet> planets;
 
     @BeforeAll
