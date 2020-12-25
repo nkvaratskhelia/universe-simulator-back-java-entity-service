@@ -36,11 +36,9 @@ abstract class SpaceEntityDto {
         if (isUpdate && Objects.isNull(id)) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_ID);
         }
-
         if (Utils.isNullOrBlank(name)) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_NAME);
         }
-
         if (isUpdate && Objects.isNull(version)) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_VERSION);
         }

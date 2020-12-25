@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -41,7 +41,7 @@ class GalaxyServiceTest {
         //when
         List<Galaxy> result = service.getList();
         //then
-        assertEquals(list, result);
+        assertThat(result).isEqualTo(list);
         then(repository).should().findAll();
     }
 
@@ -50,10 +50,10 @@ class GalaxyServiceTest {
         //given
         UUID id = UUID.randomUUID();
         given(repository.findById(any())).willReturn(Optional.empty());
+        //when
+        AppException exception = catchThrowableOfType(() -> service.get(id), AppException.class);
         //then
-        AppException exception = assertThrows(AppException.class, () -> service.get(id));
-        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
-
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
         then(repository).should().findById(id);
     }
 
@@ -62,12 +62,11 @@ class GalaxyServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().name("name").build();
-
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         Galaxy result = service.get(id);
         //then
-        assertEquals(entity, result);
+        assertThat(result).isEqualTo(entity);
         then(repository).should().findById(id);
     }
 
@@ -79,7 +78,7 @@ class GalaxyServiceTest {
         //when
         Galaxy result = service.add(entity);
         //then
-        assertEquals(entity, result);
+        assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
     }
 
@@ -88,12 +87,11 @@ class GalaxyServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().id(id).name("name").build();
-
         given(repository.findById(any())).willReturn(Optional.empty());
+        //when
+        AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
-        AppException exception = assertThrows(AppException.class, () -> service.update(entity));
-        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
-
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
         then(repository).should().findById(id);
         then(repository).should(never()).save(any());
     }
@@ -103,42 +101,23 @@ class GalaxyServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().id(id).name("name").build();
-
         given(repository.findById(any())).willReturn(Optional.of(entity));
         given(repository.save(any())).willReturn(entity);
         //when
         Galaxy result = service.update(entity);
         //then
-        assertEquals(entity, result);
-
+        assertThat(result).isEqualTo(entity);
         then(repository).should().findById(id);
         then(repository).should().save(entity);
     }
 
     @Test
-    void testDelete_idNotFound() {
+    void testDelete() {
         //given
         UUID id = UUID.randomUUID();
-        given(repository.findById(any())).willReturn(Optional.empty());
-        //then
-        AppException exception = assertThrows(AppException.class, () -> service.delete(id));
-        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, exception.getErrorCode());
-
-        then(repository).should().findById(id);
-        then(repository).should(never()).delete(any());
-    }
-
-    @Test
-    void testDelete_successfulDelete() throws AppException {
-        //given
-        UUID id = UUID.randomUUID();
-        Galaxy entity = Galaxy.builder().name("name").build();
-
-        given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         service.delete(id);
         //then
-        then(repository).should().findById(id);
         then(repository).should().deleteById(id);
     }
 }
