@@ -12,18 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.TypeToken;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -43,14 +40,11 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
                 Galaxy.builder().name("name").build()
         );
         List<GalaxyDto> dtoList = modelMapper.map(entityList, new TypeToken<List<GalaxyDto>>() {}.getType());
-
         given(service.getList()).willReturn(entityList);
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
         //then
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals(objectMapper.writeValueAsString(dtoList), response.getContentAsString());
-
+        verifySuccessfulResponse(response, dtoList);
         then(service).should().getList();
     }
 
@@ -62,7 +56,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
         then(service).should().get(id);
     }
 
@@ -72,23 +66,18 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().name("name").build();
         GalaxyDto dto = modelMapper.map(entity, GalaxyDto.class);
-
         given(service.get(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
         //then
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals(objectMapper.writeValueAsString(dto), response.getContentAsString());
-
+        verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
     }
 
     @Test
-    void testAdd_validationFail() throws Exception {
-        //-----should fail validation on null name-----
-
+    void testAdd_validate_nullName() throws Exception {
         //given
-        GalaxyDto dto = TestUtils.buildSampleGalaxyDtoForAdd();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName(null);
         //when
         MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
@@ -96,45 +85,47 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
+    }
 
-        //-----should fail validation on empty name-----
-
+    @Test
+    void testAdd_validate_emptyName() throws Exception {
         //given
-        dto = TestUtils.buildSampleGalaxyDtoForAdd();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName("");
         //when
-        response = mockMvc.perform(post("/galaxy/add")
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
+    }
 
-        //-----should fail validation on blank name-----
-
+    @Test
+    void testAdd_validate_BlankName() throws Exception {
         //given
-        dto = TestUtils.buildSampleGalaxyDtoForAdd();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName(" ");
         //when
-        response = mockMvc.perform(post("/galaxy/add")
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
     @Test
     void testAdd_dirtyFieldFixAndSuccessfulAdd() throws Exception {
         //given
-        GalaxyDto inputDto = TestUtils.buildSampleGalaxyDtoForAdd();
+        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForAdd();
         Galaxy entity = modelMapper.map(inputDto, Galaxy.class);
         GalaxyDto resultDto = modelMapper.map(entity, GalaxyDto.class);
-        
+
         //dirty input
         inputDto.setId(UUID.randomUUID());
         inputDto.setName(" name ");
@@ -147,90 +138,90 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(inputDto))
         ).andReturn().getResponse();
         //then
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals(objectMapper.writeValueAsString(resultDto), response.getContentAsString());
-
+        verifySuccessfulResponse(response, resultDto);
         then(service).should().add(entity);
     }
 
     @Test
-    void testUpdate_validationFail() throws Exception {
-        //-----should fail validation on null id-----
-
+    void testUpdate_validate_nullId() throws Exception {
         //given
-        GalaxyDto dto = new GalaxyDto();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
+        dto.setId(null);
         //when
         MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_ID);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_ID);
         then(service).should(never()).update(any());
+    }
 
-        //-----should fail validation on null name-----
-
+    @Test
+    void testUpdate_validate_nullName() throws Exception {
         //given
-        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setName(null);
         //when
-        response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
+    }
 
-        //-----should fail validation on empty name-----
-
+    @Test
+    void testUpdate_validate_EmptyName() throws Exception {
         //given
-        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setName("");
         //when
-        response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
+    }
 
-        //-----should fail validation on blank name-----
-
+    @Test
+    void testUpdate_validate_BlankName() throws Exception {
         //given
-        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setName(" ");
         //when
-        response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
+    }
 
-        //-----should fail validation on null version-----
-
+    @Test
+    void testUpdate_validate_nullVersion() throws Exception {
         //given
-        dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setVersion(null);
         //when
-        response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
         then(service).should(never()).update(any());
     }
 
     @Test
     void testUpdate_idNotFound() throws Exception {
         //given
-        GalaxyDto dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
-
         given(service.update(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
         //when
         MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
@@ -238,14 +229,14 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
         then(service).should().update(entity);
     }
 
     @Test
     void testUpdate_dirtyFieldFixAndSuccessfulUpdate() throws Exception {
         //given
-        GalaxyDto inputDto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForUpdate();
         Galaxy entity = modelMapper.map(inputDto, Galaxy.class);
         GalaxyDto resultDto = modelMapper.map(entity, GalaxyDto.class);
 
@@ -259,32 +250,18 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(inputDto))
         ).andReturn().getResponse();
         //then
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals(objectMapper.writeValueAsString(resultDto), response.getContentAsString());
-
+        verifySuccessfulResponse(response, resultDto);
         then(service).should().update(entity);
     }
 
     @Test
-    void testDelete_idNotFound() throws Exception {
-        //given
-        UUID id = UUID.randomUUID();
-        willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND)).given(service).delete(any());
-        //when
-        MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
-        //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
-        then(service).should().delete(id);
-    }
-
-    @Test
-    void testDelete_successfulDelete() throws Exception {
+    void testDelete() throws Exception {
         //given
         UUID id = UUID.randomUUID();
         //when
         MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        verifyOkStatus(response.getStatus());
         then(service).should().delete(id);
     }
 }

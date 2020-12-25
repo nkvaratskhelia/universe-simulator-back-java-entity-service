@@ -8,14 +8,14 @@ public final class TestUtils {
 
     private TestUtils() {}
 
-    public static GalaxyDto buildSampleGalaxyDtoForAdd() {
+    public static GalaxyDto buildGalaxyDtoForAdd() {
         return GalaxyDto.builder()
                 .name("name")
                 .build();
     }
 
-    public static GalaxyDto buildSampleGalaxyDtoForUpdate() {
-        GalaxyDto result = buildSampleGalaxyDtoForAdd();
+    public static GalaxyDto buildGalaxyDtoForUpdate() {
+        GalaxyDto result = buildGalaxyDtoForAdd();
         result.setId(UUID.randomUUID());
         result.setVersion(0L);
 
