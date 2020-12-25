@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,8 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
@@ -52,7 +50,7 @@ class PlanetServiceTest {
         // act
         Planet resultPlanet = service.get(id);
         // assert
-        assertEquals(planet, resultPlanet);
+        assertThat(resultPlanet).isEqualTo(planet);
         then(repo).should().findById(id);
     }
 
@@ -62,8 +60,8 @@ class PlanetServiceTest {
         // arrange
         given(repo.findById(id)).willReturn(Optional.empty());
         // act, assert
-        AppException appException = assertThrows(AppException.class, () -> service.get(id));
-        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, appException.getErrorCode());
+        AppException appException = catchThrowableOfType(() -> service.get(id), AppException.class);
+        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
         then(repo).should().findById(id);
     }
 
@@ -75,7 +73,7 @@ class PlanetServiceTest {
         // act
         List<Planet> resultPlanets = service.getList();
         // assert
-        assertEquals(planets, resultPlanets);
+        assertThat(resultPlanets).isEqualTo(planets);
         then(repo).should().findAll();
     }
 
@@ -87,7 +85,7 @@ class PlanetServiceTest {
         // act
         Planet resultPlanet = service.add(planet);
         // assert
-        assertEquals(planet, resultPlanet);
+        assertThat(resultPlanet).isEqualTo(planet);
         then(repo).should().save(planet);
     }
 
@@ -100,7 +98,7 @@ class PlanetServiceTest {
         // act
         Planet resultPlanet = service.update(planet);
         // assert
-        assertEquals(planet, resultPlanet);
+        assertThat(resultPlanet).isEqualTo(planet);
         then(repo).should().findById(id);
         then(repo).should().save(planet);
     }
@@ -111,8 +109,8 @@ class PlanetServiceTest {
         // arrange
         given(repo.findById(id)).willReturn(Optional.empty());
         // act, assert
-        AppException appException = assertThrows(AppException.class, () -> service.update(planet));
-        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, appException.getErrorCode());
+        AppException appException = catchThrowableOfType(() -> service.update(planet), AppException.class);
+        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
         then(repo).should().findById(id);
         then(repo).should(never()).save(planet);
     }
@@ -123,19 +121,19 @@ class PlanetServiceTest {
         // arrange
         given(repo.findById(id)).willReturn(Optional.of(planet));
         // act, assert
-        assertDoesNotThrow(() -> service.delete(id));
+        assertThatCode(() -> service.delete(id)).doesNotThrowAnyException();
         then(repo).should().findById(id);
         then(repo).should().deleteById(id);
     }
 
     @Test
     @DisplayName("test planetService.delete fail")
-    void testDeleteException() throws AppException {
+    void testDeleteException() {
         // arrange
         given(repo.findById(id)).willReturn(Optional.empty());
         // act, assert
-        AppException appException = assertThrows(AppException.class, () -> service.delete(id));
-        assertEquals(ErrorCodeType.ENTITY_NOT_FOUND, appException.getErrorCode());
+        AppException appException = catchThrowableOfType(() -> service.delete(id), AppException.class);
+        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
         then(repo).should().findById(id);
         then(repo).should(never()).deleteById(id);
     }
