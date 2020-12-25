@@ -11,14 +11,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import java.util.UUID;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -35,9 +40,8 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     @Test
     void testDataIntegrityViolation() throws Exception {
         //given
-        GalaxyDto dto = TestUtils.buildSampleGalaxyDtoForAdd();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
-
         given(service.add(any())).willThrow(DataIntegrityViolationException.class);
         //when
         MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
@@ -45,33 +49,46 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_EXISTS);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_EXISTS);
         then(service).should().add(entity);
     }
 
     @Test
-    void testHttpMediaTypeNotSupported() throws Exception {
-        //-----should fail on missing content type-----
-
+    void testEmptyResultDataAccess() throws Exception {
         //given
-        GalaxyDto dto = new GalaxyDto();
+        UUID id = UUID.randomUUID();
+        willThrow(EmptyResultDataAccessException.class).given(service).delete(any());
+        //when
+        MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
+        //then
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        then(service).should().delete(id);
+    }
+
+    @Test
+    void testHttpMediaTypeNotSupported_missingContentType() throws Exception {
+        //given
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         //when
         MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_CONTENT_TYPE);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_CONTENT_TYPE);
         then(service).should(never()).add(any());
+    }
 
-        //-----should fail on invalid content type-----
-
+    @Test
+    void testHttpMediaTypeNotSupported_invalidContentType() throws Exception {
+        //given
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         //when
-        response = mockMvc.perform(post("/galaxy/add")
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_XML)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_CONTENT_TYPE);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_CONTENT_TYPE);
         then(service).should(never()).add(any());
     }
 
@@ -80,7 +97,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_REQUEST_BODY);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_REQUEST_BODY);
         then(service).should(never()).add(any());
     }
 
@@ -89,7 +106,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_HTTP_METHOD);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_HTTP_METHOD);
         then(service).should(never()).getList();
     }
 
@@ -100,16 +117,15 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_REQUEST_PARAMETER);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_REQUEST_PARAMETER);
         then(service).should(never()).get(any());
     }
 
     @Test
     void testObjectOptimisticLockingFailure() throws Exception {
         //given
-        GalaxyDto dto = TestUtils.buildSampleGalaxyDtoForUpdate();
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
-
         given(service.update(any())).willThrow(ObjectOptimisticLockingFailureException.class);
         //when
         MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
@@ -117,7 +133,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_MODIFIED);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_MODIFIED);
         then(service).should().update(entity);
     }
 
@@ -128,7 +144,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
         //then
-        verifyRestErrorResponse(response.getContentAsString(), ErrorCodeType.SERVER_ERROR);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.SERVER_ERROR);
         then(service).should().getList();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -20,7 +21,6 @@ class RestExceptionHandler {
 
     private ResponseEntity<RestErrorResponse> buildErrorResponse(ErrorCodeType errorCode) {
         RestErrorResponse response = new RestErrorResponse(errorCode);
-
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
     }
 
@@ -28,6 +28,12 @@ class RestExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     private ResponseEntity<RestErrorResponse> handleDataIntegrityViolationException() {
         return buildErrorResponse(ErrorCodeType.ENTITY_EXISTS);
+    }
+
+    //thrown when trying to delete non-existent entity
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    private ResponseEntity<RestErrorResponse> handleEmptyResultDataAccessException() {
+        return buildErrorResponse(ErrorCodeType.ENTITY_NOT_FOUND);
     }
 
     //thrown when content type is not specified or is something other than json

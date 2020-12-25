@@ -3,37 +3,45 @@ package com.example.universe.simulator.entityservice.unit.utils;
 import com.example.universe.simulator.entityservice.utils.Utils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UtilsTest {
 
     @Test
-    void testIsNullOrBlank() {
+    void testIsNullOrBlank_nullString() {
         //when
         boolean result = Utils.isNullOrBlank(null);
         //then
-        assertTrue(result);
+        assertThat(result).isTrue();
+    }
 
+    @Test
+    void testIsNullOrBlank_emptyString() {
         //given
         String str = "";
         //when
-        result = Utils.isNullOrBlank(str);
+        boolean result = Utils.isNullOrBlank(str);
         //then
-        assertTrue(result);
+        assertThat(result).isTrue();
+    }
 
+    @Test
+    void testIsNullOrBlank_blankString() {
         //given
-        str = " ";
+        String str = " ";
         //when
-        result = Utils.isNullOrBlank(str);
+        boolean result = Utils.isNullOrBlank(str);
         //then
-        assertTrue(result);
+        assertThat(result).isTrue();
+    }
 
+    @Test
+    void testIsNullOrBlank_properString() {
         //given
-        str = "str";
+        String str = "str";
         //when
-        result = Utils.isNullOrBlank(str);
+        boolean result = Utils.isNullOrBlank(str);
         //then
-        assertFalse(result);
+        assertThat(result).isFalse();
     }
 }

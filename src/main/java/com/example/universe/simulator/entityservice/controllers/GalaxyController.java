@@ -43,7 +43,6 @@ public class GalaxyController {
         dto.validate(false);
 
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
-
         return modelMapper.map(service.add(entity), GalaxyDto.class);
     }
 
@@ -52,12 +51,11 @@ public class GalaxyController {
         dto.validate(true);
 
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
-
         return modelMapper.map(service.update(entity), GalaxyDto.class);
     }
 
     @DeleteMapping("delete/{id}")
-    private void delete(@PathVariable UUID id) throws AppException {
+    private void delete(@PathVariable UUID id) {
         service.delete(id);
     }
 }

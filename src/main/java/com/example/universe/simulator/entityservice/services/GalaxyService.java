@@ -32,14 +32,14 @@ public class GalaxyService {
 
     @Transactional
     public Galaxy update(Galaxy entity) throws AppException {
+        //validate entity with id exists
         get(entity.getId());
 
         return repository.save(entity);
     }
 
     @Transactional
-    public void delete(UUID id) throws AppException {
-        get(id);
+    public void delete(UUID id) {
         repository.deleteById(id);
     }
 }
