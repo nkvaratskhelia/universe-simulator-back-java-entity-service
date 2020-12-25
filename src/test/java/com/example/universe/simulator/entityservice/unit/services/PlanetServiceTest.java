@@ -38,7 +38,7 @@ class PlanetServiceTest {
     @BeforeAll
     static void setUpContext() {
         id = UUID.randomUUID();
-        planet = Planet.builder().id(id).name("earth").build();
+        planet = Planet.builder().id(id).name("name").version(0L).build();
         planets = List.of(planet);
     }
 
@@ -56,7 +56,7 @@ class PlanetServiceTest {
 
     @Test
     @DisplayName("test planetService.get fail")
-    void testGetException() {
+    void testGet_entityNotFound() {
         // arrange
         given(repo.findById(id)).willReturn(Optional.empty());
         // act, assert
@@ -105,7 +105,7 @@ class PlanetServiceTest {
 
     @Test
     @DisplayName("test planetService.update fail")
-    void testUpdateException() {
+    void testUpdate_entityNotFound() {
         // arrange
         given(repo.findById(id)).willReturn(Optional.empty());
         // act, assert
@@ -128,7 +128,7 @@ class PlanetServiceTest {
 
     @Test
     @DisplayName("test planetService.delete fail")
-    void testDeleteException() {
+    void testDelete_entityNotFound() {
         // arrange
         given(repo.findById(id)).willReturn(Optional.empty());
         // act, assert

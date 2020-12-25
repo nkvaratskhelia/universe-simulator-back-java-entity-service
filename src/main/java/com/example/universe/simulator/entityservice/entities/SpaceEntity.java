@@ -31,5 +31,5 @@ abstract class SpaceEntity {
     private String name;
 
     @Version
-    private long version;
+    private Long version;
 }
