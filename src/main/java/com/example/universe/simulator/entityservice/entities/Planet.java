@@ -24,6 +24,4 @@ public class Planet extends SpaceEntity {
     @JoinColumn(nullable = false)
     private Star star;
 
-    @OneToMany(mappedBy = "planet")
-    private Set<Moon> moons;
 }

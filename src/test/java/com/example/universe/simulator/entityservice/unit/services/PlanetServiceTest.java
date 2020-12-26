@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
@@ -43,99 +44,78 @@ class PlanetServiceTest {
     }
 
     @Test
-    @DisplayName("test planetService.get success")
     void testGet() throws AppException {
-        // arrange
-        given(repo.findById(id)).willReturn(Optional.of(planet));
-        // act
+        // given
+        given(repo.findById(any())).willReturn(Optional.of(planet));
+        // when
         Planet resultPlanet = service.get(id);
-        // assert
+        // then
         assertThat(resultPlanet).isEqualTo(planet);
         then(repo).should().findById(id);
     }
 
     @Test
-    @DisplayName("test planetService.get fail")
     void testGet_entityNotFound() {
-        // arrange
-        given(repo.findById(id)).willReturn(Optional.empty());
-        // act, assert
+        // given
+        given(repo.findById(any())).willReturn(Optional.empty());
+        // when, then
         AppException appException = catchThrowableOfType(() -> service.get(id), AppException.class);
         assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
         then(repo).should().findById(id);
     }
 
     @Test
-    @DisplayName("test planetService.getList")
     void testGetList() {
-        // arrange
+        // given
         given(repo.findAll()).willReturn(planets);
-        // act
+        // when
         List<Planet> resultPlanets = service.getList();
-        // assert
+        // then
         assertThat(resultPlanets).isEqualTo(planets);
         then(repo).should().findAll();
     }
 
     @Test
-    @DisplayName("test planetService.add")
     void testAdd() {
-        // arrange
-        given(repo.save(planet)).willReturn(planet);
-        // act
+        // given
+        given(repo.save(any())).willReturn(planet);
+        // when
         Planet resultPlanet = service.add(planet);
-        // assert
+        // then
         assertThat(resultPlanet).isEqualTo(planet);
         then(repo).should().save(planet);
     }
 
     @Test
-    @DisplayName("test planetService.update success")
     void testUpdate() throws AppException {
-        // arrange
-        given(repo.findById(id)).willReturn(Optional.of(planet));
-        given(repo.save(planet)).willReturn(planet);
-        // act
+        // given
+        given(repo.findById(any())).willReturn(Optional.of(planet));
+        given(repo.save(any())).willReturn(planet);
+        // when
         Planet resultPlanet = service.update(planet);
-        // assert
+        // then
         assertThat(resultPlanet).isEqualTo(planet);
         then(repo).should().findById(id);
         then(repo).should().save(planet);
     }
 
     @Test
-    @DisplayName("test planetService.update fail")
     void testUpdate_entityNotFound() {
-        // arrange
-        given(repo.findById(id)).willReturn(Optional.empty());
-        // act, assert
+        // given
+        given(repo.findById(any())).willReturn(Optional.empty());
+        // when, then
         AppException appException = catchThrowableOfType(() -> service.update(planet), AppException.class);
         assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
         then(repo).should().findById(id);
-        then(repo).should(never()).save(planet);
+        then(repo).should(never()).save(any());
     }
 
     @Test
-    @DisplayName("test planetService.delete success")
     void testDelete() {
-        // arrange
-        given(repo.findById(id)).willReturn(Optional.of(planet));
-        // act, assert
-        assertThatCode(() -> service.delete(id)).doesNotThrowAnyException();
-        then(repo).should().findById(id);
+        // when
+        service.delete(id);
+        // then
         then(repo).should().deleteById(id);
-    }
-
-    @Test
-    @DisplayName("test planetService.delete fail")
-    void testDelete_entityNotFound() {
-        // arrange
-        given(repo.findById(id)).willReturn(Optional.empty());
-        // act, assert
-        AppException appException = catchThrowableOfType(() -> service.delete(id), AppException.class);
-        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
-        then(repo).should().findById(id);
-        then(repo).should(never()).deleteById(id);
     }
 
 }

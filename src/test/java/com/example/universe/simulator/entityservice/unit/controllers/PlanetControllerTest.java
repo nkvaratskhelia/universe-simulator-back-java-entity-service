@@ -33,12 +33,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
 
     @Test
     void testGet() throws Exception {
-        // arrange
+        // given
         UUID id = UUID.randomUUID();
         Planet planet = Planet.builder().name("name").build();
         PlanetDto planetDto = modelMapper.map(planet, PlanetDto.class);
-        given(service.get(id)).willReturn(planet);
-        // act
+        given(service.get(any())).willReturn(planet);
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/planet/get/{id}", id)
                 .accept(MediaType.APPLICATION_JSON);
@@ -46,37 +46,37 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifySuccessfulResponse(response, planetDto);
         then(service).should().get(id);
     }
 
-    //@Test
-    //void testGet_entityNotFound() throws Exception {
-    //    // arrange
-    //    UUID id = UUID.randomUUID();
-    //    given(service.get(id)).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
-    //    // act
-    //    RequestBuilder requestBuilder = MockMvcRequestBuilders
-    //            .get("/planet/get/{id}", id)
-    //            .accept(MediaType.APPLICATION_JSON);
-    //    MockHttpServletResponse response = mockMvc
-    //            .perform(requestBuilder)
-    //            .andReturn()
-    //            .getResponse();
-    //    // assert
-    //    verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
-    //    then(service).should().get(id);
-    //}
+    @Test
+    void testGet_entityNotFound() throws Exception {
+        // given
+        UUID id = UUID.randomUUID();
+        given(service.get(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
+        // when
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/planet/get/{id}", id)
+                .accept(MediaType.APPLICATION_JSON);
+        MockHttpServletResponse response = mockMvc
+                .perform(requestBuilder)
+                .andReturn()
+                .getResponse();
+        // then
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        then(service).should().get(id);
+    }
 
     @Test
     void testGetList() throws Exception {
-        // arrange
+        // given
         List<Planet> planets = List.of(Planet.builder().name("name").build());
         List<PlanetDto> planetDtos = modelMapper.map(planets, new TypeToken<List<PlanetDto>>() {
         }.getType());
         given(service.getList()).willReturn(planets);
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/planet/get-list")
                 .accept(MediaType.APPLICATION_JSON);
@@ -84,18 +84,18 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifySuccessfulResponse(response, planetDtos);
         then(service).should().getList();
     }
 
     @Test
     void testAdd() throws Exception {
-        // arrange
-        Planet planet = Planet.builder().name("name").build();
-        PlanetDto planetDto = modelMapper.map(planet, PlanetDto.class);
-        given(service.add(planet)).willReturn(planet);
-        // act
+        // given
+        PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
+        Planet planet = modelMapper.map(planetDto, Planet.class);
+        given(service.add(any())).willReturn(planet);
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/planet/add")
                 .accept(MediaType.APPLICATION_JSON)
@@ -105,17 +105,17 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
-        verifySuccessfulResponse(response, planetDto);
+        // then
+        verifySuccessfulResponse(response, modelMapper.map(planet, PlanetDto.class));
         then(service).should().add(planet);
     }
 
     @Test
     void testAdd_validateNullName() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
         planetDto.setName(null);
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/planet/add")
                 .accept(MediaType.APPLICATION_JSON)
@@ -125,17 +125,17 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
     @Test
     void testAdd_validateEmptyName() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
         planetDto.setName("");
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/planet/add")
                 .accept(MediaType.APPLICATION_JSON)
@@ -145,17 +145,17 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
     @Test
     void testAdd_validateBlankName() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
         planetDto.setName(" ");
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/planet/add")
                 .accept(MediaType.APPLICATION_JSON)
@@ -165,18 +165,18 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
     @Test
     void testUpdate() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForUpdate();
         Planet planet = modelMapper.map(planetDto, Planet.class);
-        given(service.update(planet)).willReturn(planet);
-        // act
+        given(service.update(any())).willReturn(planet);
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/planet/update")
                 .accept(MediaType.APPLICATION_JSON)
@@ -186,17 +186,17 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifySuccessfulResponse(response, planetDto);
         then(service).should().update(planet);
     }
 
     @Test
     void testUpdate_validateNullName() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForUpdate();
         planetDto.setName(null);
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/planet/update")
                 .accept(MediaType.APPLICATION_JSON)
@@ -206,17 +206,17 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
     @Test
     void testUpdate_validateEmptyName() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForUpdate();
         planetDto.setName("");
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/planet/update")
                 .accept(MediaType.APPLICATION_JSON)
@@ -226,17 +226,17 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
     @Test
     void testUpdate_validateBlankName() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForUpdate();
         planetDto.setName("    ");
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/planet/update")
                 .accept(MediaType.APPLICATION_JSON)
@@ -246,17 +246,17 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
     @Test
     void testUpdate_validateNullId() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForUpdate();
         planetDto.setId(null);
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/planet/update")
                 .accept(MediaType.APPLICATION_JSON)
@@ -266,17 +266,17 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_ID);
         then(service).should(never()).update(any());
     }
 
     @Test
     void testUpdate_validateNullVersion() throws Exception {
-        // arrange
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForUpdate();
         planetDto.setVersion(null);
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/planet/update")
                 .accept(MediaType.APPLICATION_JSON)
@@ -286,16 +286,16 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
         then(service).should(never()).update(any());
     }
 
     @Test
     void testDelete() throws Exception {
-        // arrange
+        // given
         UUID id = UUID.randomUUID();
-        // act
+        // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .delete("/planet/delete/{id}", id)
                 .accept(MediaType.APPLICATION_JSON);
@@ -303,7 +303,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .perform(requestBuilder)
                 .andReturn()
                 .getResponse();
-        // assert
+        // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);
     }

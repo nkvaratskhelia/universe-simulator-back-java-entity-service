@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.dtos;
 
+import com.example.universe.simulator.entityservice.exception.AppException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,12 +12,12 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-public class PlanetDto extends SpaceEntityDto {
+public class StarDto extends SpaceEntityDto {
 
-    private StarDto star;
+    private GalaxyDto galaxy;
 
     @Override
-    protected void validateDtoSpecificFields() {
+    protected void validateDtoSpecificFields() throws AppException {
     }
 
     @Override

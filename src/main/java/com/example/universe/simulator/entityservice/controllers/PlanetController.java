@@ -46,7 +46,7 @@ public class PlanetController {
     }
 
     @DeleteMapping("/delete/{id}")
-    private void delete(@PathVariable UUID id) throws AppException {
+    private void delete(@PathVariable UUID id) {
         service.delete(id);
     }
 

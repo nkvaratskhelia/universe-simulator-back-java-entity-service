@@ -37,8 +37,7 @@ public class PlanetService {
     }
 
     @Transactional
-    public void delete(UUID id) throws AppException {
-        get(id);
+    public void delete(UUID id) {
         repo.deleteById(id);
     }
 
