@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCodeType {
 
-    ENTITY_EXISTS(HttpStatus.CONFLICT),
     ENTITY_MODIFIED(HttpStatus.CONFLICT),
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND),
+    EXISTS_NAME(HttpStatus.CONFLICT),
     INVALID_CONTENT_TYPE(HttpStatus.BAD_REQUEST),
     INVALID_HTTP_METHOD(HttpStatus.BAD_REQUEST),
     INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST),

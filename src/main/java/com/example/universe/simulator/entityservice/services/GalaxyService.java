@@ -26,15 +26,27 @@ public class GalaxyService {
     }
 
     @Transactional
-    public Galaxy add(Galaxy entity) {
+    public Galaxy add(Galaxy entity) throws AppException {
+        validate(entity, false);
         return repository.save(entity);
+    }
+
+    private void validate(Galaxy entity, boolean isUpdate) throws AppException {
+        if (isUpdate && !repository.existsById(entity.getId())) {
+            throw new AppException(ErrorCodeType.ENTITY_NOT_FOUND);
+        }
+
+        boolean existsByName = isUpdate
+                ? repository.existsByNameAndIdNot(entity.getName(), entity.getId())
+                : repository.existsByName(entity.getName());
+        if (existsByName) {
+            throw new AppException(ErrorCodeType.EXISTS_NAME);
+        }
     }
 
     @Transactional
     public Galaxy update(Galaxy entity) throws AppException {
-        //validate entity with id exists
-        get(entity.getId());
-
+        validate(entity, true);
         return repository.save(entity);
     }
 

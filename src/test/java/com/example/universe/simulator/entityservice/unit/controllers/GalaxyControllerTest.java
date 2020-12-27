@@ -120,6 +120,22 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
+    void testAdd_duplicateName() throws Exception {
+        //given
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
+        Galaxy entity = modelMapper.map(dto, Galaxy.class);
+        given(service.add(any())).willThrow(new AppException(ErrorCodeType.EXISTS_NAME));
+        //when
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.EXISTS_NAME);
+        then(service).should().add(entity);
+    }
+
+    @Test
     void testAdd_dirtyFieldFixAndSuccessfulAdd() throws Exception {
         //given
         GalaxyDto inputDto = TestUtils.buildGalaxyDtoForAdd();
@@ -230,6 +246,22 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         ).andReturn().getResponse();
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        then(service).should().update(entity);
+    }
+
+    @Test
+    void testUpdate_duplicateName() throws Exception {
+        //given
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
+        Galaxy entity = modelMapper.map(dto, Galaxy.class);
+        given(service.update(any())).willThrow(new AppException(ErrorCodeType.EXISTS_NAME));
+        //when
+        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andReturn().getResponse();
+        //then
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.EXISTS_NAME);
         then(service).should().update(entity);
     }
 

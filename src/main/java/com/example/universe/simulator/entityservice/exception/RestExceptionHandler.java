@@ -1,6 +1,5 @@
 package com.example.universe.simulator.entityservice.exception;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -22,12 +21,6 @@ class RestExceptionHandler {
     private ResponseEntity<RestErrorResponse> buildErrorResponse(ErrorCodeType errorCode) {
         RestErrorResponse response = new RestErrorResponse(errorCode);
         return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
-    }
-
-    //thrown when database unique field constraint is violated
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    private ResponseEntity<RestErrorResponse> handleDataIntegrityViolationException() {
-        return buildErrorResponse(ErrorCodeType.ENTITY_EXISTS);
     }
 
     //thrown when trying to delete non-existent entity
