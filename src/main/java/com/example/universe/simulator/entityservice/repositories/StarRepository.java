@@ -10,4 +10,6 @@ public interface StarRepository extends JpaRepository<Star, UUID> {
     boolean existsByName(String name);
 
     boolean existsByNameAndIdNot(String name, UUID id);
+
+    boolean existsByGalaxyId(UUID id);
 }

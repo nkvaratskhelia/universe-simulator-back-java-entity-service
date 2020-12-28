@@ -26,7 +26,7 @@ class RestExceptionHandler {
     //thrown when trying to delete non-existent entity
     @ExceptionHandler(EmptyResultDataAccessException.class)
     private ResponseEntity<RestErrorResponse> handleEmptyResultDataAccessException() {
-        return buildErrorResponse(ErrorCodeType.ENTITY_NOT_FOUND);
+        return buildErrorResponse(ErrorCodeType.NOT_FOUND_ENTITY);
     }
 
     //thrown when content type is not specified or is something other than json

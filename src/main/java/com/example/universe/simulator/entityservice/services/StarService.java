@@ -24,7 +24,7 @@ public class StarService {
     }
 
     public Star get(UUID id) throws AppException {
-        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
+        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional
@@ -35,7 +35,7 @@ public class StarService {
 
     private void validate(Star entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
-            throw new AppException(ErrorCodeType.ENTITY_NOT_FOUND);
+            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
         }
 
         boolean existsByName = isUpdate
@@ -46,7 +46,7 @@ public class StarService {
         }
 
         if (!galaxyRepository.existsById(entity.getGalaxy().getId())) {
-            throw new AppException(ErrorCodeType.GALAXY_NOT_FOUND);
+            throw new AppException(ErrorCodeType.NOT_FOUND_GALAXY);
         }
     }
 

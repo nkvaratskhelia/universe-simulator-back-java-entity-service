@@ -4,6 +4,7 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
+import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +18,14 @@ public class GalaxyService {
 
     private final GalaxyRepository repository;
 
+    private final StarRepository starRepository;
+
     public List<Galaxy> getList() {
         return repository.findAll();
     }
 
     public Galaxy get(UUID id) throws AppException {
-        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
+        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional
@@ -33,7 +36,7 @@ public class GalaxyService {
 
     private void validate(Galaxy entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
-            throw new AppException(ErrorCodeType.ENTITY_NOT_FOUND);
+            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
         }
 
         boolean existsByName = isUpdate
@@ -51,7 +54,11 @@ public class GalaxyService {
     }
 
     @Transactional
-    public void delete(UUID id) {
+    public void delete(UUID id) throws AppException {
+        if (starRepository.existsByGalaxyId(id)) {
+            throw new AppException(ErrorCodeType.IN_USE);
+        }
+
         repository.deleteById(id);
     }
 }

@@ -3,7 +3,6 @@ package com.example.universe.simulator.entityservice.unit.controllers;
 import com.example.universe.simulator.entityservice.controllers.StarController;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
-import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
@@ -49,19 +48,7 @@ class StarControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testGet_idNotFound() throws Exception {
-        //given
-        UUID id = UUID.randomUUID();
-        given(service.get(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(get("/star/get/{id}", id)).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
-        then(service).should().get(id);
-    }
-
-    @Test
-    void testGet_successfulGet() throws Exception {
+    void testGet() throws Exception {
         //given
         UUID id = UUID.randomUUID();
         Star entity = Star.builder().name("name").build();
@@ -147,38 +134,6 @@ class StarControllerTest extends AbstractWebMvcTest {
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
         then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_duplicateName() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForAdd();
-        Star entity = modelMapper.map(dto, Star.class);
-        given(service.add(any())).willThrow(new AppException(ErrorCodeType.EXISTS_NAME));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.EXISTS_NAME);
-        then(service).should().add(entity);
-    }
-
-    @Test
-    void testAdd_galaxyNotFound() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForAdd();
-        Star entity = modelMapper.map(dto, Star.class);
-        given(service.add(any())).willThrow(new AppException(ErrorCodeType.GALAXY_NOT_FOUND));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.GALAXY_NOT_FOUND);
-        then(service).should().add(entity);
     }
 
     @Test
@@ -307,54 +262,6 @@ class StarControllerTest extends AbstractWebMvcTest {
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
         then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testUpdate_idNotFound() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        Star entity = modelMapper.map(dto, Star.class);
-        given(service.update(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
-        then(service).should().update(entity);
-    }
-
-    @Test
-    void testUpdate_duplicateName() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        Star entity = modelMapper.map(dto, Star.class);
-        given(service.update(any())).willThrow(new AppException(ErrorCodeType.EXISTS_NAME));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.EXISTS_NAME);
-        then(service).should().update(entity);
-    }
-
-    @Test
-    void testUpdate_galaxyNotFound() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        Star entity = modelMapper.map(dto, Star.class);
-        given(service.update(any())).willThrow(new AppException(ErrorCodeType.GALAXY_NOT_FOUND));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.GALAXY_NOT_FOUND);
-        then(service).should().update(entity);
     }
 
     @Test

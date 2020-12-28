@@ -4,6 +4,7 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
+import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,9 @@ class GalaxyServiceTest {
 
     @Mock
     private GalaxyRepository repository;
+
+    @Mock
+    private StarRepository starRepository;
 
     @InjectMocks
     private GalaxyService service;
@@ -54,7 +58,7 @@ class GalaxyServiceTest {
         //when
         AppException exception = catchThrowableOfType(() -> service.get(id), AppException.class);
         //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().findById(id);
     }
 
@@ -107,7 +111,7 @@ class GalaxyServiceTest {
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().existsById(id);
         then(repository).should(never()).save(any());
     }
@@ -144,7 +148,20 @@ class GalaxyServiceTest {
     }
 
     @Test
-    void testDelete() {
+    void testDelete_inUse() {
+        //given
+        UUID id = UUID.randomUUID();
+        given(starRepository.existsByGalaxyId(any())).willReturn(true);
+        //when
+        AppException exception = catchThrowableOfType(() -> service.delete(id), AppException.class);
+        //then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
+        then(starRepository).should().existsByGalaxyId(id);
+        then(repository).should(never()).deleteById(any());
+    }
+
+    @Test
+    void testDelete_successfulDelete() throws AppException {
         //given
         UUID id = UUID.randomUUID();
         //when

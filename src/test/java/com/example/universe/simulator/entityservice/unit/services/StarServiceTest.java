@@ -59,7 +59,7 @@ class StarServiceTest {
         //when
         AppException exception = catchThrowableOfType(() -> service.get(id), AppException.class);
         //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().findById(id);
     }
 
@@ -102,7 +102,7 @@ class StarServiceTest {
         //when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
         //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.GALAXY_NOT_FOUND);
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
         then(galaxyRepository).should().existsById(entity.getGalaxy().getId());
         then(repository).should(never()).save(any());
     }
@@ -133,7 +133,7 @@ class StarServiceTest {
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.ENTITY_NOT_FOUND);
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().existsById(id);
         then(repository).should(never()).save(any());
     }
@@ -169,7 +169,7 @@ class StarServiceTest {
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.GALAXY_NOT_FOUND);
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
         then(galaxyRepository).should().existsById(entity.getGalaxy().getId());
         then(repository).should(never()).save(any());
     }

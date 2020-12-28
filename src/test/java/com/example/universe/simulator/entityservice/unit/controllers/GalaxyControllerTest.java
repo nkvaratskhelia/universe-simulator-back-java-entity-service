@@ -3,7 +3,6 @@ package com.example.universe.simulator.entityservice.unit.controllers;
 import com.example.universe.simulator.entityservice.controllers.GalaxyController;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
-import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
@@ -49,19 +48,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testGet_idNotFound() throws Exception {
-        //given
-        UUID id = UUID.randomUUID();
-        given(service.get(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
-        then(service).should().get(id);
-    }
-
-    @Test
-    void testGet_successfulGet() throws Exception {
+    void testGet() throws Exception {
         //given
         UUID id = UUID.randomUUID();
         Galaxy entity = Galaxy.builder().name("name").build();
@@ -117,22 +104,6 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_duplicateName() throws Exception {
-        //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        Galaxy entity = modelMapper.map(dto, Galaxy.class);
-        given(service.add(any())).willThrow(new AppException(ErrorCodeType.EXISTS_NAME));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.EXISTS_NAME);
-        then(service).should().add(entity);
     }
 
     @Test
@@ -231,38 +202,6 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
         then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_idNotFound() throws Exception {
-        //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = modelMapper.map(dto, Galaxy.class);
-        given(service.update(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
-        then(service).should().update(entity);
-    }
-
-    @Test
-    void testUpdate_duplicateName() throws Exception {
-        //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = modelMapper.map(dto, Galaxy.class);
-        given(service.update(any())).willThrow(new AppException(ErrorCodeType.EXISTS_NAME));
-        //when
-        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.EXISTS_NAME);
-        then(service).should().update(entity);
     }
 
     @Test
