@@ -45,8 +45,10 @@ class GalaxyServiceTest {
         List<Galaxy> list = List.of(
                 Galaxy.builder().name("name").build()
         );
+
         Pageable pageable = Pageable.unpaged();
         Page<Galaxy> page = new PageImpl<>(list, pageable, list.size());
+
         given(repository.findAll(any(Pageable.class))).willReturn(page);
         //when
         Page<Galaxy> result = service.getList(pageable);
