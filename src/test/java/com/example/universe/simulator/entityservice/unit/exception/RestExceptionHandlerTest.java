@@ -10,7 +10,6 @@ import com.example.universe.simulator.entityservice.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -36,22 +35,6 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @MockBean
     private GalaxyService service;
-
-    @Test
-    void testDataIntegrityViolation() throws Exception {
-        //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        Galaxy entity = modelMapper.map(dto, Galaxy.class);
-        given(service.add(any())).willThrow(DataIntegrityViolationException.class);
-        //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
-        //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_EXISTS);
-        then(service).should().add(entity);
-    }
 
     @Test
     void testEmptyResultDataAccess() throws Exception {
