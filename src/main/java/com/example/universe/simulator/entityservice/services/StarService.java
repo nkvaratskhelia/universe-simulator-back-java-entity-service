@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.services;
 
-import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
@@ -14,27 +14,26 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class GalaxyService {
+public class StarService {
 
-    private final GalaxyRepository repository;
+    private final StarRepository repository;
+    private final GalaxyRepository galaxyRepository;
 
-    private final StarRepository starRepository;
-
-    public List<Galaxy> getList() {
+    public List<Star> getList() {
         return repository.findAll();
     }
 
-    public Galaxy get(UUID id) throws AppException {
+    public Star get(UUID id) throws AppException {
         return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional
-    public Galaxy add(Galaxy entity) throws AppException {
+    public Star add(Star entity) throws AppException {
         validate(entity, false);
         return repository.save(entity);
     }
 
-    private void validate(Galaxy entity, boolean isUpdate) throws AppException {
+    private void validate(Star entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
             throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
         }
@@ -45,20 +44,20 @@ public class GalaxyService {
         if (existsByName) {
             throw new AppException(ErrorCodeType.EXISTS_NAME);
         }
+
+        if (!galaxyRepository.existsById(entity.getGalaxy().getId())) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_GALAXY);
+        }
     }
 
     @Transactional
-    public Galaxy update(Galaxy entity) throws AppException {
+    public Star update(Star entity) throws AppException {
         validate(entity, true);
         return repository.save(entity);
     }
 
     @Transactional
-    public void delete(UUID id) throws AppException {
-        if (starRepository.existsByGalaxyId(id)) {
-            throw new AppException(ErrorCodeType.IN_USE);
-        }
-
+    public void delete(UUID id) {
         repository.deleteById(id);
     }
 }

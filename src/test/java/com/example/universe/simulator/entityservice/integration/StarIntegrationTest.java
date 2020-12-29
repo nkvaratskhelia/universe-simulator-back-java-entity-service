@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.integration;
 
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
+import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.utils.TestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -16,48 +17,62 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-class GalaxyIntegrationTest extends AbstractIntegrationTest {
+class StarIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
+        //-----------------------------------should add galaxy-----------------------------------
+
+        //given
+        GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
+        //when
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(galaxyDto))
+        ).andReturn().getResponse();
+        //then
+        GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(get("/star/get-list")).andReturn().getResponse();
         //then
-        List<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        List<StarDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList).isEmpty();
 
         //-----------------------------------should add entity-----------------------------------
 
         //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
+        StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.setName("name1");
+        dto.getGalaxy().setId(addedGalaxy.getId());
         //when
-        response = mockMvc.perform(post("/galaxy/add")
+        response = mockMvc.perform(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        GalaxyDto addedDto1 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        StarDto addedDto1 = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
         //-----------------------------------should add entity-----------------------------------
 
         //given
-        dto = TestUtils.buildGalaxyDtoForAdd();
+        dto = TestUtils.buildStarDtoForAdd();
         dto.setName("name2");
+        dto.getGalaxy().setId(addedGalaxy.getId());
         //when
-        response = mockMvc.perform(post("/galaxy/add")
+        response = mockMvc.perform(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        GalaxyDto addedDto2 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        StarDto addedDto2 = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
         //-----------------------------------should return list with 2 elements-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(get("/star/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList).hasSize(2);
@@ -65,35 +80,37 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return entity-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/galaxy/get/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = mockMvc.perform(get("/star/get/{id}", addedDto1.getId())).andReturn().getResponse();
         //then
-        GalaxyDto resultDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        StarDto resultDto = objectMapper.readValue(response.getContentAsString(), StarDto.class);
         assertThat(resultDto).isEqualTo(addedDto1);
 
         //-----------------------------------should update entity-----------------------------------
 
         //given
-        dto = TestUtils.buildGalaxyDtoForUpdate();
+        dto = TestUtils.buildStarDtoForUpdate();
         dto.setId(addedDto1.getId());
         dto.setName("name1Update");
+        dto.getGalaxy().setId(addedGalaxy.getId());
 
         //when
-        response = mockMvc.perform(put("/galaxy/update")
+        response = mockMvc.perform(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
         //then
-        GalaxyDto updatedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        StarDto updatedDto = objectMapper.readValue(response.getContentAsString(), StarDto.class);
         assertThat(updatedDto.getName()).isEqualTo("name1Update");
         assertThat(updatedDto.getVersion()).isEqualTo(1);
 
         //-----------------------------------should throw entity modified error-----------------------------------
 
         //given
-        dto = TestUtils.buildGalaxyDtoForUpdate();
+        dto = TestUtils.buildStarDtoForUpdate();
         dto.setId(addedDto1.getId());
+        dto.getGalaxy().setId(addedGalaxy.getId());
         //when
-        response = mockMvc.perform(put("/galaxy/update")
+        response = mockMvc.perform(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
         ).andReturn().getResponse();
@@ -103,30 +120,37 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should delete entity-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = mockMvc.perform(delete("/star/delete/{id}", addedDto1.getId())).andReturn().getResponse();
         //then
         verifyOkStatus(response.getStatus());
 
         //-----------------------------------should delete entity-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedDto2.getId())).andReturn().getResponse();
+        response = mockMvc.perform(delete("/star/delete/{id}", addedDto2.getId())).andReturn().getResponse();
         //then
         verifyOkStatus(response.getStatus());
 
         //-----------------------------------should throw not found error-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = mockMvc.perform(delete("/star/delete/{id}", addedDto1.getId())).andReturn().getResponse();
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.NOT_FOUND_ENTITY);
 
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(get("/star/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList).isEmpty();
+
+        //-----------------------------------should delete galaxy-----------------------------------
+
+        //when
+        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedGalaxy.getId())).andReturn().getResponse();
+        //then
+        verifyOkStatus(response.getStatus());
     }
 }
