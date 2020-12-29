@@ -21,14 +21,14 @@ public class PlanetController {
 
     private final PlanetService service;
 
-    @GetMapping("/get/{id}")
-    private PlanetDto get(@PathVariable UUID id) throws AppException {
-        return modelMapper.map(service.get(id), PlanetDto.class);
-    }
-
     @GetMapping("/get-list")
     private List<PlanetDto> getList() {
         return modelMapper.map(service.getList(), new TypeToken<List<PlanetDto>>() {}.getType());
+    }
+
+    @GetMapping("/get/{id}")
+    private PlanetDto get(@PathVariable UUID id) throws AppException {
+        return modelMapper.map(service.get(id), PlanetDto.class);
     }
 
     @PostMapping("/add")

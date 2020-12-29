@@ -5,6 +5,7 @@ import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
+import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.StarService;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ class StarServiceTest {
     @Mock
     private GalaxyRepository galaxyRepository;
 
+    @Mock
+    private PlanetRepository planetRepository;
+
     @InjectMocks
     private StarService service;
 
@@ -52,6 +56,19 @@ class StarServiceTest {
     }
 
     @Test
+    void testGet_successfulGet() throws AppException {
+        //given
+        UUID id = UUID.randomUUID();
+        Star entity = Star.builder().name("name").build();
+        given(repository.findById(any())).willReturn(Optional.of(entity));
+        //when
+        Star result = service.get(id);
+        //then
+        assertThat(result).isEqualTo(entity);
+        then(repository).should().findById(id);
+    }
+
+    @Test
     void testGet_idNotFound() {
         //given
         UUID id = UUID.randomUUID();
@@ -64,16 +81,20 @@ class StarServiceTest {
     }
 
     @Test
-    void testGet_successfulGet() throws AppException {
+    void testAdd_successfulAdd() throws AppException {
         //given
-        UUID id = UUID.randomUUID();
-        Star entity = Star.builder().name("name").build();
-        given(repository.findById(any())).willReturn(Optional.of(entity));
+        Star entity = Star.builder()
+                .name("name")
+                .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+                .build();
+        given(repository.existsByName(anyString())).willReturn(false);
+        given(galaxyRepository.existsById(any())).willReturn(true);
+        given(repository.save(any())).willReturn(entity);
         //when
-        Star result = service.get(id);
+        Star result = service.add(entity);
         //then
         assertThat(result).isEqualTo(entity);
-        then(repository).should().findById(id);
+        then(repository).should().save(entity);
     }
 
     @Test
@@ -108,17 +129,20 @@ class StarServiceTest {
     }
 
     @Test
-    void testAdd_successfulAdd() throws AppException {
+    void testUpdate_successfulUpdate() throws AppException {
         //given
+        UUID id = UUID.randomUUID();
         Star entity = Star.builder()
+                .id(id)
                 .name("name")
                 .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
                 .build();
-        given(repository.existsByName(anyString())).willReturn(false);
+        given(repository.existsById(any())).willReturn(true);
+        given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
         //when
-        Star result = service.add(entity);
+        Star result = service.update(entity);
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
@@ -175,27 +199,7 @@ class StarServiceTest {
     }
 
     @Test
-    void testUpdate_successfulUpdate() throws AppException {
-        //given
-        UUID id = UUID.randomUUID();
-        Star entity = Star.builder()
-                .id(id)
-                .name("name")
-                .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-                .build();
-        given(repository.existsById(any())).willReturn(true);
-        given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
-        given(galaxyRepository.existsById(any())).willReturn(true);
-        given(repository.save(any())).willReturn(entity);
-        //when
-        Star result = service.update(entity);
-        //then
-        assertThat(result).isEqualTo(entity);
-        then(repository).should().save(entity);
-    }
-
-    @Test
-    void testDelete() {
+    void testDelete() throws AppException {
         //given
         UUID id = UUID.randomUUID();
         //when
@@ -203,4 +207,18 @@ class StarServiceTest {
         //then
         then(repository).should().deleteById(id);
     }
+
+    @Test
+    void testDelete_inUse() {
+        //given
+        UUID id = UUID.randomUUID();
+        given(planetRepository.existsByStarId(any())).willReturn(true);
+        //when
+        AppException exception = catchThrowableOfType(() -> service.delete(id), AppException.class);
+        //then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
+        then(planetRepository).should().existsByStarId(id);
+        then(repository).should(never()).deleteById(any());
+    }
+
 }

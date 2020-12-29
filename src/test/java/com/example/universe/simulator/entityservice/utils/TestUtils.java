@@ -42,6 +42,7 @@ public final class TestUtils {
     public static PlanetDto buildPlanetDtoForAdd() {
         return PlanetDto.builder()
                 .name("name")
+                .star(StarDto.builder().id(UUID.randomUUID()).build())
                 .build();
     }
 
