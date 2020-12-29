@@ -90,10 +90,16 @@ class PlanetControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAdd_dirtyFieldFixAndSuccessfulAdd() throws Exception {
         // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
         Planet planet = modelMapper.map(planetDto, Planet.class);
+
+        //dirty input
+        planetDto.setId(UUID.randomUUID());
+        planetDto.setName(" name ");
+        planetDto.setVersion(1L);
+
         given(service.add(any())).willReturn(planet);
         // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -171,10 +177,14 @@ class PlanetControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdate_dirtyFieldFixAndSuccessfulUpdate() throws Exception {
         // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForUpdate();
         Planet planet = modelMapper.map(planetDto, Planet.class);
+
+        //dirty input
+        planetDto.setName(" name ");
+
         given(service.update(any())).willReturn(planet);
         // when
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -187,7 +197,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
                 .andReturn()
                 .getResponse();
         // then
-        verifySuccessfulResponse(response, planetDto);
+        verifySuccessfulResponse(response, modelMapper.map(planet, PlanetDto.class));
         then(service).should().update(planet);
     }
 
@@ -289,6 +299,27 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         // then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
         then(service).should(never()).update(any());
+    }
+
+    @Test
+    void testUpdate_idNotFound() throws Exception {
+        // given
+        PlanetDto planetDto = TestUtils.buildPlanetDtoForUpdate();
+        Planet planet = modelMapper.map(planetDto, Planet.class);
+        given(service.update(any())).willThrow(new AppException(ErrorCodeType.ENTITY_NOT_FOUND));
+        // when
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/planet/update")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(planetDto));
+        MockHttpServletResponse response = mockMvc
+                .perform(requestBuilder)
+                .andReturn()
+                .getResponse();
+        // then
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        then(service).should().update(planet);
     }
 
     @Test
