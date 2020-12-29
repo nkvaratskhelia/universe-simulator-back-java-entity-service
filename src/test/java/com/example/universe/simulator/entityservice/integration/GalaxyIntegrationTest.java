@@ -2,13 +2,12 @@ package com.example.universe.simulator.entityservice.integration;
 
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.utils.JsonPage;
 import com.example.universe.simulator.entityservice.utils.TestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -20,13 +19,22 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
+        //-----------------------------------should throw sort parameter error-----------------------------------
+
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")
+                .param("sort", "invalid")
+        ).andReturn().getResponse();
+        //then
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_SORT_PARAMETER);
+
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
         //then
-        List<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList).isEmpty();
+        JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(resultList.getContent()).isEmpty();
 
         //-----------------------------------should add entity-----------------------------------
 
@@ -60,7 +68,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList).hasSize(2);
+        assertThat(resultList.getContent()).hasSize(2);
 
         //-----------------------------------should return entity-----------------------------------
 
@@ -127,6 +135,6 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList).isEmpty();
+        assertThat(resultList.getContent()).isEmpty();
     }
 }
