@@ -44,7 +44,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         //when
         MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_NOT_FOUND);
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.NOT_FOUND_ENTITY);
         then(service).should().delete(id);
     }
 
