@@ -1,9 +1,9 @@
 package com.example.universe.simulator.entityservice.controllers;
 
-import com.example.universe.simulator.entityservice.dtos.StarDto;
-import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.dtos.PlanetDto;
+import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.services.StarService;
+import com.example.universe.simulator.entityservice.services.PlanetService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -20,42 +20,42 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("star")
+@RequestMapping("planet")
 @RequiredArgsConstructor
-public class StarController {
+public class PlanetController {
 
     private final ModelMapper modelMapper;
 
-    private final StarService service;
+    private final PlanetService service;
 
     @GetMapping("get-list")
-    private List<StarDto> getList() {
-        return modelMapper.map(service.getList(), new TypeToken<List<StarDto>>() {}.getType());
+    private List<PlanetDto> getList() {
+        return modelMapper.map(service.getList(), new TypeToken<List<PlanetDto>>() {}.getType());
     }
 
     @GetMapping("get/{id}")
-    private StarDto get(@PathVariable UUID id) throws AppException {
-        return modelMapper.map(service.get(id), StarDto.class);
+    private PlanetDto get(@PathVariable UUID id) throws AppException {
+        return modelMapper.map(service.get(id), PlanetDto.class);
     }
 
     @PostMapping("add")
-    private StarDto add(@RequestBody StarDto dto) throws AppException {
+    private PlanetDto add(@RequestBody PlanetDto dto) throws AppException {
         dto.validate(false);
 
-        Star entity = modelMapper.map(dto, Star.class);
-        return modelMapper.map(service.add(entity), StarDto.class);
+        Planet entity = modelMapper.map(dto, Planet.class);
+        return modelMapper.map(service.add(entity), PlanetDto.class);
     }
 
     @PutMapping("update")
-    private StarDto update(@RequestBody StarDto dto) throws AppException {
+    private PlanetDto update(@RequestBody PlanetDto dto) throws AppException {
         dto.validate(true);
 
-        Star entity = modelMapper.map(dto, Star.class);
-        return modelMapper.map(service.update(entity), StarDto.class);
+        Planet entity = modelMapper.map(dto, Planet.class);
+        return modelMapper.map(service.update(entity), PlanetDto.class);
     }
 
     @DeleteMapping("delete/{id}")
-    private void delete(@PathVariable UUID id) throws AppException {
+    private void delete(@PathVariable UUID id) {
         service.delete(id);
     }
 }
