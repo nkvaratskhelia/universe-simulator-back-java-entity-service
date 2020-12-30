@@ -6,10 +6,11 @@ import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,8 +20,8 @@ public class GalaxyService {
     private final GalaxyRepository repository;
     private final StarRepository starRepository;
 
-    public List<Galaxy> getList() {
-        return repository.findAll();
+    public Page<Galaxy> getList(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     public Galaxy get(UUID id) throws AppException {

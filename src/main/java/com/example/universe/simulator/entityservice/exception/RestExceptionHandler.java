@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.exception;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -57,6 +58,12 @@ class RestExceptionHandler {
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     private ResponseEntity<RestErrorResponse> handleObjectOptimisticLockingFailureException() {
         return buildErrorResponse(ErrorCodeType.ENTITY_MODIFIED);
+    }
+
+    //thrown when passing invalid sort parameter to paged requests
+    @ExceptionHandler(PropertyReferenceException.class)
+    private ResponseEntity<RestErrorResponse> handlePropertyReferenceException() {
+        return buildErrorResponse(ErrorCodeType.INVALID_SORT_PARAMETER);
     }
 
     @ExceptionHandler(Exception.class)

@@ -11,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -37,7 +41,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     private GalaxyService service;
 
     @Test
-    void testEmptyResultDataAccess() throws Exception {
+    void testEmptyResultDataAccessException() throws Exception {
         //given
         UUID id = UUID.randomUUID();
         willThrow(EmptyResultDataAccessException.class).given(service).delete(any());
@@ -49,7 +53,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testHttpMediaTypeNotSupported_missingContentType() throws Exception {
+    void testHttpMediaTypeNotSupportedException_missingContentType() throws Exception {
         //given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         //when
@@ -62,7 +66,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testHttpMediaTypeNotSupported_invalidContentType() throws Exception {
+    void testHttpMediaTypeNotSupportedException_invalidContentType() throws Exception {
         //given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         //when
@@ -76,7 +80,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testHttpMessageNotReadable() throws Exception {
+    void testHttpMessageNotReadableException() throws Exception {
         //when
         MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")).andReturn().getResponse();
         //then
@@ -85,27 +89,29 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testHttpRequestMethodNotSupported() throws Exception {
+    void testHttpRequestMethodNotSupportedException() throws Exception {
+        //given
+        UUID id = UUID.randomUUID();
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_HTTP_METHOD);
-        then(service).should(never()).getList();
+        then(service).should(never()).delete(any());
     }
 
     @Test
-    void testMethodArgumentTypeMismatch() throws Exception {
+    void testMethodArgumentTypeMismatchException() throws Exception {
         //given
         String id = "id";
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_REQUEST_PARAMETER);
         then(service).should(never()).get(any());
     }
 
     @Test
-    void testObjectOptimisticLockingFailure() throws Exception {
+    void testObjectOptimisticLockingFailureException() throws Exception {
         //given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
@@ -121,13 +127,29 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     }
 
     @Test
+    void testPropertyReferenceException() throws Exception {
+        //given
+        Sort sort = Sort.by(Sort.Order.asc("invalid"));
+        Pageable pageable = PageRequest.of(0, 20, sort);
+        given(service.getList(any())).willThrow(PropertyReferenceException.class);
+        //when
+        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")
+                .param("sort", "invalid")
+        ).andReturn().getResponse();
+        //then
+        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_SORT_PARAMETER);
+        then(service).should().getList(pageable);
+    }
+
+    @Test
     void testUnknownException() throws Exception {
         //given
-        given(service.getList()).willThrow(RuntimeException.class);
+        UUID id = UUID.randomUUID();
+        willThrow(RuntimeException.class).given(service).delete(any());
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.SERVER_ERROR);
-        then(service).should().getList();
+        then(service).should().delete(id);
     }
 }
