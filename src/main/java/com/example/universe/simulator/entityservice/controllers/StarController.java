@@ -56,7 +56,7 @@ public class StarController {
     }
 
     @DeleteMapping("delete/{id}")
-    private void delete(@PathVariable UUID id) {
+    private void delete(@PathVariable UUID id) throws AppException {
         service.delete(id);
     }
 }

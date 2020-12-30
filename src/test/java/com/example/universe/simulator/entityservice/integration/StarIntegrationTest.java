@@ -92,6 +92,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         //then
         StarDto resultDto = objectMapper.readValue(response.getContentAsString(), StarDto.class);
         assertThat(resultDto).isEqualTo(addedDto1);
+        assertThat(resultDto.getGalaxy().getId()).isEqualTo(addedGalaxy.getId());
 
         //-----------------------------------should update entity-----------------------------------
 

@@ -4,6 +4,7 @@ import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
+import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ public class StarService {
 
     private final StarRepository repository;
     private final GalaxyRepository galaxyRepository;
+    private final PlanetRepository planetRepository;
 
     public Page<Star> getList(Pageable pageable) {
         return repository.findAll(pageable);
@@ -58,7 +60,11 @@ public class StarService {
     }
 
     @Transactional
-    public void delete(UUID id) {
+    public void delete(UUID id) throws AppException {
+        if (planetRepository.existsByStarId(id)) {
+            throw new AppException(ErrorCodeType.IN_USE);
+        }
+
         repository.deleteById(id);
     }
 }

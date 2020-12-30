@@ -1,40 +1,39 @@
 package com.example.universe.simulator.entityservice.services;
 
-import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
-import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
+import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class GalaxyService {
+public class PlanetService {
 
-    private final GalaxyRepository repository;
+    private final PlanetRepository repository;
     private final StarRepository starRepository;
 
-    public Page<Galaxy> getList(Pageable pageable) {
-        return repository.findAll(pageable);
+    public List<Planet> getList() {
+        return repository.findAll();
     }
 
-    public Galaxy get(UUID id) throws AppException {
+    public Planet get(UUID id) throws AppException {
         return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional
-    public Galaxy add(Galaxy entity) throws AppException {
+    public Planet add(Planet entity) throws AppException {
         validate(entity, false);
         return repository.save(entity);
     }
 
-    private void validate(Galaxy entity, boolean isUpdate) throws AppException {
+    private void validate(Planet entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
             throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
         }
@@ -45,20 +44,21 @@ public class GalaxyService {
         if (existsByName) {
             throw new AppException(ErrorCodeType.EXISTS_NAME);
         }
+
+        if (!starRepository.existsById(entity.getStar().getId())) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_STAR);
+        }
     }
 
     @Transactional
-    public Galaxy update(Galaxy entity) throws AppException {
+    public Planet update(Planet entity) throws AppException {
         validate(entity, true);
         return repository.save(entity);
     }
 
     @Transactional
-    public void delete(UUID id) throws AppException {
-        if (starRepository.existsByGalaxyId(id)) {
-            throw new AppException(ErrorCodeType.IN_USE);
-        }
-
+    public void delete(UUID id) {
+        // TODO check planet id in moons repo
         repository.deleteById(id);
     }
 }

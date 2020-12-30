@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.utils;
 
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
+import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 
 import java.util.UUID;
@@ -35,6 +36,21 @@ public final class TestUtils {
         result.setId(UUID.randomUUID());
         result.setVersion(0L);
 
+        return result;
+    }
+
+    public static PlanetDto buildPlanetDtoForAdd() {
+        return PlanetDto.builder()
+                .name("name")
+                .star(StarDto.builder().id(UUID.randomUUID()).build())
+                .build();
+    }
+
+    public static PlanetDto buildPlanetDtoForUpdate() {
+        PlanetDto result = buildPlanetDtoForAdd();
+        result.setId(UUID.randomUUID());
+        result.setVersion(0L);
+        
         return result;
     }
 }
