@@ -1,41 +1,39 @@
 package com.example.universe.simulator.entityservice.services;
 
-import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
-import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class StarService {
+public class PlanetService {
 
-    private final StarRepository repository;
-    private final GalaxyRepository galaxyRepository;
-    private final PlanetRepository planetRepository;
+    private final PlanetRepository repository;
+    private final StarRepository starRepository;
 
-    public List<Star> getList() {
+    public List<Planet> getList() {
         return repository.findAll();
     }
 
-    public Star get(UUID id) throws AppException {
+    public Planet get(UUID id) throws AppException {
         return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional
-    public Star add(Star entity) throws AppException {
+    public Planet add(Planet entity) throws AppException {
         validate(entity, false);
         return repository.save(entity);
     }
 
-    private void validate(Star entity, boolean isUpdate) throws AppException {
+    private void validate(Planet entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
             throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
         }
@@ -47,23 +45,20 @@ public class StarService {
             throw new AppException(ErrorCodeType.EXISTS_NAME);
         }
 
-        if (!galaxyRepository.existsById(entity.getGalaxy().getId())) {
-            throw new AppException(ErrorCodeType.NOT_FOUND_GALAXY);
+        if (!starRepository.existsById(entity.getStar().getId())) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_STAR);
         }
     }
 
     @Transactional
-    public Star update(Star entity) throws AppException {
+    public Planet update(Planet entity) throws AppException {
         validate(entity, true);
         return repository.save(entity);
     }
 
     @Transactional
-    public void delete(UUID id) throws AppException {
-        if (planetRepository.existsByStarId(id)) {
-            throw new AppException(ErrorCodeType.IN_USE);
-        }
-
+    public void delete(UUID id) {
+        // TODO check planet id in moons repo
         repository.deleteById(id);
     }
 }

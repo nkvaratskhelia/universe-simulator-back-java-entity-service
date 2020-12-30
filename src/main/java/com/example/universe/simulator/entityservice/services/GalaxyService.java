@@ -18,7 +18,6 @@ import java.util.UUID;
 public class GalaxyService {
 
     private final GalaxyRepository repository;
-
     private final StarRepository starRepository;
 
     public Page<Galaxy> getList(Pageable pageable) {
