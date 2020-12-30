@@ -6,7 +6,8 @@ import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.services.StarService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,8 +29,9 @@ public class StarController {
     private final StarService service;
 
     @GetMapping("get-list")
-    private List<StarDto> getList() {
-        return modelMapper.map(service.getList(), new TypeToken<List<StarDto>>() {}.getType());
+    private Page<StarDto> getList(Pageable pageable) {
+        return service.getList(pageable)
+                .map(item -> modelMapper.map(item, StarDto.class));
     }
 
     @GetMapping("get/{id}")

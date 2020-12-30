@@ -11,6 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.TypeToken;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -38,13 +43,26 @@ class StarControllerTest extends AbstractWebMvcTest {
         List<Star> entityList = List.of(
                 Star.builder().name("name").build()
         );
-        List<StarDto> dtoList = modelMapper.map(entityList, new TypeToken<List<StarDto>>() {}.getType());
-        given(service.getList()).willReturn(entityList);
+
+        Sort sort = Sort.by(
+                Sort.Order.desc("version"),
+                Sort.Order.asc("name")
+        );
+        Pageable pageable = PageRequest.of(1, 2, sort);
+        Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<StarDto> dtoPage = modelMapper.map(entityPage, new TypeToken<Page<StarDto>>() {}.getType());
+
+        given(service.getList(any())).willReturn(entityPage);
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/star/get-list")).andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc.perform(get("/star/get-list")
+                .param("page", "1")
+                .param("size", "2")
+                .param("sort", "version,desc")
+                .param("sort", "name,asc")
+        ).andReturn().getResponse();
         //then
-        verifySuccessfulResponse(response, dtoList);
-        then(service).should().getList();
+        verifySuccessfulResponse(response, dtoPage);
+        then(service).should().getList(pageable);
     }
 
     @Test
