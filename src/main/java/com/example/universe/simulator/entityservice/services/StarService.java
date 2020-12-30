@@ -35,21 +35,6 @@ public class StarService {
         return repository.save(entity);
     }
 
-    @Transactional
-    public Star update(Star entity) throws AppException {
-        validate(entity, true);
-        return repository.save(entity);
-    }
-
-    @Transactional
-    public void delete(UUID id) throws AppException {
-        if (planetRepository.existsByStarId(id)) {
-            throw new AppException(ErrorCodeType.IN_USE);
-        }
-
-        repository.deleteById(id);
-    }
-
     private void validate(Star entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
             throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
@@ -67,4 +52,18 @@ public class StarService {
         }
     }
 
+    @Transactional
+    public Star update(Star entity) throws AppException {
+        validate(entity, true);
+        return repository.save(entity);
+    }
+
+    @Transactional
+    public void delete(UUID id) throws AppException {
+        if (planetRepository.existsByStarId(id)) {
+            throw new AppException(ErrorCodeType.IN_USE);
+        }
+
+        repository.deleteById(id);
+    }
 }

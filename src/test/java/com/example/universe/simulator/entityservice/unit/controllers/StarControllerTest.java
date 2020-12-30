@@ -62,29 +62,6 @@ class StarControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testAdd_dirtyFieldFixAndSuccessfulAdd() throws Exception {
-        //given
-        StarDto inputDto = TestUtils.buildStarDtoForAdd();
-        Star entity = modelMapper.map(inputDto, Star.class);
-        StarDto resultDto = modelMapper.map(entity, StarDto.class);
-
-        //dirty input
-        inputDto.setId(UUID.randomUUID());
-        inputDto.setName(" name ");
-        inputDto.setVersion(1L);
-
-        given(service.add(any())).willReturn(entity);
-        //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto))
-        ).andReturn().getResponse();
-        //then
-        verifySuccessfulResponse(response, resultDto);
-        then(service).should().add(entity);
-    }
-
-    @Test
     void testAdd_validate_nullName() throws Exception {
         //given
         StarDto dto = TestUtils.buildStarDtoForAdd();
@@ -160,24 +137,26 @@ class StarControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testUpdate_dirtyFieldFixAndSuccessfulUpdate() throws Exception {
+    void testAdd_dirtyFieldFixAndSuccessfulAdd() throws Exception {
         //given
-        StarDto inputDto = TestUtils.buildStarDtoForUpdate();
+        StarDto inputDto = TestUtils.buildStarDtoForAdd();
         Star entity = modelMapper.map(inputDto, Star.class);
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
 
         //dirty input
+        inputDto.setId(UUID.randomUUID());
         inputDto.setName(" name ");
+        inputDto.setVersion(1L);
 
-        given(service.update(any())).willReturn(entity);
+        given(service.add(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDto))
         ).andReturn().getResponse();
         //then
         verifySuccessfulResponse(response, resultDto);
-        then(service).should().update(entity);
+        then(service).should().add(entity);
     }
 
     @Test
@@ -283,6 +262,27 @@ class StarControllerTest extends AbstractWebMvcTest {
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
         then(service).should(never()).add(any());
+    }
+
+    @Test
+    void testUpdate_dirtyFieldFixAndSuccessfulUpdate() throws Exception {
+        //given
+        StarDto inputDto = TestUtils.buildStarDtoForUpdate();
+        Star entity = modelMapper.map(inputDto, Star.class);
+        StarDto resultDto = modelMapper.map(entity, StarDto.class);
+
+        //dirty input
+        inputDto.setName(" name ");
+
+        given(service.update(any())).willReturn(entity);
+        //when
+        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(inputDto))
+        ).andReturn().getResponse();
+        //then
+        verifySuccessfulResponse(response, resultDto);
+        then(service).should().update(entity);
     }
 
     @Test

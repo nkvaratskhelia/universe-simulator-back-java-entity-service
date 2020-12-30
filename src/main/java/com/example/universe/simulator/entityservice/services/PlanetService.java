@@ -24,7 +24,7 @@ public class PlanetService {
     }
 
     public Planet get(UUID id) throws AppException {
-        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_PLANET));
+        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional
@@ -47,7 +47,7 @@ public class PlanetService {
 
     private void validate(Planet entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
-            throw new AppException(ErrorCodeType.NOT_FOUND_PLANET);
+            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
         }
 
         boolean existsByName = isUpdate

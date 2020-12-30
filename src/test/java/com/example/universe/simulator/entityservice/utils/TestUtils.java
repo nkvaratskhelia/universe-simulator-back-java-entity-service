@@ -50,6 +50,7 @@ public final class TestUtils {
         PlanetDto result = buildPlanetDtoForAdd();
         result.setId(UUID.randomUUID());
         result.setVersion(0L);
+        
         return result;
     }
 }

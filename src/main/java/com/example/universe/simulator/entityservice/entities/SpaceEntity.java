@@ -31,6 +31,5 @@ abstract class SpaceEntity {
     private String name;
 
     @Version
-    @Column(nullable = false)
     private long version;
 }
