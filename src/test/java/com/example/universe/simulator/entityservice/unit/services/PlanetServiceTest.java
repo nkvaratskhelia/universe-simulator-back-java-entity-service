@@ -39,96 +39,147 @@ class PlanetServiceTest {
 
     @Test
     void testGetList() {
-        // given
-        List<Planet> list = List.of(Planet.builder().name("name").build());
+        //given
+        List<Planet> list = List.of(
+                Planet.builder().name("name").build()
+        );
         given(repository.findAll()).willReturn(list);
-        // when
+        //when
         List<Planet> result = service.getList();
-        // then
+        //then
         assertThat(result).isEqualTo(list);
         then(repository).should().findAll();
     }
 
     @Test
-    void testGet() throws AppException {
-        // given
+    void testGet_idNotFound() {
+        //given
+        UUID id = UUID.randomUUID();
+        given(repository.findById(any())).willReturn(Optional.empty());
+        //when
+        AppException exception = catchThrowableOfType(() -> service.get(id), AppException.class);
+        //then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
+        then(repository).should().findById(id);
+    }
+
+    @Test
+    void testGet_successfulGet() throws AppException {
+        //given
         UUID id = UUID.randomUUID();
         Planet entity = Planet.builder().name("name").build();
         given(repository.findById(any())).willReturn(Optional.of(entity));
-        // when
+        //when
         Planet result = service.get(id);
-        // then
+        //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().findById(id);
-    }
-
-    @Test
-    void testGet_planetNotFound() {
-        // given
-        UUID id = UUID.randomUUID();
-        given(repository.findById(any())).willReturn(Optional.empty());
-        // when, then
-        AppException appException = catchThrowableOfType(() -> service.get(id), AppException.class);
-        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
-        then(repository).should().findById(id);
-    }
-
-    @Test
-    void testAdd() throws AppException {
-        // given
-        Planet entity = Planet
-                .builder()
-                .name("name")
-                .star(Star.builder().id(UUID.randomUUID()).build())
-                .build();
-        given(repository.existsByName(anyString())).willReturn(false);
-        given(starRepository.existsById(any())).willReturn(true);
-        given(repository.save(any())).willReturn(entity);
-        // when
-        Planet result = service.add(entity);
-        // then
-        assertThat(result).isEqualTo(entity);
-        then(repository).should().existsByName(entity.getName());
-        then(starRepository).should().existsById(entity.getStar().getId());
-        then(repository).should().save(entity);
     }
 
     @Test
     void testAdd_duplicateName() {
-        // given
+        //given
         Planet entity = Planet.builder().name("name").build();
         given(repository.existsByName(anyString())).willReturn(true);
-        // when, then
-        AppException appException = catchThrowableOfType(() -> service.add(entity), AppException.class);
-        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
+        //when
+        AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
+        //then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
         then(repository).should().existsByName(entity.getName());
-        then(starRepository).should(never()).existsById(any());
+        then(repository).should(never()).existsByNameAndIdNot(anyString(), any());
         then(repository).should(never()).save(any());
     }
 
     @Test
     void testAdd_starNotFound() {
-        // given
-        Planet entity = Planet
-                .builder()
+        //given
+        Planet entity = Planet.builder()
                 .name("name")
                 .star(Star.builder().id(UUID.randomUUID()).build())
                 .build();
         given(repository.existsByName(anyString())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(false);
-        // when, then
-        AppException appException = catchThrowableOfType(() -> service.add(entity), AppException.class);
-        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_STAR);
-        then(repository).should().existsByName(entity.getName());
+        //when
+        AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
+        //then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_STAR);
         then(starRepository).should().existsById(entity.getStar().getId());
         then(repository).should(never()).save(any());
     }
 
     @Test
-    void testUpdate() throws AppException {
-        // given
-        Planet entity = Planet
-                .builder()
+    void testAdd_successfulAdd() throws AppException {
+        //given
+        Planet entity = Planet.builder()
+                .name("name")
+                .star(Star.builder().id(UUID.randomUUID()).build())
+                .build();
+        given(repository.existsByName(anyString())).willReturn(false);
+        given(starRepository.existsById(any())).willReturn(true);
+        given(repository.save(any())).willReturn(entity);
+        //when
+        Planet result = service.add(entity);
+        //then
+        assertThat(result).isEqualTo(entity);
+        then(repository).should().save(entity);
+    }
+
+    @Test
+    void testUpdate_idNotFound() {
+        //given
+        UUID id = UUID.randomUUID();
+        Planet entity = Planet.builder().id(id).build();
+        given(repository.existsById(any())).willReturn(false);
+        //when
+        AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
+        //then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
+        then(repository).should().existsById(id);
+        then(repository).should(never()).save(any());
+    }
+
+    @Test
+    void testUpdate_duplicateName() {
+        //given
+        UUID id = UUID.randomUUID();
+        Planet entity = Planet.builder().id(id).name("name").build();
+        given(repository.existsById(any())).willReturn(true);
+        given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
+        //when
+        AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
+        //then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
+        then(repository).should().existsByNameAndIdNot(entity.getName(), id);
+        then(repository).should(never()).existsByName(any());
+        then(repository).should(never()).save(any());
+    }
+
+    @Test
+    void testUpdate_starNotFound() {
+        //given
+        UUID id = UUID.randomUUID();
+        Planet entity = Planet.builder()
+                .id(id)
+                .name("name")
+                .star(Star.builder().id(UUID.randomUUID()).build())
+                .build();
+        given(repository.existsById(any())).willReturn(true);
+        given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
+        given(starRepository.existsById(any())).willReturn(false);
+        //when
+        AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
+        //then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_STAR);
+        then(starRepository).should().existsById(entity.getStar().getId());
+        then(repository).should(never()).save(any());
+    }
+
+    @Test
+    void testUpdate_successfulUpdate() throws AppException {
+        //given
+        UUID id = UUID.randomUUID();
+        Planet entity = Planet.builder()
+                .id(id)
                 .name("name")
                 .star(Star.builder().id(UUID.randomUUID()).build())
                 .build();
@@ -136,82 +187,20 @@ class PlanetServiceTest {
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
-        // when
+        //when
         Planet result = service.update(entity);
-        // then
+        //then
         assertThat(result).isEqualTo(entity);
-        then(repository).should().existsById(entity.getId());
-        then(repository).should().existsByNameAndIdNot(entity.getName(), entity.getId());
-        then(starRepository).should().existsById(entity.getStar().getId());
         then(repository).should().save(entity);
     }
 
     @Test
-    void testUpdate_planetNotFound() {
-        // given
-        Planet entity = Planet
-                .builder()
-                .name("name")
-                .build();
-        given(repository.existsById(any())).willReturn(false);
-        // when
-        AppException appException = catchThrowableOfType(() -> service.update(entity), AppException.class);
-        // then
-        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
-        then(repository).should().existsById(entity.getId());
-        then(repository).should(never()).existsByNameAndIdNot(anyString(), any());
-        then(starRepository).should(never()).existsById(any());
-        then(repository).should(never()).save(any());
-    }
-
-    @Test
-    void testUpdate_duplicateName() {
-        // given
-        Planet entity = Planet
-                .builder()
-                .name("name")
-                .build();
-        given(repository.existsById(any())).willReturn(true);
-        given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
-        // when
-        AppException appException = catchThrowableOfType(() -> service.update(entity), AppException.class);
-        // then
-        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
-        then(repository).should().existsById(entity.getId());
-        then(repository).should().existsByNameAndIdNot(entity.getName(), entity.getId());
-        then(starRepository).should(never()).existsById(any());
-        then(repository).should(never()).save(any());
-    }
-
-    @Test
-    void testUpdate_starNotFound() {
-        // given
-        Planet entity = Planet
-                .builder()
-                .name("name")
-                .star(Star.builder().id(UUID.randomUUID()).build())
-                .build();
-        given(repository.existsById(any())).willReturn(true);
-        given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
-        given(starRepository.existsById(any())).willReturn(false);
-        // when
-        AppException appException = catchThrowableOfType(() -> service.update(entity), AppException.class);
-        // then
-        assertThat(appException.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_STAR);
-        then(repository).should().existsById(entity.getId());
-        then(repository).should().existsByNameAndIdNot(entity.getName(), entity.getId());
-        then(starRepository).should().existsById(entity.getStar().getId());
-        then(repository).should(never()).save(any());
-    }
-
-    @Test
     void testDelete() {
-        // given
+        //given
         UUID id = UUID.randomUUID();
-        // when
+        //when
         service.delete(id);
-        // then
+        //then
         then(repository).should().deleteById(id);
     }
-
 }

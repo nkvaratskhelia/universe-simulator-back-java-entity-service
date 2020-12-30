@@ -164,6 +164,7 @@ class GalaxyServiceTest {
     void testDelete_successfulDelete() throws AppException {
         //given
         UUID id = UUID.randomUUID();
+        given(starRepository.existsByGalaxyId(any())).willReturn(false);
         //when
         service.delete(id);
         //then

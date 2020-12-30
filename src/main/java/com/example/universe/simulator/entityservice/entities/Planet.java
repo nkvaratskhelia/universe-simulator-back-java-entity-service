@@ -9,19 +9,16 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
-@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 public class Planet extends SpaceEntity {
 
     @ManyToOne
     @JoinColumn(nullable = false)
+    @EqualsAndHashCode.Exclude
     private Star star;
-
 }

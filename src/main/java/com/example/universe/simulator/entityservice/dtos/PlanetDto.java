@@ -10,8 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
@@ -31,7 +30,5 @@ public class PlanetDto extends SpaceEntityDto {
     }
 
     @Override
-    protected void fixDtoSpecificDirtyFields() {
-    }
-
+    protected void fixDtoSpecificDirtyFields() {}
 }

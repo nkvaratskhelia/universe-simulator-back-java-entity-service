@@ -215,6 +215,7 @@ class StarServiceTest {
     void testDelete_successfulDelete() throws AppException {
         //given
         UUID id = UUID.randomUUID();
+        given(planetRepository.existsByStarId(any())).willReturn(false);
         //when
         service.delete(id);
         //then

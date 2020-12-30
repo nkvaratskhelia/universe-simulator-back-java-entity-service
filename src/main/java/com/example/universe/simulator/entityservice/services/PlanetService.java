@@ -33,18 +33,6 @@ public class PlanetService {
         return repository.save(entity);
     }
 
-    @Transactional
-    public Planet update(Planet entity) throws AppException {
-        validate(entity, true);
-        return repository.save(entity);
-    }
-
-    @Transactional
-    public void delete(UUID id) {
-        // TODO check planet id in moons repo
-        repository.deleteById(id);
-    }
-
     private void validate(Planet entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
             throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
@@ -62,4 +50,15 @@ public class PlanetService {
         }
     }
 
+    @Transactional
+    public Planet update(Planet entity) throws AppException {
+        validate(entity, true);
+        return repository.save(entity);
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        // TODO check planet id in moons repo
+        repository.deleteById(id);
+    }
 }
