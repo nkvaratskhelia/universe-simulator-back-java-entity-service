@@ -1,41 +1,40 @@
 package com.example.universe.simulator.entityservice.services;
 
-import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
-import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class PlanetService {
+public class MoonService {
 
-    private final PlanetRepository repository;
-    private final StarRepository starRepository;
-    private final MoonRepository moonRepository;
+    private final MoonRepository repository;
+    private final PlanetRepository planetRepository;
 
-    public List<Planet> getList() {
-        return repository.findAll();
+    public Page<Moon> getList(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
-    public Planet get(UUID id) throws AppException {
+    public Moon get(UUID id) throws AppException {
         return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional
-    public Planet add(Planet entity) throws AppException {
+    public Moon add(Moon entity) throws AppException {
         validate(entity, false);
         return repository.save(entity);
     }
 
-    private void validate(Planet entity, boolean isUpdate) throws AppException {
+    private void validate(Moon entity, boolean isUpdate) throws AppException {
         if (isUpdate && !repository.existsById(entity.getId())) {
             throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
         }
@@ -47,23 +46,19 @@ public class PlanetService {
             throw new AppException(ErrorCodeType.EXISTS_NAME);
         }
 
-        if (!starRepository.existsById(entity.getStar().getId())) {
-            throw new AppException(ErrorCodeType.NOT_FOUND_STAR);
+        if (!planetRepository.existsById(entity.getPlanet().getId())) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_PLANET);
         }
     }
 
     @Transactional
-    public Planet update(Planet entity) throws AppException {
+    public Moon update(Moon entity) throws AppException {
         validate(entity, true);
         return repository.save(entity);
     }
 
     @Transactional
-    public void delete(UUID id) throws AppException {
-        if (moonRepository.existsByPlanetId(id)) {
-            throw new AppException(ErrorCodeType.IN_USE);
-        }
-
+    public void delete(UUID id) {
         repository.deleteById(id);
     }
 }
