@@ -7,6 +7,8 @@ import com.example.universe.simulator.entityservice.services.PlanetService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,8 +31,8 @@ public class PlanetController {
     private final PlanetService service;
 
     @GetMapping("get-list")
-    private List<PlanetDto> getList() {
-        return modelMapper.map(service.getList(), new TypeToken<List<PlanetDto>>() {}.getType());
+    private Page<PlanetDto> getList(Pageable pageable) {
+        return service.getList(pageable).map(item -> modelMapper.map(item, PlanetDto.class));
     }
 
     @GetMapping("get/{id}")
