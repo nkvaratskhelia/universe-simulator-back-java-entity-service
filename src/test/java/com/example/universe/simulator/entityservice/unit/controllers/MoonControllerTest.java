@@ -1,7 +1,6 @@
 package com.example.universe.simulator.entityservice.unit.controllers;
 
 import com.example.universe.simulator.entityservice.controllers.MoonController;
-import com.example.universe.simulator.entityservice.controllers.PlanetController;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
@@ -9,7 +8,6 @@ import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.utils.TestUtils;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.TypeToken;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -51,7 +49,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
         );
         Pageable pageable = PageRequest.of(1, 2, sort);
         Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<MoonDto> dtoPage = modelMapper.map(entityPage, new TypeToken<Page<MoonDto>>() {}.getType());
+        Page<MoonDto> dtoPage = entityPage.map(item -> modelMapper.map(item, MoonDto.class));
 
         given(service.getList(any())).willReturn(entityPage);
         //when

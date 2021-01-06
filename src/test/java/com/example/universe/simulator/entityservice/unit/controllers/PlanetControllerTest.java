@@ -8,9 +8,13 @@ import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.utils.TestUtils;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.TypeToken;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -38,13 +42,26 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         List<Planet> entityList = List.of(
                 Planet.builder().name("name").build()
         );
-        List<PlanetDto> dtoList = modelMapper.map(entityList, new TypeToken<List<PlanetDto>>() {}.getType());
-        given(service.getList()).willReturn(entityList);
+
+        Sort sort = Sort.by(
+                Sort.Order.desc("version"),
+                Sort.Order.asc("name")
+        );
+        Pageable pageable = PageRequest.of(1, 2, sort);
+        Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<PlanetDto> dtoPage = entityPage.map(item -> modelMapper.map(item, PlanetDto.class));
+
+        given(service.getList(any())).willReturn(entityPage);
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/planet/get-list")).andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc.perform(get("/planet/get-list")
+                .param("page", "1")
+                .param("size", "2")
+                .param("sort", "version,desc")
+                .param("sort", "name,asc")
+        ).andReturn().getResponse();
         //then
-        verifySuccessfulResponse(response, dtoList);
-        then(service).should().getList();
+        verifySuccessfulResponse(response, dtoPage);
+        then(service).should().getList(pageable);
     }
 
     @Test

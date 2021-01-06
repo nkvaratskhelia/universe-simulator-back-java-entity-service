@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,12 +50,16 @@ class PlanetServiceTest {
         List<Planet> list = List.of(
                 Planet.builder().name("name").build()
         );
-        given(repository.findAll()).willReturn(list);
+        
+        Pageable pageable = Pageable.unpaged();
+        Page<Planet> page = new PageImpl<>(list, pageable, list.size());
+        
+        given(repository.findAll(any(Pageable.class))).willReturn(page);
         //when
-        List<Planet> result = service.getList();
+        Page<Planet> result = service.getList(pageable);
         //then
-        assertThat(result).isEqualTo(list);
-        then(repository).should().findAll();
+        assertThat(result).isEqualTo(page);
+        then(repository).should().findAll(pageable);
     }
 
     @Test
