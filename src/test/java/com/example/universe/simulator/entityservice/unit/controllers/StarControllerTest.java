@@ -8,7 +8,6 @@ import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.utils.TestUtils;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.TypeToken;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -50,7 +49,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         );
         Pageable pageable = PageRequest.of(1, 2, sort);
         Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<StarDto> dtoPage = modelMapper.map(entityPage, new TypeToken<Page<StarDto>>() {}.getType());
+        Page<StarDto> dtoPage = entityPage.map(item -> modelMapper.map(item, StarDto.class));
 
         given(service.getList(any())).willReturn(entityPage);
         //when

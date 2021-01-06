@@ -202,7 +202,7 @@ class MoonServiceTest {
     }
 
     @Test
-    void testDelete_successfulDelete() throws AppException {
+    void testDelete_successfulDelete() {
         //given
         UUID id = UUID.randomUUID();
         //when

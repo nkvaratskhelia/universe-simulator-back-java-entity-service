@@ -47,14 +47,16 @@ class PlanetServiceTest {
     @Test
     void testGetList() {
         //given
-        List<Planet> list = List.of(Planet.builder().name("name").build());
+        List<Planet> list = List.of(
+                Planet.builder().name("name").build()
+        );
+        
         Pageable pageable = Pageable.unpaged();
         Page<Planet> page = new PageImpl<>(list, pageable, list.size());
+        
         given(repository.findAll(any(Pageable.class))).willReturn(page);
-
         //when
         Page<Planet> result = service.getList(pageable);
-
         //then
         assertThat(result).isEqualTo(page);
         then(repository).should().findAll(pageable);
