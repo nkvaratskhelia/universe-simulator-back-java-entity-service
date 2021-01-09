@@ -25,7 +25,8 @@ public class MoonService {
     }
 
     public Moon get(UUID id) throws AppException {
-        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
+        return repository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional

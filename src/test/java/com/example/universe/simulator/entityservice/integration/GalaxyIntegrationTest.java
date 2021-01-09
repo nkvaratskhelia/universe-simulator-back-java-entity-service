@@ -2,6 +2,7 @@ package com.example.universe.simulator.entityservice.integration;
 
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.utils.JsonPage;
 import com.example.universe.simulator.entityservice.utils.TestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -22,7 +23,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should throw sort parameter error-----------------------------------
 
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")
                 .param("sort", "invalid")
         ).andReturn().getResponse();
         //then
@@ -31,7 +32,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
         //then
         JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -65,7 +66,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return list with 2 elements-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
@@ -92,8 +93,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         ).andReturn().getResponse();
         //then
         GalaxyDto updatedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
-        assertThat(updatedDto.getName()).isEqualTo("name1Update");
-        assertThat(updatedDto.getVersion()).isEqualTo(1);
+        assertThat(updatedDto.getName()).isEqualTo(dto.getName());
+        assertThat(updatedDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
         //-----------------------------------should throw entity modified error-----------------------------------
 
@@ -107,6 +108,19 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         ).andReturn().getResponse();
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_MODIFIED);
+
+        //-----------------------------------should return list with 1 element-----------------------------------
+
+        //given
+        GalaxyFilter filter = GalaxyFilter.builder().name("1uP").build();
+        //when
+        response = mockMvc.perform(post("/galaxy/get-list")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(filter))
+        ).andReturn().getResponse();
+        //then
+        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(resultList.getContent()).hasSize(1);
 
         //-----------------------------------should delete entity-----------------------------------
 
@@ -132,7 +146,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/galaxy/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();

@@ -50,7 +50,6 @@ class StarServiceTest {
         List<Star> list = List.of(
                 Star.builder().name("name").build()
         );
-
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
 

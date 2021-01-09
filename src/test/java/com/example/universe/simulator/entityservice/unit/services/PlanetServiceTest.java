@@ -50,10 +50,9 @@ class PlanetServiceTest {
         List<Planet> list = List.of(
                 Planet.builder().name("name").build()
         );
-        
         Pageable pageable = Pageable.unpaged();
         Page<Planet> page = new PageImpl<>(list, pageable, list.size());
-        
+
         given(repository.findAll(any(Pageable.class))).willReturn(page);
         //when
         Page<Planet> result = service.getList(pageable);

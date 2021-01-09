@@ -46,7 +46,6 @@ class MoonServiceTest {
         List<Moon> list = List.of(
                 Moon.builder().name("name").build()
         );
-
         Pageable pageable = Pageable.unpaged();
         Page<Moon> page = new PageImpl<>(list, pageable, list.size());
 

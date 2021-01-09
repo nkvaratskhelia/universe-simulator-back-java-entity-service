@@ -26,10 +26,10 @@ abstract class SpaceEntityDto {
 
     public void validate(boolean isUpdate) throws AppException {
         validateCommonFields(isUpdate);
-        validateDtoSpecificFields();
+        validateDtoFields();
 
         fixCommonDirtyFields(isUpdate);
-        fixDtoSpecificDirtyFields();
+        fixDtoDirtyFields();
     }
 
     private void validateCommonFields(boolean isUpdate) throws AppException {
@@ -53,7 +53,7 @@ abstract class SpaceEntityDto {
         name = name.strip();
     }
 
-    protected abstract void validateDtoSpecificFields() throws AppException;
+    abstract void validateDtoFields() throws AppException;
 
-    protected abstract void fixDtoSpecificDirtyFields();
+    abstract void fixDtoDirtyFields();
 }
