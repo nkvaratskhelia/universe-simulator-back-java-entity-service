@@ -20,11 +20,11 @@ public abstract class AbstractMockMvcTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected void verifyOkStatus(int status) {
+    protected final void verifyOkStatus(int status) {
         assertThat(status).isEqualTo(HttpStatus.OK.value());
     }
 
-    protected void verifyErrorResponse(String responseContent, ErrorCodeType errorCode) throws JsonProcessingException {
+    protected final void verifyErrorResponse(String responseContent, ErrorCodeType errorCode) throws JsonProcessingException {
         RestErrorResponse restErrorResponse = objectMapper.readValue(responseContent, RestErrorResponse.class);
 
         assertThat(restErrorResponse.getError()).isEqualTo(errorCode);

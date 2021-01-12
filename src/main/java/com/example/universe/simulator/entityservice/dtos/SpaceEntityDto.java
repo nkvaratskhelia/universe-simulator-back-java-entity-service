@@ -24,7 +24,7 @@ abstract class SpaceEntityDto {
 
     private Long version;
 
-    public void validate(boolean isUpdate) throws AppException {
+    public final void validate(boolean isUpdate) throws AppException {
         validateCommonFields(isUpdate);
         validateDtoFields();
 
