@@ -109,8 +109,8 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         ).andReturn().getResponse();
         //then
         StarDto updatedDto = objectMapper.readValue(response.getContentAsString(), StarDto.class);
-        assertThat(updatedDto.getName()).isEqualTo("name1Update");
-        assertThat(updatedDto.getVersion()).isEqualTo(1);
+        assertThat(updatedDto.getName()).isEqualTo(dto.getName());
+        assertThat(updatedDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
         //-----------------------------------should throw entity modified error-----------------------------------
 

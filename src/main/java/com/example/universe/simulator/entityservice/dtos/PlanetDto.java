@@ -20,7 +20,7 @@ public class PlanetDto extends SpaceEntityDto {
     private StarDto star;
 
     @Override
-    protected void validateDtoSpecificFields() throws AppException {
+    void validateDtoFields() throws AppException {
         if (Objects.isNull(star)) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_STAR);
         }
@@ -30,5 +30,5 @@ public class PlanetDto extends SpaceEntityDto {
     }
 
     @Override
-    protected void fixDtoSpecificDirtyFields() {}
+    void fixDtoDirtyFields() {}
 }

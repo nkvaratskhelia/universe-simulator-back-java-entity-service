@@ -3,17 +3,21 @@ package com.example.universe.simulator.entityservice.unit.services;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
+import com.example.universe.simulator.entityservice.specifications.GalaxySpecification;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,16 +49,19 @@ class GalaxyServiceTest {
         List<Galaxy> list = List.of(
                 Galaxy.builder().name("name").build()
         );
-
         Pageable pageable = Pageable.unpaged();
         Page<Galaxy> page = new PageImpl<>(list, pageable, list.size());
 
-        given(repository.findAll(any(Pageable.class))).willReturn(page);
+        Optional<GalaxyFilter> filter = Optional.of(GalaxyFilter.builder().name("name").build());
+        Specification<Galaxy> specification = new GalaxySpecification().getSpecification(filter.get());
+
+        given(repository.findAll(ArgumentMatchers.<Specification<Galaxy>>any(), any(Pageable.class)))
+                .willReturn(page);
         //when
-        Page<Galaxy> result = service.getList(pageable);
+        Page<Galaxy> result = service.getList(specification, pageable);
         //then
         assertThat(result).isEqualTo(page);
-        then(repository).should().findAll(pageable);
+        then(repository).should().findAll(specification, pageable);
     }
 
     @Test

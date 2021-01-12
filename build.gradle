@@ -39,6 +39,7 @@ dependencies {
     runtimeOnly 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
     compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

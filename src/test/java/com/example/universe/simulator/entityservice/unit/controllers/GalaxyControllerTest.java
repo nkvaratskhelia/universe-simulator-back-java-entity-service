@@ -51,9 +51,9 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
 
-        given(service.getList(any())).willReturn(entityPage);
+        given(service.getList(any(), any())).willReturn(entityPage);
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")
                 .param("page", "1")
                 .param("size", "2")
                 .param("sort", "version,desc")
@@ -61,7 +61,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         ).andReturn().getResponse();
         //then
         verifySuccessfulResponse(response, dtoPage);
-        then(service).should().getList(pageable);
+        then(service).should().getList(null, pageable);
     }
 
     @Test
