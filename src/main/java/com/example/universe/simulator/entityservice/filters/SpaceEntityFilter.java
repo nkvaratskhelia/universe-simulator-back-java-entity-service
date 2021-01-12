@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 @Getter @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class SpaceEntityFilter {
+public abstract class SpaceEntityFilter {
 
     private String name;
 }

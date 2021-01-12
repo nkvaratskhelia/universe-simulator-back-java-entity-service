@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 abstract class SpaceEntitySpecification<ENTITY, FILTER extends SpaceEntityFilter> extends AbstractSpecification<ENTITY> {
 
-    public Specification<ENTITY> getSpecification(FILTER filter) {
+    public final Specification<ENTITY> getSpecification(FILTER filter) {
         return getCommonSpecification(filter)
                 .and(getEntitySpecification(filter));
     }
