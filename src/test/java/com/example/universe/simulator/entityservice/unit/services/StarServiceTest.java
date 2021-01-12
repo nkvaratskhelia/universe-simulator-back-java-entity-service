@@ -4,18 +4,22 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.StarService;
+import com.example.universe.simulator.entityservice.specifications.StarSpecification;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,16 +54,19 @@ class StarServiceTest {
         List<Star> list = List.of(
                 Star.builder().name("name").build()
         );
-
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
 
-        given(repository.findAll(any(Pageable.class))).willReturn(page);
+        Optional<StarFilter> filter = Optional.of(StarFilter.builder().name("name").build());
+        Specification<Star> specification = new StarSpecification().getSpecification(filter.get());
+
+        given(repository.findAll(ArgumentMatchers.<Specification<Star>>any(), any(Pageable.class)))
+                .willReturn(page);
         //when
-        Page<Star> result = service.getList(pageable);
+        Page<Star> result = service.getList(specification, pageable);
         //then
         assertThat(result).isEqualTo(page);
-        then(repository).should().findAll(pageable);
+        then(repository).should().findAll(specification, pageable);
     }
 
     @Test

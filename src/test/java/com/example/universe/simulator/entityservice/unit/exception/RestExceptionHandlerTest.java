@@ -130,15 +130,17 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     void testPropertyReferenceException() throws Exception {
         //given
         Sort sort = Sort.by(Sort.Order.asc("invalid"));
-        Pageable pageable = PageRequest.of(0, 20, sort);
-        given(service.getList(any())).willThrow(PropertyReferenceException.class);
+        Pageable defaultPageable = TestUtils.getDefaultPageable();
+        Pageable pageable = PageRequest.of(defaultPageable.getPageNumber(), defaultPageable.getPageSize(), sort);
+
+        given(service.getList(any(), any())).willThrow(PropertyReferenceException.class);
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get-list")
+        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")
                 .param("sort", "invalid")
         ).andReturn().getResponse();
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_SORT_PARAMETER);
-        then(service).should().getList(pageable);
+        then(service).should().getList(null, pageable);
     }
 
     @Test

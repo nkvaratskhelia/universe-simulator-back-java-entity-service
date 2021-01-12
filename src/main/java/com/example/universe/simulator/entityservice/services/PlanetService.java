@@ -27,7 +27,8 @@ public class PlanetService {
     }
 
     public Planet get(UUID id) throws AppException {
-        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
+        return repository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional

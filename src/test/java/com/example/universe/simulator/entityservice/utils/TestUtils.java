@@ -4,12 +4,19 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.UUID;
 
 public final class TestUtils {
 
     private TestUtils() {}
+
+    public static Pageable getDefaultPageable() {
+        return PageRequest.of(0, 20, Sort.unsorted());
+    }
 
     public static GalaxyDto buildGalaxyDtoForAdd() {
         return GalaxyDto.builder()
@@ -51,7 +58,7 @@ public final class TestUtils {
         PlanetDto result = buildPlanetDtoForAdd();
         result.setId(UUID.randomUUID());
         result.setVersion(0L);
-        
+
         return result;
     }
 

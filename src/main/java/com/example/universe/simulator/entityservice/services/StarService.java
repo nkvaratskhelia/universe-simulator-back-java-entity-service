@@ -9,6 +9,7 @@ import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +23,13 @@ public class StarService {
     private final GalaxyRepository galaxyRepository;
     private final PlanetRepository planetRepository;
 
-    public Page<Star> getList(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<Star> getList(Specification<Star> specification, Pageable pageable) {
+        return repository.findAll(specification, pageable);
     }
 
     public Star get(UUID id) throws AppException {
-        return repository.findById(id).orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
+        return repository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional

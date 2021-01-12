@@ -5,6 +5,7 @@ import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.utils.JsonPage;
 import com.example.universe.simulator.entityservice.utils.TestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -63,7 +64,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should throw sort parameter error-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/moon/get-list")
+        response = mockMvc.perform(post("/moon/get-list")
                 .param("sort", "invalid")
         ).andReturn().getResponse();
         //then
@@ -72,7 +73,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/moon/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/moon/get-list")).andReturn().getResponse();
         //then
         JsonPage<MoonDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -108,7 +109,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return list with 2 elements-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/moon/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/moon/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
@@ -137,8 +138,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         ).andReturn().getResponse();
         //then
         MoonDto updatedDto = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
-        assertThat(updatedDto.getName()).isEqualTo("name1Update");
-        assertThat(updatedDto.getVersion()).isEqualTo(1);
+        assertThat(updatedDto.getName()).isEqualTo(dto.getName());
+        assertThat(updatedDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
         //-----------------------------------should throw entity modified error-----------------------------------
 
@@ -153,6 +154,19 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         ).andReturn().getResponse();
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_MODIFIED);
+
+        //-----------------------------------should return list with 1 element-----------------------------------
+
+        //given
+        MoonFilter filter = MoonFilter.builder().name("1uP").build();
+        //when
+        response = mockMvc.perform(post("/moon/get-list")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(filter))
+        ).andReturn().getResponse();
+        //then
+        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(resultList.getContent()).hasSize(1);
 
         //-----------------------------------should delete entity-----------------------------------
 
@@ -178,7 +192,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/moon/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/moon/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();

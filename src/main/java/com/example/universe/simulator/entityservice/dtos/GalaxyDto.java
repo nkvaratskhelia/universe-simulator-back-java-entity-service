@@ -13,8 +13,8 @@ import lombok.experimental.SuperBuilder;
 public class GalaxyDto extends SpaceEntityDto {
 
     @Override
-    protected void validateDtoSpecificFields() {}
+    void validateDtoFields() {}
 
     @Override
-    protected void fixDtoSpecificDirtyFields() {}
+    void fixDtoDirtyFields() {}
 }
