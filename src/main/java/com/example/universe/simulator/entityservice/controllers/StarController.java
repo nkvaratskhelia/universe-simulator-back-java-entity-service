@@ -3,11 +3,14 @@ package com.example.universe.simulator.entityservice.controllers;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
+import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.services.StarService;
+import com.example.universe.simulator.entityservice.specifications.StarSpecification;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -28,9 +32,11 @@ public class StarController {
 
     private final StarService service;
 
-    @GetMapping("get-list")
-    private Page<StarDto> getList(Pageable pageable) {
-        return service.getList(pageable)
+    @PostMapping("get-list")
+    private Page<StarDto> getList(@RequestBody Optional<StarFilter> filter, Pageable pageable) {
+        Specification<Star> specification = filter.map(item -> new StarSpecification().getSpecification(item))
+                .orElse(null);
+        return service.getList(specification, pageable)
                 .map(item -> modelMapper.map(item, StarDto.class));
     }
 

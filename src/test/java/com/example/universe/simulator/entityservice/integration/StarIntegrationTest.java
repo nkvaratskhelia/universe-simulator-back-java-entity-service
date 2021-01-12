@@ -3,6 +3,7 @@ package com.example.universe.simulator.entityservice.integration;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.utils.JsonPage;
 import com.example.universe.simulator.entityservice.utils.TestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -35,7 +36,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should throw sort parameter error-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/star/get-list")
+        response = mockMvc.perform(post("/star/get-list")
                 .param("sort", "invalid")
         ).andReturn().getResponse();
         //then
@@ -44,7 +45,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/star/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/star/get-list")).andReturn().getResponse();
         //then
         JsonPage<StarDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -80,7 +81,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return list with 2 elements-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/star/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/star/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
@@ -126,6 +127,19 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         //then
         verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_MODIFIED);
 
+        //-----------------------------------should return list with 1 element-----------------------------------
+
+        //given
+        StarFilter filter = StarFilter.builder().name("1uP").build();
+        //when
+        response = mockMvc.perform(post("/star/get-list")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(filter))
+        ).andReturn().getResponse();
+        //then
+        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(resultList.getContent()).hasSize(1);
+
         //-----------------------------------should delete entity-----------------------------------
 
         //when
@@ -150,7 +164,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/star/get-list")).andReturn().getResponse();
+        response = mockMvc.perform(post("/star/get-list")).andReturn().getResponse();
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
