@@ -9,5 +9,4 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class PlanetFilter extends SpaceEntityFilter {
-}
+public class PlanetFilter extends SpaceEntityFilter {}
