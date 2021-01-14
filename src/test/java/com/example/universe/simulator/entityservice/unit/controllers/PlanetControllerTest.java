@@ -51,9 +51,9 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<PlanetDto> dtoPage = entityPage.map(item -> modelMapper.map(item, PlanetDto.class));
 
-        given(service.getList(any())).willReturn(entityPage);
+        given(service.getList(any(), any())).willReturn(entityPage);
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/planet/get-list")
+        MockHttpServletResponse response = mockMvc.perform(post("/planet/get-list")
                 .param("page", "1")
                 .param("size", "2")
                 .param("sort", "version,desc")
@@ -61,7 +61,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         ).andReturn().getResponse();
         //then
         verifySuccessfulResponse(response, dtoPage);
-        then(service).should().getList(pageable);
+        then(service).should().getList(null, pageable);
     }
 
     @Test
