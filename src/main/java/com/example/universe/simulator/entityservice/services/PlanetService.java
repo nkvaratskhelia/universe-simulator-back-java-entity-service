@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class PlanetService {
+public class PlanetService extends SpaceEntityService<Planet> {
 
     private final PlanetRepository repository;
     private final StarRepository starRepository;
@@ -33,30 +33,13 @@ public class PlanetService {
 
     @Transactional
     public Planet add(Planet entity) throws AppException {
-        validate(entity, false);
+        validate(entity, false, repository);
         return repository.save(entity);
-    }
-
-    private void validate(Planet entity, boolean isUpdate) throws AppException {
-        if (isUpdate && !repository.existsById(entity.getId())) {
-            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
-        }
-
-        boolean existsByName = isUpdate
-                ? repository.existsByNameAndIdNot(entity.getName(), entity.getId())
-                : repository.existsByName(entity.getName());
-        if (existsByName) {
-            throw new AppException(ErrorCodeType.EXISTS_NAME);
-        }
-
-        if (!starRepository.existsById(entity.getStar().getId())) {
-            throw new AppException(ErrorCodeType.NOT_FOUND_STAR);
-        }
     }
 
     @Transactional
     public Planet update(Planet entity) throws AppException {
-        validate(entity, true);
+        validate(entity, true, repository);
         return repository.save(entity);
     }
 
@@ -67,5 +50,12 @@ public class PlanetService {
         }
 
         repository.deleteById(id);
+    }
+
+    @Override
+    void validateEntity(Planet entity, boolean isUpdate) throws AppException {
+        if (!starRepository.existsById(entity.getStar().getId())) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_STAR);
+        }
     }
 }

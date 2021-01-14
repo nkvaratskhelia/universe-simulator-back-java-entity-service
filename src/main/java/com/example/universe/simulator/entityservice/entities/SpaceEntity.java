@@ -21,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 @SuperBuilder
-abstract class SpaceEntity {
+public abstract class SpaceEntity {
 
     @Id
     @GeneratedValue
