@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class GalaxyService {
+public class GalaxyService extends SpaceEntityService<Galaxy> {
 
     private final GalaxyRepository repository;
     private final StarRepository starRepository;
@@ -32,26 +32,13 @@ public class GalaxyService {
 
     @Transactional
     public Galaxy add(Galaxy entity) throws AppException {
-        validate(entity, false);
+        validate(entity, false, repository);
         return repository.save(entity);
-    }
-
-    private void validate(Galaxy entity, boolean isUpdate) throws AppException {
-        if (isUpdate && !repository.existsById(entity.getId())) {
-            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
-        }
-
-        boolean existsByName = isUpdate
-                ? repository.existsByNameAndIdNot(entity.getName(), entity.getId())
-                : repository.existsByName(entity.getName());
-        if (existsByName) {
-            throw new AppException(ErrorCodeType.EXISTS_NAME);
-        }
     }
 
     @Transactional
     public Galaxy update(Galaxy entity) throws AppException {
-        validate(entity, true);
+        validate(entity, true, repository);
         return repository.save(entity);
     }
 
@@ -63,4 +50,7 @@ public class GalaxyService {
 
         repository.deleteById(id);
     }
+
+    @Override
+    void validateEntity(Galaxy entity, boolean isUpdate) {}
 }
