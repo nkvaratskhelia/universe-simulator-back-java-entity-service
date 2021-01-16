@@ -28,10 +28,10 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         //given
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
+        MockHttpServletResponse response = performRequest(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(galaxyDto))
-        ).andReturn().getResponse();
+        );
         //then
         GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
@@ -41,10 +41,10 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         StarDto starDto = TestUtils.buildStarDtoForAdd();
         starDto.getGalaxy().setId(addedGalaxy.getId());
         //when
-        response = mockMvc.perform(post("/star/add")
+        response = performRequest(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(starDto))
-        ).andReturn().getResponse();
+        );
         //then
         StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
@@ -54,26 +54,26 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
         planetDto.getStar().setId(addedStar.getId());
         //when
-        response = mockMvc.perform(post("/planet/add")
+        response = performRequest(post("/planet/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(planetDto))
-        ).andReturn().getResponse();
+        );
         //then
         PlanetDto addedPlanet = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
         //-----------------------------------should throw sort parameter error-----------------------------------
 
         //when
-        response = mockMvc.perform(post("/moon/get-list")
+        response = performRequest(post("/moon/get-list")
                 .param("sort", "invalid")
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_SORT_PARAMETER);
+        verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
 
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(post("/moon/get-list")).andReturn().getResponse();
+        response = performRequest(post("/moon/get-list"));
         //then
         JsonPage<MoonDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -85,10 +85,10 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         dto.setName("name1");
         dto.getPlanet().setId(addedPlanet.getId());
         //when
-        response = mockMvc.perform(post("/moon/add")
+        response = performRequest(post("/moon/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
         MoonDto addedDto1 = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
 
@@ -99,17 +99,17 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         dto.setName("name2");
         dto.getPlanet().setId(addedPlanet.getId());
         //when
-        response = mockMvc.perform(post("/moon/add")
+        response = performRequest(post("/moon/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
         MoonDto addedDto2 = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
 
         //-----------------------------------should return list with 2 elements-----------------------------------
 
         //when
-        response = mockMvc.perform(post("/moon/get-list")).andReturn().getResponse();
+        response = performRequest(post("/moon/get-list"));
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
@@ -117,7 +117,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return entity-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/moon/get/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = performRequest(get("/moon/get/{id}", addedDto1.getId()));
         //then
         MoonDto resultDto = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
         assertThat(resultDto).isEqualTo(addedDto1);
@@ -132,10 +132,10 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         dto.getPlanet().setId(addedPlanet.getId());
 
         //when
-        response = mockMvc.perform(put("/moon/update")
+        response = performRequest(put("/moon/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
         MoonDto updatedDto = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
         assertThat(updatedDto.getName()).isEqualTo(dto.getName());
@@ -148,22 +148,22 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         dto.setId(addedDto1.getId());
         dto.getPlanet().setId(addedPlanet.getId());
         //when
-        response = mockMvc.perform(put("/moon/update")
+        response = performRequest(put("/moon/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_MODIFIED);
+        verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 
         //-----------------------------------should return list with 1 element-----------------------------------
 
         //given
         MoonFilter filter = MoonFilter.builder().name("1uP").build();
         //when
-        response = mockMvc.perform(post("/moon/get-list")
+        response = performRequest(post("/moon/get-list")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(filter))
-        ).andReturn().getResponse();
+        );
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
@@ -171,28 +171,28 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should delete entity-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/moon/delete/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = performRequest(delete("/moon/delete/{id}", addedDto1.getId()));
         //then
         verifyOkStatus(response.getStatus());
 
         //-----------------------------------should delete entity-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/moon/delete/{id}", addedDto2.getId())).andReturn().getResponse();
+        response = performRequest(delete("/moon/delete/{id}", addedDto2.getId()));
         //then
         verifyOkStatus(response.getStatus());
 
         //-----------------------------------should throw not found error-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/moon/delete/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = performRequest(delete("/moon/delete/{id}", addedDto1.getId()));
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.NOT_FOUND_ENTITY);
+        verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
 
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(post("/moon/get-list")).andReturn().getResponse();
+        response = performRequest(post("/moon/get-list"));
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -200,21 +200,21 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should delete planet-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/planet/delete/{id}", addedPlanet.getId())).andReturn().getResponse();
+        response = performRequest(delete("/planet/delete/{id}", addedPlanet.getId()));
         //then
         verifyOkStatus(response.getStatus());
 
         //-----------------------------------should delete star-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/star/delete/{id}", addedStar.getId())).andReturn().getResponse();
+        response = performRequest(delete("/star/delete/{id}", addedStar.getId()));
         //then
         verifyOkStatus(response.getStatus());
 
         //-----------------------------------should delete galaxy-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedGalaxy.getId())).andReturn().getResponse();
+        response = performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
         //then
         verifyOkStatus(response.getStatus());
     }

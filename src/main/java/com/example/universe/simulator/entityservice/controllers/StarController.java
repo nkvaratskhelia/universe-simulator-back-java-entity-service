@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping("star")
@@ -33,10 +34,10 @@ public class StarController {
     private final StarService service;
 
     @PostMapping("get-list")
-    private Page<StarDto> getList(@RequestBody Optional<StarFilter> filter, Pageable pageable) {
+    private Callable<Page<StarDto>> getList(@RequestBody Optional<StarFilter> filter, Pageable pageable) {
         Specification<Star> specification = filter.map(item -> new StarSpecification().getSpecification(item))
                 .orElse(null);
-        return service.getList(specification, pageable)
+        return () -> service.getList(specification, pageable)
                 .map(item -> modelMapper.map(item, StarDto.class));
     }
 

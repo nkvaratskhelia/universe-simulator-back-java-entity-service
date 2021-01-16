@@ -43,7 +43,7 @@ class CommonControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
+        MockHttpServletResponse response = performRequest(post("/galaxy/get-list"));
         //then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);

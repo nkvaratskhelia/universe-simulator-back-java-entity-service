@@ -53,12 +53,12 @@ class StarControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/get-list")
+        MockHttpServletResponse response = performRequest(post("/star/get-list")
                 .param("page", "1")
                 .param("size", "2")
                 .param("sort", "version,desc")
                 .param("sort", "name,asc")
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);
@@ -72,7 +72,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = modelMapper.map(entity, StarDto.class);
         given(service.get(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/star/get/{id}", id)).andReturn().getResponse();
+        MockHttpServletResponse response = performRequest(get("/star/get/{id}", id));
         //then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -84,12 +84,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.setName(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
+        MockHttpServletResponse response = performRequest(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -99,12 +99,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.setName("");
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
+        MockHttpServletResponse response = performRequest(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -114,12 +114,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.setName(" ");
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
+        MockHttpServletResponse response = performRequest(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -129,12 +129,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.setGalaxy(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
+        MockHttpServletResponse response = performRequest(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_GALAXY);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_GALAXY);
         then(service).should(never()).add(any());
     }
 
@@ -144,12 +144,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.getGalaxy().setId(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
+        MockHttpServletResponse response = performRequest(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
         then(service).should(never()).add(any());
     }
 
@@ -167,10 +167,10 @@ class StarControllerTest extends AbstractWebMvcTest {
 
         given(service.add(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/star/add")
+        MockHttpServletResponse response = performRequest(post("/star/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDto))
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, resultDto);
         then(service).should().add(entity);
@@ -182,12 +182,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForUpdate();
         dto.setId(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = performRequest(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_ID);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_ID);
         then(service).should(never()).update(any());
     }
 
@@ -197,12 +197,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForUpdate();
         dto.setName(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = performRequest(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -212,12 +212,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForUpdate();
         dto.setName("");
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = performRequest(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -227,12 +227,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForUpdate();
         dto.setName(" ");
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = performRequest(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -242,12 +242,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForUpdate();
         dto.setVersion(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = performRequest(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_VERSION);
         then(service).should(never()).update(any());
     }
 
@@ -257,12 +257,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForUpdate();
         dto.setGalaxy(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = performRequest(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_GALAXY);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_GALAXY);
         then(service).should(never()).add(any());
     }
 
@@ -272,12 +272,12 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = TestUtils.buildStarDtoForUpdate();
         dto.getGalaxy().setId(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = performRequest(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
         then(service).should(never()).add(any());
     }
 
@@ -293,10 +293,10 @@ class StarControllerTest extends AbstractWebMvcTest {
 
         given(service.update(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/star/update")
+        MockHttpServletResponse response = performRequest(put("/star/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDto))
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, resultDto);
         then(service).should().update(entity);
@@ -307,7 +307,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         //given
         UUID id = UUID.randomUUID();
         //when
-        MockHttpServletResponse response = mockMvc.perform(delete("/star/delete/{id}", id)).andReturn().getResponse();
+        MockHttpServletResponse response = performRequest(delete("/star/delete/{id}", id));
         //then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);
