@@ -53,12 +53,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/planet/get-list")
+        MockHttpServletResponse response = performRequest(post("/planet/get-list")
                 .param("page", "1")
                 .param("size", "2")
                 .param("sort", "version,desc")
                 .param("sort", "name,asc")
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);
@@ -72,7 +72,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = modelMapper.map(entity, PlanetDto.class);
         given(service.get(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/planet/get/{id}", id)).andReturn().getResponse();
+        MockHttpServletResponse response = performRequest(get("/planet/get/{id}", id));
         //then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -84,12 +84,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/planet/add")
+        MockHttpServletResponse response = performRequest(post("/planet/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -99,12 +99,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName("");
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/planet/add")
+        MockHttpServletResponse response = performRequest(post("/planet/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -114,12 +114,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName(" ");
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/planet/add")
+        MockHttpServletResponse response = performRequest(post("/planet/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -129,12 +129,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.setStar(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/planet/add")
+        MockHttpServletResponse response = performRequest(post("/planet/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_STAR);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_STAR);
         then(service).should(never()).add(any());
     }
 
@@ -144,12 +144,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.getStar().setId(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/planet/add")
+        MockHttpServletResponse response = performRequest(post("/planet/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_STAR_ID);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_STAR_ID);
         then(service).should(never()).add(any());
     }
 
@@ -167,10 +167,10 @@ class PlanetControllerTest extends AbstractWebMvcTest {
 
         given(service.add(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/planet/add")
+        MockHttpServletResponse response = performRequest(post("/planet/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDto))
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, resultDto);
         then(service).should().add(entity);
@@ -182,12 +182,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForUpdate();
         dto.setId(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/planet/update")
+        MockHttpServletResponse response = performRequest(put("/planet/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_ID);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_ID);
         then(service).should(never()).update(any());
     }
 
@@ -197,12 +197,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForUpdate();
         dto.setName(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/planet/update")
+        MockHttpServletResponse response = performRequest(put("/planet/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -212,12 +212,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForUpdate();
         dto.setName("");
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/planet/update")
+        MockHttpServletResponse response = performRequest(put("/planet/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -227,12 +227,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForUpdate();
         dto.setName(" ");
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/planet/update")
+        MockHttpServletResponse response = performRequest(put("/planet/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -242,12 +242,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForUpdate();
         dto.setVersion(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/planet/update")
+        MockHttpServletResponse response = performRequest(put("/planet/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_VERSION);
         then(service).should(never()).update(any());
     }
 
@@ -257,12 +257,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForUpdate();
         dto.setStar(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/planet/update")
+        MockHttpServletResponse response = performRequest(put("/planet/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_STAR);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_STAR);
         then(service).should(never()).add(any());
     }
 
@@ -272,12 +272,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = TestUtils.buildPlanetDtoForUpdate();
         dto.getStar().setId(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/planet/update")
+        MockHttpServletResponse response = performRequest(put("/planet/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_STAR_ID);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_STAR_ID);
         then(service).should(never()).add(any());
     }
 
@@ -293,10 +293,10 @@ class PlanetControllerTest extends AbstractWebMvcTest {
 
         given(service.update(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/planet/update")
+        MockHttpServletResponse response = performRequest(put("/planet/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDto))
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, resultDto);
         then(service).should().update(entity);
@@ -307,7 +307,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         //given
         UUID id = UUID.randomUUID();
         //when
-        MockHttpServletResponse response = mockMvc.perform(delete("/planet/delete/{id}", id)).andReturn().getResponse();
+        MockHttpServletResponse response = performRequest(delete("/planet/delete/{id}", id));
         //then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);

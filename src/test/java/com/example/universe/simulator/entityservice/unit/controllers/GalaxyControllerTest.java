@@ -53,12 +53,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
                 .param("page", "1")
                 .param("size", "2")
                 .param("sort", "version,desc")
                 .param("sort", "name,asc")
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);
@@ -72,7 +72,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = modelMapper.map(entity, GalaxyDto.class);
         given(service.get(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(get("/galaxy/get/{id}", id)).andReturn().getResponse();
+        MockHttpServletResponse response = performRequest(get("/galaxy/get/{id}", id));
         //then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -84,12 +84,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
+        MockHttpServletResponse response = performRequest(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -99,12 +99,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName("");
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
+        MockHttpServletResponse response = performRequest(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -114,12 +114,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName(" ");
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
+        MockHttpServletResponse response = performRequest(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).add(any());
     }
 
@@ -137,10 +137,10 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
 
         given(service.add(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/add")
+        MockHttpServletResponse response = performRequest(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDto))
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, resultDto);
         then(service).should().add(entity);
@@ -152,12 +152,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setId(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = performRequest(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_ID);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_ID);
         then(service).should(never()).update(any());
     }
 
@@ -167,12 +167,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setName(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = performRequest(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -182,12 +182,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setName("");
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = performRequest(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -197,12 +197,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setName(" ");
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = performRequest(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_NAME);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
         then(service).should(never()).update(any());
     }
 
@@ -212,12 +212,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setVersion(null);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = performRequest(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.MISSING_PARAMETER_VERSION);
+        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_VERSION);
         then(service).should(never()).update(any());
     }
 
@@ -233,10 +233,10 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
 
         given(service.update(any())).willReturn(entity);
         //when
-        MockHttpServletResponse response = mockMvc.perform(put("/galaxy/update")
+        MockHttpServletResponse response = performRequest(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(inputDto))
-        ).andReturn().getResponse();
+        );
         //then
         verifySuccessfulResponse(response, resultDto);
         then(service).should().update(entity);
@@ -247,7 +247,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         //given
         UUID id = UUID.randomUUID();
         //when
-        MockHttpServletResponse response = mockMvc.perform(delete("/galaxy/delete/{id}", id)).andReturn().getResponse();
+        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
         //then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);

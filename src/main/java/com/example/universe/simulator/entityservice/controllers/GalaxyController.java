@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping("galaxy")
@@ -33,10 +34,10 @@ public class GalaxyController {
     private final GalaxyService service;
 
     @PostMapping("get-list")
-    private Page<GalaxyDto> getList(@RequestBody Optional<GalaxyFilter> filter, Pageable pageable) {
+    private Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, Pageable pageable) {
         Specification<Galaxy> specification = filter.map(item -> new GalaxySpecification().getSpecification(item))
                 .orElse(null);
-        return service.getList(specification, pageable)
+        return () -> service.getList(specification, pageable)
                 .map(item -> modelMapper.map(item, GalaxyDto.class));
     }
 

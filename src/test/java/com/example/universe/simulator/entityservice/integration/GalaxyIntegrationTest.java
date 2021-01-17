@@ -23,16 +23,16 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should throw sort parameter error-----------------------------------
 
         //when
-        MockHttpServletResponse response = mockMvc.perform(post("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
                 .param("sort", "invalid")
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.INVALID_SORT_PARAMETER);
+        verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
 
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
+        response = performRequest(post("/galaxy/get-list"));
         //then
         JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -43,10 +43,10 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName("name1");
         //when
-        response = mockMvc.perform(post("/galaxy/add")
+        response = performRequest(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
         GalaxyDto addedDto1 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
@@ -56,17 +56,17 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName("name2");
         //when
-        response = mockMvc.perform(post("/galaxy/add")
+        response = performRequest(post("/galaxy/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
         GalaxyDto addedDto2 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
         //-----------------------------------should return list with 2 elements-----------------------------------
 
         //when
-        response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
+        response = performRequest(post("/galaxy/get-list"));
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
@@ -74,7 +74,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should return entity-----------------------------------
 
         //when
-        response = mockMvc.perform(get("/galaxy/get/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = performRequest(get("/galaxy/get/{id}", addedDto1.getId()));
         //then
         GalaxyDto resultDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
         assertThat(resultDto).isEqualTo(addedDto1);
@@ -87,10 +87,10 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         dto.setName("name1Update");
 
         //when
-        response = mockMvc.perform(put("/galaxy/update")
+        response = performRequest(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
         GalaxyDto updatedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
         assertThat(updatedDto.getName()).isEqualTo(dto.getName());
@@ -102,22 +102,22 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setId(addedDto1.getId());
         //when
-        response = mockMvc.perform(put("/galaxy/update")
+        response = performRequest(put("/galaxy/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto))
-        ).andReturn().getResponse();
+        );
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.ENTITY_MODIFIED);
+        verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 
         //-----------------------------------should return list with 1 element-----------------------------------
 
         //given
         GalaxyFilter filter = GalaxyFilter.builder().name("1uP").build();
         //when
-        response = mockMvc.perform(post("/galaxy/get-list")
+        response = performRequest(post("/galaxy/get-list")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(filter))
-        ).andReturn().getResponse();
+        );
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
@@ -125,28 +125,28 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         //-----------------------------------should delete entity-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = performRequest(delete("/galaxy/delete/{id}", addedDto1.getId()));
         //then
         verifyOkStatus(response.getStatus());
 
         //-----------------------------------should delete entity-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedDto2.getId())).andReturn().getResponse();
+        response = performRequest(delete("/galaxy/delete/{id}", addedDto2.getId()));
         //then
         verifyOkStatus(response.getStatus());
 
         //-----------------------------------should throw not found error-----------------------------------
 
         //when
-        response = mockMvc.perform(delete("/galaxy/delete/{id}", addedDto1.getId())).andReturn().getResponse();
+        response = performRequest(delete("/galaxy/delete/{id}", addedDto1.getId()));
         //then
-        verifyErrorResponse(response.getContentAsString(), ErrorCodeType.NOT_FOUND_ENTITY);
+        verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
 
         //-----------------------------------should return empty list-----------------------------------
 
         //when
-        response = mockMvc.perform(post("/galaxy/get-list")).andReturn().getResponse();
+        response = performRequest(post("/galaxy/get-list"));
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();

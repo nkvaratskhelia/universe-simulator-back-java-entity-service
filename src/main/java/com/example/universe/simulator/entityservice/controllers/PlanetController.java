@@ -1,13 +1,10 @@
 package com.example.universe.simulator.entityservice.controllers;
 
-import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
-import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.services.PlanetService;
-import com.example.universe.simulator.entityservice.specifications.MoonSpecification;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecification;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping("planet")
@@ -36,10 +34,10 @@ public class PlanetController {
     private final PlanetService service;
 
     @PostMapping("get-list")
-    private Page<PlanetDto> getList(@RequestBody Optional<PlanetFilter> filter, Pageable pageable) {
+    private Callable<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, Pageable pageable) {
         Specification<Planet> specification = filter.map(item -> new PlanetSpecification().getSpecification(item))
                 .orElse(null);
-        return service.getList(specification, pageable)
+        return () -> service.getList(specification, pageable)
                 .map(item -> modelMapper.map(item, PlanetDto.class));
     }
 
