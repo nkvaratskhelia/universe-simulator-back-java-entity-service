@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping("moon")
@@ -34,11 +34,12 @@ public class MoonController {
     private final MoonService service;
 
     @PostMapping("get-list")
-    private Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, Pageable pageable) {
+    private Mono<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, Pageable pageable) {
         Specification<Moon> specification = filter.map(item -> new MoonSpecification().getSpecification(item))
                 .orElse(null);
-        return () -> service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, MoonDto.class));
+        return Mono.just(service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, MoonDto.class))
+        );
     }
 
     @GetMapping("get/{id}")

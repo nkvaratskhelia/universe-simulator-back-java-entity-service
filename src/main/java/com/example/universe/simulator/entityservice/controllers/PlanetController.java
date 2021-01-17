@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping("planet")
@@ -34,11 +34,12 @@ public class PlanetController {
     private final PlanetService service;
 
     @PostMapping("get-list")
-    private Callable<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, Pageable pageable) {
+    private Mono<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, Pageable pageable) {
         Specification<Planet> specification = filter.map(item -> new PlanetSpecification().getSpecification(item))
                 .orElse(null);
-        return () -> service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, PlanetDto.class));
+        return Mono.just(service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, PlanetDto.class))
+        );
     }
 
     @GetMapping("get/{id}")

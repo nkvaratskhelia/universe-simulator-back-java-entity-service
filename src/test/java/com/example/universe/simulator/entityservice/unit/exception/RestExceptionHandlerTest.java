@@ -15,12 +15,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.PropertyReferenceException;
-import org.springframework.data.util.ClassTypeInformation;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -136,11 +134,10 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         Pageable defaultPageable = TestUtils.getDefaultPageable();
         Pageable pageable = PageRequest.of(defaultPageable.getPageNumber(), defaultPageable.getPageSize(), sort);
 
-        PropertyReferenceException exception = new PropertyReferenceException(property, ClassTypeInformation.from(Galaxy.class), List.of());
-        given(service.getList(any(), any())).willThrow(exception);
+        given(service.getList(any(), any())).willThrow(PropertyReferenceException.class);
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
-                .param("sort", "invalid")
+                .param("sort", property)
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
