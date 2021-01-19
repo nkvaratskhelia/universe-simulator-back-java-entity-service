@@ -21,6 +21,11 @@ profile. Keep in mind that the `test` profile is used for testing purposes. For 
 you can use the `local` profile. `bootstrap-local.properties` and `application-local.properties`
 are excluded from git.
 
+=== Running the application
+You can run the application with your IDE or with the following command:
+`./gradlew bootRun --args='--spring.profiles.active=xxx'` where `xxx` is your spring boot profile
+of choice, for example `local`.
+
 == Docker
 You need to have `docker` and `docker-compose` installed on your machine. All software
 dependencies for the project can be found in the `docker-compose.yml` file.
