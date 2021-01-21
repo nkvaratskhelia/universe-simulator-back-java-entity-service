@@ -13,10 +13,12 @@ public class RestErrorResponse {
     private Instant timestamp;
     private int status;
     private ErrorCodeType error;
+    private String message;
 
-    RestErrorResponse(ErrorCodeType errorCode) {
+    RestErrorResponse(ErrorCodeType errorCode, String message) {
         this.error = errorCode;
         timestamp = Instant.now();
         status = errorCode.getHttpStatus().value();
+        this.message = message;
     }
 }
