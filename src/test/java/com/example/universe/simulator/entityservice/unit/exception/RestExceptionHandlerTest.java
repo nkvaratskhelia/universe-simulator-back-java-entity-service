@@ -135,8 +135,8 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         Sort sort = Sort.by(Sort.Order.asc(property));
         Pageable defaultPageable = TestUtils.getDefaultPageable();
         Pageable pageable = PageRequest.of(defaultPageable.getPageNumber(), defaultPageable.getPageSize(), sort);
-        PropertyReferenceException exception = new PropertyReferenceException(property, ClassTypeInformation.from(Galaxy.class), List.of());
 
+        PropertyReferenceException exception = new PropertyReferenceException(property, ClassTypeInformation.from(Galaxy.class), List.of());
         given(service.getList(any(), any())).willThrow(exception);
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
