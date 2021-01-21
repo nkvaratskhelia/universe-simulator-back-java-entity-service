@@ -13,9 +13,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.util.UUID;
 
-/**
- * Parent for all space objects.
- */
 @MappedSuperclass
 @Getter @Setter
 @NoArgsConstructor
