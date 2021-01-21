@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.ResponseEntity;
@@ -11,63 +12,66 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+@Slf4j
 @RestControllerAdvice
 class RestExceptionHandler {
 
     @ExceptionHandler(AppException.class)
     private ResponseEntity<RestErrorResponse> handleAppException(AppException exception) {
-        return buildErrorResponse(exception.getErrorCode());
+        return buildErrorResponse(exception.getErrorCode(), exception);
     }
 
-    private ResponseEntity<RestErrorResponse> buildErrorResponse(ErrorCodeType errorCode) {
-        RestErrorResponse response = new RestErrorResponse(errorCode);
-        return ResponseEntity.status(errorCode.getHttpStatus()).body(response);
+    private ResponseEntity<RestErrorResponse> buildErrorResponse(ErrorCodeType errorCode, Exception exception) {
+        log.error("", exception);
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(new RestErrorResponse(errorCode));
     }
 
     //thrown when trying to delete non-existent entity
     @ExceptionHandler(EmptyResultDataAccessException.class)
-    private ResponseEntity<RestErrorResponse> handleEmptyResultDataAccessException() {
-        return buildErrorResponse(ErrorCodeType.NOT_FOUND_ENTITY);
+    private ResponseEntity<RestErrorResponse> handleEmptyResultDataAccessException(EmptyResultDataAccessException exception) {
+        return buildErrorResponse(ErrorCodeType.NOT_FOUND_ENTITY, exception);
     }
 
     //thrown when content type is not specified or is something other than json
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    private ResponseEntity<RestErrorResponse> handleHttpMediaTypeNotSupportedException() {
-        return buildErrorResponse(ErrorCodeType.INVALID_CONTENT_TYPE);
+    private ResponseEntity<RestErrorResponse> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException exception) {
+        return buildErrorResponse(ErrorCodeType.INVALID_CONTENT_TYPE, exception);
     }
 
     //thrown when request body is missing or cannot be deserialized
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    private ResponseEntity<RestErrorResponse> handleHttpMessageNotReadableException() {
-        return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_BODY);
+    private ResponseEntity<RestErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_BODY, exception);
     }
 
     //thrown when wrong http method is used
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    private ResponseEntity<RestErrorResponse> handleHttpRequestMethodNotSupportedException() {
-        return buildErrorResponse(ErrorCodeType.INVALID_HTTP_METHOD);
+    private ResponseEntity<RestErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+        return buildErrorResponse(ErrorCodeType.INVALID_HTTP_METHOD, exception);
     }
 
     //thrown when request parameter cannot be processed
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    private ResponseEntity<RestErrorResponse> handleMethodArgumentTypeMismatchException() {
-        return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_PARAMETER);
+    private ResponseEntity<RestErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+        return buildErrorResponse(ErrorCodeType.INVALID_REQUEST_PARAMETER, exception);
     }
 
     //thrown when request entity version does not match db version
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-    private ResponseEntity<RestErrorResponse> handleObjectOptimisticLockingFailureException() {
-        return buildErrorResponse(ErrorCodeType.ENTITY_MODIFIED);
+    private ResponseEntity<RestErrorResponse> handleObjectOptimisticLockingFailureException(ObjectOptimisticLockingFailureException exception) {
+        return buildErrorResponse(ErrorCodeType.ENTITY_MODIFIED, exception);
     }
 
     //thrown when passing invalid sort parameter to paged requests
     @ExceptionHandler(PropertyReferenceException.class)
-    private ResponseEntity<RestErrorResponse> handlePropertyReferenceException() {
-        return buildErrorResponse(ErrorCodeType.INVALID_SORT_PARAMETER);
+    private ResponseEntity<RestErrorResponse> handlePropertyReferenceException(PropertyReferenceException exception) {
+        return buildErrorResponse(ErrorCodeType.INVALID_SORT_PARAMETER, exception);
     }
 
     @ExceptionHandler(Exception.class)
-    private ResponseEntity<RestErrorResponse> handleUnknownException() {
-        return buildErrorResponse(ErrorCodeType.SERVER_ERROR);
+    private ResponseEntity<RestErrorResponse> handleUnknownException(Exception exception) {
+        return buildErrorResponse(ErrorCodeType.SERVER_ERROR, exception);
     }
 }
