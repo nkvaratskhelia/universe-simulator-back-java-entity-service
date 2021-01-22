@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.utils;
+package com.example.universe.simulator.entityservice.common.utils;
 
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;

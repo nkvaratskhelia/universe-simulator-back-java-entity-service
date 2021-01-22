@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.unit;
 
-import com.example.universe.simulator.entityservice.AbstractMockMvcTest;
+import com.example.universe.simulator.entityservice.common.AbstractMockMvcTest;
+import com.example.universe.simulator.entityservice.common.AbstractTest;
 import com.example.universe.simulator.entityservice.config.BeanConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.modelmapper.ModelMapper;
@@ -12,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@AbstractTest
 @Import(BeanConfig.class)
 public abstract class AbstractWebMvcTest extends AbstractMockMvcTest {
 
