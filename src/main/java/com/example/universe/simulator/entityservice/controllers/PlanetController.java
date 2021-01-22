@@ -7,6 +7,7 @@ import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import java.util.concurrent.Callable;
 @RestController
 @RequestMapping("planet")
 @RequiredArgsConstructor
+@Slf4j
 public class PlanetController {
 
     private final ModelMapper modelMapper;
@@ -35,6 +37,7 @@ public class PlanetController {
 
     @PostMapping("get-list")
     private Callable<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, Pageable pageable) {
+        log.info("calling getList with filter [" + filter.orElse(null) + "] and " + pageable);
         Specification<Planet> specification = filter.map(item -> new PlanetSpecification().getSpecification(item))
                 .orElse(null);
         return () -> service.getList(specification, pageable)
@@ -43,11 +46,13 @@ public class PlanetController {
 
     @GetMapping("get/{id}")
     private PlanetDto get(@PathVariable UUID id) throws AppException {
+        log.info("calling get with id [" + id + "]");
         return modelMapper.map(service.get(id), PlanetDto.class);
     }
 
     @PostMapping("add")
     private PlanetDto add(@RequestBody PlanetDto dto) throws AppException {
+        log.info("calling add with " + dto);
         dto.validate(false);
 
         Planet entity = modelMapper.map(dto, Planet.class);
@@ -56,6 +61,7 @@ public class PlanetController {
 
     @PutMapping("update")
     private PlanetDto update(@RequestBody PlanetDto dto) throws AppException {
+        log.info("calling update with " + dto);
         dto.validate(true);
 
         Planet entity = modelMapper.map(dto, Planet.class);
@@ -64,6 +70,7 @@ public class PlanetController {
 
     @DeleteMapping("delete/{id}")
     private void delete(@PathVariable UUID id) throws AppException {
+        log.info("calling delete with id [" + id + "]");
         service.delete(id);
     }
 }
