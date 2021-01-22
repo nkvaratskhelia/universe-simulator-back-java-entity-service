@@ -61,8 +61,7 @@ public class PlanetIntegrationTest extends AbstractIntegrationTest {
         //when
         response = performRequest(post("/planet/get-list"));
         //then
-        JsonPage<PlanetDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {
-        });
+        JsonPage<PlanetDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
         //-----------------------------------should add entity-----------------------------------
@@ -98,8 +97,7 @@ public class PlanetIntegrationTest extends AbstractIntegrationTest {
         //when
         response = performRequest(post("/planet/get-list"));
         //then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {
-        });
+        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
 
         //-----------------------------------should return entity-----------------------------------
@@ -153,8 +151,7 @@ public class PlanetIntegrationTest extends AbstractIntegrationTest {
                 .content(objectMapper.writeValueAsString(filter))
         );
         //then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {
-        });
+        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
 
         //-----------------------------------should delete entity-----------------------------------
@@ -183,8 +180,7 @@ public class PlanetIntegrationTest extends AbstractIntegrationTest {
         //when
         response = performRequest(post("/planet/get-list"));
         //then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {
-        });
+        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
         //-----------------------------------should delete star-----------------------------------
@@ -201,5 +197,4 @@ public class PlanetIntegrationTest extends AbstractIntegrationTest {
         //then
         verifyOkStatus(response.getStatus());
     }
-
 }
