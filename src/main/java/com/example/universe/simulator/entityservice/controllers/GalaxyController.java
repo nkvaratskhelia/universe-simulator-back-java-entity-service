@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping("galaxy")
@@ -34,12 +34,11 @@ public class GalaxyController {
     private final GalaxyService service;
 
     @PostMapping("get-list")
-    private Mono<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, Pageable pageable) {
+    private Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, Pageable pageable) {
         Specification<Galaxy> specification = filter.map(item -> new GalaxySpecification().getSpecification(item))
                 .orElse(null);
-        return Mono.just(service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, GalaxyDto.class))
-        );
+        return () -> service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, GalaxyDto.class));
     }
 
     @GetMapping("get/{id}")

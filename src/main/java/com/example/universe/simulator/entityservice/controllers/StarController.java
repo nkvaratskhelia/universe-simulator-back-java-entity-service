@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping("star")
@@ -34,12 +34,11 @@ public class StarController {
     private final StarService service;
 
     @PostMapping("get-list")
-    private Mono<Page<StarDto>> getList(@RequestBody Optional<StarFilter> filter, Pageable pageable) {
+    private Callable<Page<StarDto>> getList(@RequestBody Optional<StarFilter> filter, Pageable pageable) {
         Specification<Star> specification = filter.map(item -> new StarSpecification().getSpecification(item))
                 .orElse(null);
-        return Mono.just(service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, StarDto.class))
-        );
+        return () -> service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, StarDto.class));
     }
 
     @GetMapping("get/{id}")
