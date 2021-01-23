@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.utils;
+package com.example.universe.simulator.entityservice.common.utils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
