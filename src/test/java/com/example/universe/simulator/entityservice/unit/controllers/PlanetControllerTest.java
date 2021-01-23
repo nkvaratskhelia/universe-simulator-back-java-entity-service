@@ -6,7 +6,7 @@ import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
-import com.example.universe.simulator.entityservice.utils.TestUtils;
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
