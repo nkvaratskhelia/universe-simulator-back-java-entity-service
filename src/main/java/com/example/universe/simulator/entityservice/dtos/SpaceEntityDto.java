@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 @SuperBuilder
+@ToString
 abstract class SpaceEntityDto {
 
     private UUID id;

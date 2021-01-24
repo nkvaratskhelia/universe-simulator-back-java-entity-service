@@ -7,6 +7,7 @@ import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import java.util.concurrent.Callable;
 @RestController
 @RequestMapping("star")
 @RequiredArgsConstructor
+@Slf4j
 public class StarController {
 
     private final ModelMapper modelMapper;
@@ -35,6 +37,7 @@ public class StarController {
 
     @PostMapping("get-list")
     private Callable<Page<StarDto>> getList(@RequestBody Optional<StarFilter> filter, Pageable pageable) {
+        log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
         Specification<Star> specification = filter.map(item -> new StarSpecification().getSpecification(item))
                 .orElse(null);
         return () -> service.getList(specification, pageable)
@@ -43,11 +46,13 @@ public class StarController {
 
     @GetMapping("get/{id}")
     private StarDto get(@PathVariable UUID id) throws AppException {
+        log.info("calling get with id [{}}]", id);
         return modelMapper.map(service.get(id), StarDto.class);
     }
 
     @PostMapping("add")
     private StarDto add(@RequestBody StarDto dto) throws AppException {
+        log.info("calling add with {}", dto);
         dto.validate(false);
 
         Star entity = modelMapper.map(dto, Star.class);
@@ -56,6 +61,7 @@ public class StarController {
 
     @PutMapping("update")
     private StarDto update(@RequestBody StarDto dto) throws AppException {
+        log.info("calling update with {}", dto);
         dto.validate(true);
 
         Star entity = modelMapper.map(dto, Star.class);
@@ -64,6 +70,7 @@ public class StarController {
 
     @DeleteMapping("delete/{id}")
     private void delete(@PathVariable UUID id) throws AppException {
+        log.info("calling delete with id [{}}]", id);
         service.delete(id);
     }
 }
