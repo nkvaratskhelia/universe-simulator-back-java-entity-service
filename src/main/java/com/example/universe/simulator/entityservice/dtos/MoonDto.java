@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
@@ -14,6 +15,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
+@ToString(callSuper = true)
 public class MoonDto extends SpaceEntityDto {
 
     @EqualsAndHashCode.Exclude
