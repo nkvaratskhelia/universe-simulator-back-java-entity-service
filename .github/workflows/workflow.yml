@@ -10,4 +10,4 @@ jobs:
           java-version: 11
       - uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: build bootBuildImage --watch-fs --info
+          arguments: build bootBuildImage --watch-fs --info --stacktrace
