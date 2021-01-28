@@ -10,4 +10,7 @@ jobs:
           java-version: 11
       - uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: build --watch-fs --info
+          arguments: build bootBuildImage --watch-fs --info --stacktrace
+        env:
+          US_DOCKER_REGISTRY_USER: ${{ secrets.US_DOCKER_REGISTRY_USER }}
+          US_DOCKER_REGISTRY_PASSWORD: ${{ secrets.US_DOCKER_REGISTRY_PASSWORD }}
