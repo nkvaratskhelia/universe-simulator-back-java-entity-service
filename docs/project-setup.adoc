@@ -16,10 +16,9 @@ The project is built with the `Spring Boot v 2.4.x` framework.
 === Profiles
 You can have as many spring boot profiles as needed. Profiles usually map to environments (dev,
 staging, prod). If you need to override some properties for an environment, add a new
-`bootstrap-xxx.properties` or `application-xxx.properties` file where xxx is the name of your
-profile. Keep in mind that the `test` profile is used for testing purposes. For local development
-you can use the `local` profile. `bootstrap-local.properties` and `application-local.properties`
-are excluded from git.
+`application-xxx.properties` file, where xxx is the name of your profile. Keep in mind that the
+`test` profile is reserved for testing purposes and the `local` profile for local development.
+`application-local.properties` file is excluded from git.
 
 === Running the application
 You can run the application with your IDE or with the following command:
@@ -41,20 +40,19 @@ supply env variables to the docker-compose file.
 directory. Changefile naming scheme is as follows: `xxx-change-description.extension`.
 
 == Vault
-`Hashicorp Vault` is used to store project secrets and other variable configuration. You can set
-up vault locally as a docker-compose service by running the following command:
-`docker-compose -p universe-simulator up -d vault`. If you stop or restart your container, vault
-gets sealed and you'll need to unseal it to be able to use it again.
+`Hashicorp Vault` is used to store project secrets and other variable configuration. You can set up
+vault locally as a docker-compose service by running the following command:
+`docker-compose -p universe-simulator up -d vault`. If you stop or restart your container, vault gets
+sealed and you'll need to unseal it to be able to use it again.
 
 === Configuration
 When vault is up and running, go to vault ui at `localhost:8200` and follow the setup instructions.
-After logging in, enable a new `KV` engine with `universe-simulator` as path. This root path maps
-to the `spring.cloud.vault.kv.backend` property in `bootstrap.properties`. In the new engine create
-a secret with `entity-service` as path. This path maps to the `spring.application.name` property
-in `bootstrap.properties`. Additionally, you can add as many profile-specific paths as needed.
-These paths map to spring boot profiles (e.g. dev, staging, prod). Now you can add secrets and
-config in vault's `universe-simulator/entity-service/xxx` directory, where xxx maps to spring boot
-profiles.
+After logging in, enable a new `KV` engine with `universe-simulator` as path. This root path maps to
+the `spring.cloud.vault.kv.backend` property in `application.properties`. In the new engine create a
+secret with `entity-service` as path. This path maps to the `spring.application.name` property in
+`application.properties`. Additionally, you can add as many profile-specific paths as needed. These
+paths map to spring boot profiles (e.g. dev, staging, prod). Now you can add secrets and config in
+vault's `universe-simulator/entity-service/xxx` directory, where xxx maps to spring boot profiles.
 
 == CI/CD
 `Github Actions` is used for automating the project workflow. The workflow file can be found in the
