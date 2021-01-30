@@ -1,12 +1,11 @@
 package com.example.universe.simulator.entityservice.unit.controllers;
 
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.StarController;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
-import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
-import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,7 +23,6 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -79,92 +77,11 @@ class StarControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testAdd_validate_nullName() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForAdd();
-        dto.setName(null);
-        //when
-        MockHttpServletResponse response = performRequest(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_validate_emptyName() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForAdd();
-        dto.setName("");
-        //when
-        MockHttpServletResponse response = performRequest(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_validate_BlankName() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForAdd();
-        dto.setName(" ");
-        //when
-        MockHttpServletResponse response = performRequest(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_validate_nullGalaxy() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForAdd();
-        dto.setGalaxy(null);
-        //when
-        MockHttpServletResponse response = performRequest(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_GALAXY);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_validate_nullGalaxyId() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForAdd();
-        dto.getGalaxy().setId(null);
-        //when
-        MockHttpServletResponse response = performRequest(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_dirtyFieldFixAndSuccessfulAdd() throws Exception {
+    void testAdd() throws Exception {
         //given
         StarDto inputDto = TestUtils.buildStarDtoForAdd();
         Star entity = modelMapper.map(inputDto, Star.class);
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
-
-        //dirty input
-        inputDto.setId(UUID.randomUUID());
-        inputDto.setName(" name ");
-        inputDto.setVersion(1L);
-
         given(service.add(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(post("/star/add")
@@ -177,120 +94,11 @@ class StarControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testUpdate_validate_nullId() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        dto.setId(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_ID);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_nullName() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        dto.setName(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_EmptyName() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        dto.setName("");
-        //when
-        MockHttpServletResponse response = performRequest(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_BlankName() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        dto.setName(" ");
-        //when
-        MockHttpServletResponse response = performRequest(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_nullVersion() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        dto.setVersion(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_VERSION);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_nullGalaxy() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        dto.setGalaxy(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_GALAXY);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testUpdate_validate_nullGalaxyId() throws Exception {
-        //given
-        StarDto dto = TestUtils.buildStarDtoForUpdate();
-        dto.getGalaxy().setId(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/star/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testUpdate_dirtyFieldFixAndSuccessfulUpdate() throws Exception {
+    void testUpdate() throws Exception {
         //given
         StarDto inputDto = TestUtils.buildStarDtoForUpdate();
         Star entity = modelMapper.map(inputDto, Star.class);
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
-
-        //dirty input
-        inputDto.setName(" name ");
-
         given(service.update(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(put("/star/update")
