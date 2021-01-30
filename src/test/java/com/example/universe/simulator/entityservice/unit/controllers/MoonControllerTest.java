@@ -1,12 +1,11 @@
 package com.example.universe.simulator.entityservice.unit.controllers;
 
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.MoonController;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
-import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
-import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,7 +23,6 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -79,92 +77,11 @@ class MoonControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testAdd_validate_nullName() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForAdd();
-        dto.setName(null);
-        //when
-        MockHttpServletResponse response = performRequest(post("/moon/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_validate_emptyName() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForAdd();
-        dto.setName("");
-        //when
-        MockHttpServletResponse response = performRequest(post("/moon/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_validate_BlankName() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForAdd();
-        dto.setName(" ");
-        //when
-        MockHttpServletResponse response = performRequest(post("/moon/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_validate_nullPlanet() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForAdd();
-        dto.setPlanet(null);
-        //when
-        MockHttpServletResponse response = performRequest(post("/moon/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_PLANET);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_validate_nullPlanetId() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForAdd();
-        dto.getPlanet().setId(null);
-        //when
-        MockHttpServletResponse response = performRequest(post("/moon/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_PLANET_ID);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testAdd_dirtyFieldFixAndSuccessfulAdd() throws Exception {
+    void testAdd() throws Exception {
         //given
         MoonDto inputDto = TestUtils.buildMoonDtoForAdd();
         Moon entity = modelMapper.map(inputDto, Moon.class);
         MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
-
-        //dirty input
-        inputDto.setId(UUID.randomUUID());
-        inputDto.setName(" name ");
-        inputDto.setVersion(1L);
-
         given(service.add(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(post("/moon/add")
@@ -177,120 +94,11 @@ class MoonControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testUpdate_validate_nullId() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForUpdate();
-        dto.setId(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_ID);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_nullName() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForUpdate();
-        dto.setName(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_EmptyName() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForUpdate();
-        dto.setName("");
-        //when
-        MockHttpServletResponse response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_BlankName() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForUpdate();
-        dto.setName(" ");
-        //when
-        MockHttpServletResponse response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_NAME);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_nullVersion() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForUpdate();
-        dto.setVersion(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_VERSION);
-        then(service).should(never()).update(any());
-    }
-
-    @Test
-    void testUpdate_validate_nullPlanet() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForUpdate();
-        dto.setPlanet(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_PLANET);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testUpdate_validate_nullPlanetId() throws Exception {
-        //given
-        MoonDto dto = TestUtils.buildMoonDtoForUpdate();
-        dto.getPlanet().setId(null);
-        //when
-        MockHttpServletResponse response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
-        );
-        //then
-        verifyErrorResponse(response, ErrorCodeType.MISSING_PARAMETER_PLANET_ID);
-        then(service).should(never()).add(any());
-    }
-
-    @Test
-    void testUpdate_dirtyFieldFixAndSuccessfulUpdate() throws Exception {
+    void testUpdate() throws Exception {
         //given
         MoonDto inputDto = TestUtils.buildMoonDtoForUpdate();
         Moon entity = modelMapper.map(inputDto, Moon.class);
         MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
-
-        //dirty input
-        inputDto.setName(" name ");
-
         given(service.update(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(put("/moon/update")
