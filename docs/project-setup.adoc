@@ -58,16 +58,19 @@ profiles.
 
 == CI/CD
 `Github Actions` is used for automating the project workflow. The workflow file can be found in the
-`.github/workflows` directory. Currently, the file contains only CI part of the workflow, with CD
-to be added later. 
+`.github/workflows` directory. After building and testing the code, a docker image is built using
+gradle's `bootBuildImage` task and uploaded to `Docker Hub`. You need to add docker registry
+credentials to your repository secrets.
 
 == Https/TLS
-Application has support for `Https/TLS` and `http/2` protocol is also enabled. You need to have a
+Application has support for `Https/TLS` with `http/2` protocol also enabled. You need to have a
 keystore file named `universe-simulator.p12` in your `${HOME}/universe-simulator` directory. The
-certificate in the keystore can be either self-signed or provided by a CA. You can use java's
-`keytool` utility for working with keystore. To create a keystore file with a self-signed certificate
-run the following command: `keytool -genkeypair -alias universe-simulator -keyalg RSA
--validity <validity-in-days> -keystore universe-simulator.p12` and follow the instructions. You can
-verify the contents of the keystore file with the following command:
+certificate in the keystore can be either self-signed or provided by a CA.
+
+=== Keystore
+You can use java's `keytool` utility for working with keystore. To create a keystore file with a
+self-signed certificate run the following command: `keytool -genkeypair -alias universe-simulator
+-keyalg RSA -validity <validity-in-days> -keystore universe-simulator.p12` and follow the
+instructions. You can verify the contents of the keystore file with the following command:
 `keytool -list -v -keystore universe-simulator.p12`. Keep in mind that TLS is disabled when running
 the application with `test` profile.
