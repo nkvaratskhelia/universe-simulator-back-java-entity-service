@@ -74,3 +74,10 @@ self-signed certificate run the following command: `keytool -genkeypair -alias u
 instructions. You can verify the contents of the keystore file with the following command:
 `keytool -list -v -keystore universe-simulator.p12`. Keep in mind that TLS is disabled when running
 the application with `test` profile.
+
+== Code Coverage
+`jacoco` plugin is used to analyze code covered by tests. +
+Run `gradlew jacocoTestReport` to generate reports. +
+Reports directory defaults to `$buildDir/reports/jacoco`. +
+At present, code coverage enforcing rules not used. +
+https://docs.gradle.org/current/userguide/jacoco_plugin.html[plugin documentation]
