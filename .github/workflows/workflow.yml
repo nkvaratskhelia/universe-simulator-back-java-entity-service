@@ -10,7 +10,11 @@ jobs:
           java-version: 11
       - uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: build bootBuildImage --watch-fs --info --stacktrace
+          arguments: build --watch-fs --info --stacktrace
+      - uses: burrunan/gradle-cache-action@v1
+        if: github.ref == 'refs/heads/master'
+        with:
+          arguments: bootBuildImage --watch-fs --info --stacktrace
         env:
           US_DOCKER_REGISTRY_USER: ${{ secrets.US_DOCKER_REGISTRY_USER }}
           US_DOCKER_REGISTRY_PASSWORD: ${{ secrets.US_DOCKER_REGISTRY_PASSWORD }}
