@@ -56,9 +56,7 @@ class StarServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
-
-        Optional<StarFilter> filter = Optional.of(StarFilter.builder().name("name").build());
-        Specification<Star> specification = new StarSpecification().getSpecification(filter.get());
+        Specification<Star> specification = new StarSpecification().getSpecification(new StarFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Star>>any(), any(Pageable.class)))
                 .willReturn(page);

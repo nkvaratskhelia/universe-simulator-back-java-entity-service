@@ -4,6 +4,7 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.GalaxyController;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
@@ -41,6 +42,19 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @MockBean
     private GalaxyService service;
+
+    @Test
+    void testAppException() throws Exception {
+        //given
+        UUID id = UUID.randomUUID();
+        AppException exception = new AppException(ErrorCodeType.IN_USE);
+        willThrow(exception).given(service).delete(any());
+        //when
+        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
+        //then
+        verifyErrorResponse(response, exception.getErrorCode());
+        then(service).should().delete(id);
+    }
 
     @Test
     void testEmptyResultDataAccessException() throws Exception {

@@ -10,7 +10,7 @@ jobs:
           java-version: 11
       - uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: build --watch-fs --info --stacktrace
+          arguments: build jacocoTestCoverageVerification --watch-fs --info --stacktrace
       - uses: burrunan/gradle-cache-action@v1
         if: github.ref == 'refs/heads/master'
         with:
