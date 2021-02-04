@@ -76,6 +76,6 @@ the application with `test` profile.
 
 == Code Coverage
 `jacoco` plugin is used to analyze code coverage. You can generate the test coverage report with 
-the following command:`./gradlew jacocoTestReport`. The report can be viewed by opening the
+the following command: `./gradlew jacocoTestReport`. The report can be viewed by opening the
 `build/reports/jacoco/test/html/index.html` file. Find out more about the plugin here:
 https://docs.gradle.org/current/userguide/jacoco_plugin.html[Plugin Documentation]
