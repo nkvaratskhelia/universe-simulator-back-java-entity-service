@@ -57,9 +57,10 @@ vault's `universe-simulator/entity-service/xxx` directory, where xxx maps to spr
 
 == CI/CD
 `Github Actions` is used for automating the project workflow. The workflow file can be found in the
-`.github/workflows` directory. After building and testing the code, a docker image is built using
-gradle's `bootBuildImage` task and uploaded to `Docker Hub`. You need to add docker registry
-credentials to your repository secrets.
+`.github/workflows` directory. After building and testing the code, test coverage is enforced by the
+`jacocoTestCoverageVerification` task and if it passes, then a docker image is built using gradle's
+`bootBuildImage` task and uploaded to `Docker Hub`. You need to add docker registry credentials to
+your repository secrets.
 
 == Https/TLS
 Application has support for `Https/TLS` with `http/2` protocol also enabled. You need to have a
@@ -75,7 +76,21 @@ instructions. You can verify the contents of the keystore file with the followin
 the application with `test` profile.
 
 == Code Coverage
-`jacoco` plugin is used to analyze code coverage. You can generate the test coverage report with 
-the following command: `./gradlew jacocoTestReport`. The report can be viewed by opening the
-`build/reports/jacoco/test/html/index.html` file. Find out more about the plugin here:
+`JaCoCo` plugin is used to analyze code coverage. Find out more about Jacoco plugin here:
 https://docs.gradle.org/current/userguide/jacoco_plugin.html[Plugin Documentation]
+
+=== Report
+You can generate the test coverage report with the following command: `./gradlew jacocoTestReport`.
+The report can be viewed by opening the `build/reports/jacoco/test/html/index.html` file.
+
+=== Exclusions
+Classes which are excluded from jacoco reports are described in the `jacocoExclusions` method in
+`build.gradle`. Additionally, all lombok generated code is also excluded. This is achieved with the
+`lombok.addLombokGeneratedAnnotation = true` parameter in `lombok.config` file. If this parameter is
+present, lombok will annotate all generated code with its `@Generated` annotation and jacoco
+automatically excludes such code from processing.
+
+=== Rules
+100% code coverage is enforced by the `jacocoTestCoverageVerification` task. You can run this task
+with the following command: `./gradlew jacocoTestCoverageVerification`. If the coverage falls below
+100%, the task will fail.
