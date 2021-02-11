@@ -9,6 +9,7 @@ import com.example.universe.simulator.entityservice.specifications.PlanetSpecifi
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,7 +37,7 @@ public class PlanetController {
     private final PlanetService service;
 
     @PostMapping("get-list")
-    private Callable<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, Pageable pageable) {
+    private Callable<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
         Specification<Planet> specification = filter.map(item -> new PlanetSpecification().getSpecification(item))
                 .orElse(null);

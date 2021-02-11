@@ -94,3 +94,8 @@ automatically excludes such code from processing.
 100% code coverage is enforced by the `jacocoTestCoverageVerification` task. You can run this task
 with the following command: `./gradlew jacocoTestCoverageVerification`. If the coverage falls below
 100%, the task will fail.
+
+== Rest API
+Rest API documentation is generated automatically by `springdoc-openapi`. You can access OpenAPI
+definition at `/v3/api-docs` and swagger ui at `/swagger-ui.html`. Find out more about springdoc
+here: https://springdoc.org/[Springdoc Documentation].
