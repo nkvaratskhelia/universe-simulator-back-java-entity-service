@@ -63,7 +63,7 @@ bootBuildImage {
 }
 
 ext {
-    set('springdocOpenapiVersion', '1.5.3')
+    set('springdocOpenapiVersion', '1.5.4')
 }
 
 repositories {
