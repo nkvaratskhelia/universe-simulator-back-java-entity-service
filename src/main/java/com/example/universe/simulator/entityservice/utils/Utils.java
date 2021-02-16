@@ -1,14 +1,13 @@
 package com.example.universe.simulator.entityservice.utils;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
 import java.util.Objects;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Utils {
+@UtilityClass
+public class Utils {
 
-    public static boolean isNullOrBlank(String str) {
+    public boolean isNullOrBlank(String str) {
         return Objects.isNull(str) || str.isBlank();
     }
 }
