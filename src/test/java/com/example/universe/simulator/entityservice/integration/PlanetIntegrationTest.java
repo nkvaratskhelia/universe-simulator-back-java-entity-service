@@ -1,12 +1,12 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import com.example.universe.simulator.entityservice.common.utils.JsonPage;
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
-import com.example.universe.simulator.entityservice.common.utils.JsonPage;
-import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

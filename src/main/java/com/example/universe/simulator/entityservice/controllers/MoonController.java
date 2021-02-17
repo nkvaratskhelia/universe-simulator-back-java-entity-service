@@ -9,6 +9,7 @@ import com.example.universe.simulator.entityservice.specifications.MoonSpecifica
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,7 +37,7 @@ public class MoonController {
     private final MoonService service;
 
     @PostMapping("get-list")
-    private Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, Pageable pageable) {
+    private Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
         Specification<Moon> specification = filter.map(item -> new MoonSpecification().getSpecification(item))
                 .orElse(null);

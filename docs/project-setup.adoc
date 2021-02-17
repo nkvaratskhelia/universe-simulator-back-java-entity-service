@@ -4,10 +4,10 @@
 `Java 11` is the current version of java for the project.
 
 == Gradle
-`Gradle Wrapper` is used as a build tool for the project. You don't need to install gradle on
-your machine, it will be installed automatically by gradle wrapper. Gradle-related properties
-can be found in the `gradle-wrapper.properties` file in the `gradle/wrapper` directory. You can
-update the gradle wrapper version with the following command:
+`Gradle Wrapper` is used as a build tool for the project. You don't need to install gradle on your
+machine, it will be installed automatically by gradle wrapper. Gradle-related properties can be found
+in the `gradle-wrapper.properties` file in the `gradle/wrapper` directory. You can update the gradle
+wrapper version with the following command:
 `./gradlew wrapper --gradle-version=x.x.x --distribution-type=all`.
 
 == Spring Boot
@@ -22,12 +22,12 @@ staging, prod). If you need to override some properties for an environment, add 
 
 === Running the application
 You can run the application with your IDE or with the following command:
-`./gradlew bootRun --args='--spring.profiles.active=xxx'` where `xxx` is your spring boot profile
-of choice, for example `local`.
+`./gradlew bootRun --args='--spring.profiles.active=xxx'` where `xxx` is your spring boot profile of
+choice, for example `local`.
 
 == Docker
-You need to have `docker` and `docker-compose` installed on your machine. All software
-dependencies for the project can be found in the `docker-compose.yml` file.
+You need to have `docker` and `docker-compose` installed on your machine. All software dependencies
+for the project can be found in the `docker-compose.yml` file.
 
 == Database
 `Postgres` is currently used to store the project model entities. To run a database service locally,
@@ -56,16 +56,45 @@ vault's `universe-simulator/entity-service/xxx` directory, where xxx maps to spr
 
 == CI/CD
 `Github Actions` is used for automating the project workflow. The workflow file can be found in the
-`.github/workflows` directory. Currently, the file contains only CI part of the workflow, with CD
-to be added later. 
+`.github/workflows` directory. After building and testing the code, test coverage is enforced by the
+`jacocoTestCoverageVerification` task and if it passes, then a docker image is built using gradle's
+`bootBuildImage` task and uploaded to `Docker Hub`. You need to add docker registry credentials to
+your repository secrets.
 
 == Https/TLS
-Application has support for `Https/TLS` and `http/2` protocol is also enabled. You need to have a
+Application has support for `Https/TLS` with `http/2` protocol also enabled. You need to have a
 keystore file named `universe-simulator.p12` in your `${HOME}/universe-simulator` directory. The
-certificate in the keystore can be either self-signed or provided by a CA. You can use java's
-`keytool` utility for working with keystore. To create a keystore file with a self-signed certificate
-run the following command: `keytool -genkeypair -alias universe-simulator -keyalg RSA
--validity <validity-in-days> -keystore universe-simulator.p12` and follow the instructions. You can
-verify the contents of the keystore file with the following command:
+certificate in the keystore can be either self-signed or provided by a CA.
+
+=== Keystore
+You can use java's `keytool` utility for working with keystore. To create a keystore file with a
+self-signed certificate run the following command: `keytool -genkeypair -alias universe-simulator
+-keyalg RSA -validity <validity-in-days> -keystore universe-simulator.p12` and follow the
+instructions. You can verify the contents of the keystore file with the following command:
 `keytool -list -v -keystore universe-simulator.p12`. Keep in mind that TLS is disabled when running
 the application with `test` profile.
+
+== Code Coverage
+`JaCoCo` plugin is used to analyze code coverage. Find out more about Jacoco plugin here:
+https://docs.gradle.org/current/userguide/jacoco_plugin.html[Plugin Documentation]
+
+=== Report
+You can generate the test coverage report with the following command: `./gradlew jacocoTestReport`.
+The report can be viewed by opening the `build/reports/jacoco/test/html/index.html` file.
+
+=== Exclusions
+Classes which are excluded from jacoco reports are described in the `jacocoExclusions` method in
+`build.gradle`. Additionally, all lombok generated code is also excluded. This is achieved with the
+`lombok.addLombokGeneratedAnnotation = true` parameter in `lombok.config` file. If this parameter is
+present, lombok will annotate all generated code with its `@Generated` annotation and jacoco
+automatically excludes such code from processing.
+
+=== Rules
+100% code coverage is enforced by the `jacocoTestCoverageVerification` task. You can run this task
+with the following command: `./gradlew jacocoTestCoverageVerification`. If the coverage falls below
+100%, the task will fail.
+
+== Rest API
+Rest API documentation is generated automatically by `springdoc-openapi`. You can access OpenAPI
+definition at `/v3/api-docs` and swagger ui at `/swagger-ui.html`. Find out more about springdoc
+here: https://springdoc.org/[Springdoc Documentation].

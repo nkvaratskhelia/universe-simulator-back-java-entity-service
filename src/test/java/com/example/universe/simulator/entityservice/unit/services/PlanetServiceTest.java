@@ -56,9 +56,7 @@ class PlanetServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Planet> page = new PageImpl<>(list, pageable, list.size());
-
-        Optional<PlanetFilter> filter = Optional.of(PlanetFilter.builder().name("name").build());
-        Specification<Planet> specification = new PlanetSpecification().getSpecification(filter.get());
+        Specification<Planet> specification = new PlanetSpecification().getSpecification(new PlanetFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Planet>>any(), any(Pageable.class)))
                 .willReturn(page);

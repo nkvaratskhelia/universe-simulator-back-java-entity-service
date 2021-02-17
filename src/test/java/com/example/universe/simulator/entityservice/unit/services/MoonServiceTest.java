@@ -52,9 +52,7 @@ class MoonServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Moon> page = new PageImpl<>(list, pageable, list.size());
-
-        Optional<MoonFilter> filter = Optional.of(MoonFilter.builder().name("name").build());
-        Specification<Moon> specification = new MoonSpecification().getSpecification(filter.get());
+        Specification<Moon> specification = new MoonSpecification().getSpecification(new MoonFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Moon>>any(), any(Pageable.class)))
                 .willReturn(page);

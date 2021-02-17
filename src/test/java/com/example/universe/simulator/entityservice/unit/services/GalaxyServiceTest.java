@@ -51,9 +51,7 @@ class GalaxyServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Galaxy> page = new PageImpl<>(list, pageable, list.size());
-
-        Optional<GalaxyFilter> filter = Optional.of(GalaxyFilter.builder().name("name").build());
-        Specification<Galaxy> specification = new GalaxySpecification().getSpecification(filter.get());
+        Specification<Galaxy> specification = new GalaxySpecification().getSpecification(new GalaxyFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Galaxy>>any(), any(Pageable.class)))
                 .willReturn(page);

@@ -9,6 +9,7 @@ import com.example.universe.simulator.entityservice.specifications.GalaxySpecifi
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,7 +37,7 @@ public class GalaxyController {
     private final GalaxyService service;
 
     @PostMapping("get-list")
-    private Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, Pageable pageable) {
+    private Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
         Specification<Galaxy> specification = filter.map(item -> new GalaxySpecification().getSpecification(item))
                 .orElse(null);
