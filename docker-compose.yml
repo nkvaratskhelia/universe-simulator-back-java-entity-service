@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  postgres:
+  entity-service-postgres:
     image: postgres
     container_name: universe-simulator-entity-service-postgres
     restart: always
@@ -43,7 +43,7 @@ services:
       - vault-logs:/vault/logs
       - vault-file:/vault/file
 
-  app:
+  entity-service-app:
     image: universesimulator/entity-service
     container_name: universe-simulator-entity-service-app
     network_mode: host
