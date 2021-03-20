@@ -21,7 +21,7 @@ public abstract class AbstractWebMvcTest extends AbstractMockMvcTest {
     protected ModelMapper modelMapper;
 
     protected final void verifySuccessfulResponse(MockHttpServletResponse response, Object expected)
-            throws JsonProcessingException, UnsupportedEncodingException {
+        throws JsonProcessingException, UnsupportedEncodingException {
         verifyOkStatus(response.getStatus());
         assertThat(response.getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }

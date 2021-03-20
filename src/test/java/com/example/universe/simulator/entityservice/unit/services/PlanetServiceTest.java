@@ -52,14 +52,14 @@ class PlanetServiceTest {
     void testGetList() {
         //given
         List<Planet> list = List.of(
-                Planet.builder().name("name").build()
+            Planet.builder().name("name").build()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Planet> page = new PageImpl<>(list, pageable, list.size());
         Specification<Planet> specification = new PlanetSpecification().getSpecification(new PlanetFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Planet>>any(), any(Pageable.class)))
-                .willReturn(page);
+            .willReturn(page);
         //when
         Page<Planet> result = service.getList(specification, pageable);
         //then
@@ -110,9 +110,9 @@ class PlanetServiceTest {
     void testAdd_starNotFound() {
         //given
         Planet entity = Planet.builder()
-                .name("name")
-                .star(Star.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .star(Star.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsByName(anyString())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(false);
         //when
@@ -127,9 +127,9 @@ class PlanetServiceTest {
     void testAdd_successfulAdd() throws AppException {
         //given
         Planet entity = Planet.builder()
-                .name("name")
-                .star(Star.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .star(Star.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsByName(anyString())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
@@ -175,10 +175,10 @@ class PlanetServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Planet entity = Planet.builder()
-                .id(id)
-                .name("name")
-                .star(Star.builder().id(UUID.randomUUID()).build())
-                .build();
+            .id(id)
+            .name("name")
+            .star(Star.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(false);
@@ -195,10 +195,10 @@ class PlanetServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Planet entity = Planet.builder()
-                .id(id)
-                .name("name")
-                .star(Star.builder().id(UUID.randomUUID()).build())
-                .build();
+            .id(id)
+            .name("name")
+            .star(Star.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(true);

@@ -47,14 +47,14 @@ class GalaxyServiceTest {
     void testGetList() {
         //given
         List<Galaxy> list = List.of(
-                Galaxy.builder().name("name").build()
+            Galaxy.builder().name("name").build()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Galaxy> page = new PageImpl<>(list, pageable, list.size());
         Specification<Galaxy> specification = new GalaxySpecification().getSpecification(new GalaxyFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Galaxy>>any(), any(Pageable.class)))
-                .willReturn(page);
+            .willReturn(page);
         //when
         Page<Galaxy> result = service.getList(specification, pageable);
         //then

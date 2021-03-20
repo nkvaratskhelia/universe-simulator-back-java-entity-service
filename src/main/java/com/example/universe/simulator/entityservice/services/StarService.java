@@ -29,7 +29,7 @@ public class StarService extends SpaceEntityService<Star> {
 
     public Star get(UUID id) throws AppException {
         return repository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
+            .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional

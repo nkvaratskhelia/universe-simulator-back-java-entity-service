@@ -74,7 +74,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
-                .content(objectMapper.writeValueAsString(dto))
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
@@ -87,8 +87,8 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
-                .contentType(MediaType.APPLICATION_XML)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_XML)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
@@ -134,8 +134,8 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         given(service.update(any())).willThrow(ObjectOptimisticLockingFailureException.class);
         //when
         MockHttpServletResponse response = performRequest(put("/galaxy/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
@@ -154,7 +154,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         given(service.getList(any(), any())).willThrow(exception);
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
-                .param("sort", property)
+            .param("sort", property)
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);

@@ -24,7 +24,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
-                .param("sort", "invalid")
+            .param("sort", "invalid")
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
@@ -44,8 +44,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         dto.setName("name1");
         //when
         response = performRequest(post("/galaxy/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         GalaxyDto addedDto1 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
@@ -57,8 +57,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         dto.setName("name2");
         //when
         response = performRequest(post("/galaxy/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         GalaxyDto addedDto2 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
@@ -88,8 +88,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         //when
         response = performRequest(put("/galaxy/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         GalaxyDto updatedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
@@ -103,8 +103,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         dto.setId(addedDto1.getId());
         //when
         response = performRequest(put("/galaxy/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
@@ -115,8 +115,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         GalaxyFilter filter = GalaxyFilter.builder().name("1uP").build();
         //when
         response = performRequest(post("/galaxy/get-list")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filter))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filter))
         );
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});

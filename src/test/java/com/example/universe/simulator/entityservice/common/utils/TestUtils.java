@@ -20,8 +20,8 @@ public final class TestUtils {
 
     public static GalaxyDto buildGalaxyDtoForAdd() {
         return GalaxyDto.builder()
-                .name("name")
-                .build();
+            .name("name")
+            .build();
     }
 
     public static GalaxyDto buildGalaxyDtoForUpdate() {
@@ -34,9 +34,9 @@ public final class TestUtils {
 
     public static StarDto buildStarDtoForAdd() {
         return StarDto.builder()
-                .name("name")
-                .galaxy(GalaxyDto.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .galaxy(GalaxyDto.builder().id(UUID.randomUUID()).build())
+            .build();
     }
 
     public static StarDto buildStarDtoForUpdate() {
@@ -49,9 +49,9 @@ public final class TestUtils {
 
     public static PlanetDto buildPlanetDtoForAdd() {
         return PlanetDto.builder()
-                .name("name")
-                .star(StarDto.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .star(StarDto.builder().id(UUID.randomUUID()).build())
+            .build();
     }
 
     public static PlanetDto buildPlanetDtoForUpdate() {
@@ -64,9 +64,9 @@ public final class TestUtils {
 
     public static MoonDto buildMoonDtoForAdd() {
         return MoonDto.builder()
-                .name("name")
-                .planet(PlanetDto.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .planet(PlanetDto.builder().id(UUID.randomUUID()).build())
+            .build();
     }
 
     public static MoonDto buildMoonDtoForUpdate() {

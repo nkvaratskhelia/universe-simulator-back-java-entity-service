@@ -48,14 +48,14 @@ class MoonServiceTest {
     void testGetList() {
         //given
         List<Moon> list = List.of(
-                Moon.builder().name("name").build()
+            Moon.builder().name("name").build()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Moon> page = new PageImpl<>(list, pageable, list.size());
         Specification<Moon> specification = new MoonSpecification().getSpecification(new MoonFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Moon>>any(), any(Pageable.class)))
-                .willReturn(page);
+            .willReturn(page);
         //when
         Page<Moon> result = service.getList(specification, pageable);
         //then
@@ -106,9 +106,9 @@ class MoonServiceTest {
     void testAdd_planetNotFound() {
         //given
         Moon entity = Moon.builder()
-                .name("name")
-                .planet(Planet.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .planet(Planet.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsByName(anyString())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(false);
         //when
@@ -123,9 +123,9 @@ class MoonServiceTest {
     void testAdd_successfulAdd() throws AppException {
         //given
         Moon entity = Moon.builder()
-                .name("name")
-                .planet(Planet.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .planet(Planet.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsByName(anyString())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
@@ -171,10 +171,10 @@ class MoonServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Moon entity = Moon.builder()
-                .id(id)
-                .name("name")
-                .planet(Planet.builder().id(UUID.randomUUID()).build())
-                .build();
+            .id(id)
+            .name("name")
+            .planet(Planet.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(false);
@@ -191,10 +191,10 @@ class MoonServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Moon entity = Moon.builder()
-                .id(id)
-                .name("name")
-                .planet(Planet.builder().id(UUID.randomUUID()).build())
-                .build();
+            .id(id)
+            .name("name")
+            .planet(Planet.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(true);

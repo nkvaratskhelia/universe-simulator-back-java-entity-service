@@ -29,7 +29,7 @@ public abstract class AbstractMockMvcTest {
     }
 
     protected final void verifyErrorResponse(MockHttpServletResponse response, ErrorCodeType errorCode)
-            throws JsonProcessingException, UnsupportedEncodingException {
+        throws JsonProcessingException, UnsupportedEncodingException {
         RestErrorResponse restErrorResponse = objectMapper.readValue(response.getContentAsString(), RestErrorResponse.class);
         assertThat(restErrorResponse.getError()).isEqualTo(errorCode);
         assertThat(restErrorResponse.getStatus()).isEqualTo(errorCode.getHttpStatus().value());
@@ -40,7 +40,7 @@ public abstract class AbstractMockMvcTest {
     protected final MockHttpServletResponse performRequest(RequestBuilder requestBuilder) throws Exception {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
         return mvcResult.getRequest().isAsyncStarted()
-                ? mockMvc.perform(asyncDispatch(mvcResult)).andReturn().getResponse()
-                : mvcResult.getResponse();
+            ? mockMvc.perform(asyncDispatch(mvcResult)).andReturn().getResponse()
+            : mvcResult.getResponse();
     }
 }

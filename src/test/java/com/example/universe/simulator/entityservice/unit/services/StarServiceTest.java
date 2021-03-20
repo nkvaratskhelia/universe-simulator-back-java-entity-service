@@ -52,14 +52,14 @@ class StarServiceTest {
     void testGetList() {
         //given
         List<Star> list = List.of(
-                Star.builder().name("name").build()
+            Star.builder().name("name").build()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
         Specification<Star> specification = new StarSpecification().getSpecification(new StarFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Star>>any(), any(Pageable.class)))
-                .willReturn(page);
+            .willReturn(page);
         //when
         Page<Star> result = service.getList(specification, pageable);
         //then
@@ -110,9 +110,9 @@ class StarServiceTest {
     void testAdd_galaxyNotFound() {
         //given
         Star entity = Star.builder()
-                .name("name")
-                .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsByName(anyString())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(false);
         //when
@@ -127,9 +127,9 @@ class StarServiceTest {
     void testAdd_successfulAdd() throws AppException {
         //given
         Star entity = Star.builder()
-                .name("name")
-                .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-                .build();
+            .name("name")
+            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsByName(anyString())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
@@ -175,10 +175,10 @@ class StarServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Star entity = Star.builder()
-                .id(id)
-                .name("name")
-                .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-                .build();
+            .id(id)
+            .name("name")
+            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(false);
@@ -195,10 +195,10 @@ class StarServiceTest {
         //given
         UUID id = UUID.randomUUID();
         Star entity = Star.builder()
-                .id(id)
-                .name("name")
-                .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-                .build();
+            .id(id)
+            .name("name")
+            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+            .build();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(true);

@@ -40,9 +40,9 @@ public class PlanetController {
     private Callable<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
         Specification<Planet> specification = filter.map(item -> new PlanetSpecification().getSpecification(item))
-                .orElse(null);
+            .orElse(null);
         return () -> service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, PlanetDto.class));
+            .map(item -> modelMapper.map(item, PlanetDto.class));
     }
 
     @GetMapping("get/{id}")
