@@ -38,12 +38,12 @@ class PlanetControllerTest extends AbstractWebMvcTest {
     void testGetList() throws Exception {
         //given
         List<Planet> entityList = List.of(
-                Planet.builder().name("name").build()
+            Planet.builder().name("name").build()
         );
 
         Sort sort = Sort.by(
-                Sort.Order.desc("version"),
-                Sort.Order.asc("name")
+            Sort.Order.desc("version"),
+            Sort.Order.asc("name")
         );
         Pageable pageable = PageRequest.of(1, 2, sort);
         Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
@@ -52,10 +52,10 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         given(service.getList(any(), any())).willReturn(entityPage);
         //when
         MockHttpServletResponse response = performRequest(post("/planet/get-list")
-                .param("page", "1")
-                .param("size", "2")
-                .param("sort", "version,desc")
-                .param("sort", "name,asc")
+            .param("page", "1")
+            .param("size", "2")
+            .param("sort", "version,desc")
+            .param("sort", "name,asc")
         );
         //then
         verifySuccessfulResponse(response, dtoPage);
@@ -85,8 +85,8 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         given(service.add(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(post("/planet/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inputDto))
         );
         //then
         verifySuccessfulResponse(response, resultDto);
@@ -102,8 +102,8 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         given(service.update(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(put("/planet/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inputDto))
         );
         //then
         verifySuccessfulResponse(response, resultDto);

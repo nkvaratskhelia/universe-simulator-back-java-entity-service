@@ -38,12 +38,12 @@ class MoonControllerTest extends AbstractWebMvcTest {
     void testGetList() throws Exception {
         //given
         List<Moon> entityList = List.of(
-                Moon.builder().name("name").build()
+            Moon.builder().name("name").build()
         );
 
         Sort sort = Sort.by(
-                Sort.Order.desc("version"),
-                Sort.Order.asc("name")
+            Sort.Order.desc("version"),
+            Sort.Order.asc("name")
         );
         Pageable pageable = PageRequest.of(1, 2, sort);
         Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
@@ -52,10 +52,10 @@ class MoonControllerTest extends AbstractWebMvcTest {
         given(service.getList(any(), any())).willReturn(entityPage);
         //when
         MockHttpServletResponse response = performRequest(post("/moon/get-list")
-                .param("page", "1")
-                .param("size", "2")
-                .param("sort", "version,desc")
-                .param("sort", "name,asc")
+            .param("page", "1")
+            .param("size", "2")
+            .param("sort", "version,desc")
+            .param("sort", "name,asc")
         );
         //then
         verifySuccessfulResponse(response, dtoPage);
@@ -85,8 +85,8 @@ class MoonControllerTest extends AbstractWebMvcTest {
         given(service.add(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(post("/moon/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inputDto))
         );
         //then
         verifySuccessfulResponse(response, resultDto);
@@ -102,8 +102,8 @@ class MoonControllerTest extends AbstractWebMvcTest {
         given(service.update(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inputDto))
         );
         //then
         verifySuccessfulResponse(response, resultDto);

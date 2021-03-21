@@ -40,9 +40,9 @@ public class MoonController {
     private Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
         Specification<Moon> specification = filter.map(item -> new MoonSpecification().getSpecification(item))
-                .orElse(null);
+            .orElse(null);
         return () -> service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, MoonDto.class));
+            .map(item -> modelMapper.map(item, MoonDto.class));
     }
 
     @GetMapping("get/{id}")

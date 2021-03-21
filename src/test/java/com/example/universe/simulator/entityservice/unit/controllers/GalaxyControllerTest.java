@@ -38,12 +38,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     void testGetList() throws Exception {
         //given
         List<Galaxy> entityList = List.of(
-                Galaxy.builder().name("name").build()
+            Galaxy.builder().name("name").build()
         );
 
         Sort sort = Sort.by(
-                Sort.Order.desc("version"),
-                Sort.Order.asc("name")
+            Sort.Order.desc("version"),
+            Sort.Order.asc("name")
         );
         Pageable pageable = PageRequest.of(1, 2, sort);
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
@@ -52,10 +52,10 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         given(service.getList(any(), any())).willReturn(entityPage);
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
-                .param("page", "1")
-                .param("size", "2")
-                .param("sort", "version,desc")
-                .param("sort", "name,asc")
+            .param("page", "1")
+            .param("size", "2")
+            .param("sort", "version,desc")
+            .param("sort", "name,asc")
         );
         //then
         verifySuccessfulResponse(response, dtoPage);
@@ -85,8 +85,8 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         given(service.add(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inputDto))
         );
         //then
         verifySuccessfulResponse(response, resultDto);
@@ -102,8 +102,8 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         given(service.update(any())).willReturn(entity);
         //when
         MockHttpServletResponse response = performRequest(put("/galaxy/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inputDto))
         );
         //then
         verifySuccessfulResponse(response, resultDto);

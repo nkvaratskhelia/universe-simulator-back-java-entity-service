@@ -40,9 +40,9 @@ public class GalaxyController {
     private Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
         Specification<Galaxy> specification = filter.map(item -> new GalaxySpecification().getSpecification(item))
-                .orElse(null);
+            .orElse(null);
         return () -> service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, GalaxyDto.class));
+            .map(item -> modelMapper.map(item, GalaxyDto.class));
     }
 
     @GetMapping("get/{id}")

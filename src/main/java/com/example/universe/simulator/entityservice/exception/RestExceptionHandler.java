@@ -24,8 +24,8 @@ class RestExceptionHandler {
     private ResponseEntity<RestErrorResponse> buildErrorResponse(ErrorCodeType errorCode, Exception exception) {
         log.error("", exception);
         return ResponseEntity
-                .status(errorCode.getHttpStatus())
-                .body(new RestErrorResponse(errorCode));
+            .status(errorCode.getHttpStatus())
+            .body(new RestErrorResponse(errorCode));
     }
 
     //thrown when trying to delete non-existent entity

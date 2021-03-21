@@ -27,7 +27,7 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
 
     public Galaxy get(UUID id) throws AppException {
         return repository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
+            .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional

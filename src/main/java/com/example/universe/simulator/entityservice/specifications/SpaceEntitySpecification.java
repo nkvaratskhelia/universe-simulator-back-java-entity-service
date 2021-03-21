@@ -9,7 +9,7 @@ abstract class SpaceEntitySpecification<ENTITY, FILTER extends SpaceEntityFilter
 
     public final Specification<ENTITY> getSpecification(FILTER filter) {
         return getCommonSpecification(filter)
-                .and(getEntitySpecification(filter));
+            .and(getEntitySpecification(filter));
     }
 
     private Specification<ENTITY> getCommonSpecification(FILTER filter) {
@@ -18,8 +18,8 @@ abstract class SpaceEntitySpecification<ENTITY, FILTER extends SpaceEntityFilter
 
     private Specification<ENTITY> nameLike(String name) {
         return !Utils.isNullOrBlank(name)
-                ? like(SpaceEntity_.NAME, name)
-                : null;
+            ? like(SpaceEntity_.NAME, name)
+            : null;
     }
 
     abstract Specification<ENTITY> getEntitySpecification(FILTER filter);

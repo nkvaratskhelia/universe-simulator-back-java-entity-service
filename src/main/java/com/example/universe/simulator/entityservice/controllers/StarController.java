@@ -40,9 +40,9 @@ public class StarController {
     private Callable<Page<StarDto>> getList(@RequestBody Optional<StarFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
         Specification<Star> specification = filter.map(item -> new StarSpecification().getSpecification(item))
-                .orElse(null);
+            .orElse(null);
         return () -> service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, StarDto.class));
+            .map(item -> modelMapper.map(item, StarDto.class));
     }
 
     @GetMapping("get/{id}")

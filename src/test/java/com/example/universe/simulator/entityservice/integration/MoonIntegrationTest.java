@@ -29,8 +29,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(galaxyDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(galaxyDto))
         );
         //then
         GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
@@ -42,8 +42,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         starDto.getGalaxy().setId(addedGalaxy.getId());
         //when
         response = performRequest(post("/star/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(starDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(starDto))
         );
         //then
         StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
@@ -55,8 +55,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         planetDto.getStar().setId(addedStar.getId());
         //when
         response = performRequest(post("/planet/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(planetDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(planetDto))
         );
         //then
         PlanetDto addedPlanet = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
@@ -65,7 +65,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
         //when
         response = performRequest(post("/moon/get-list")
-                .param("sort", "invalid")
+            .param("sort", "invalid")
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
@@ -86,8 +86,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         dto.getPlanet().setId(addedPlanet.getId());
         //when
         response = performRequest(post("/moon/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         MoonDto addedDto1 = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
@@ -100,8 +100,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         dto.getPlanet().setId(addedPlanet.getId());
         //when
         response = performRequest(post("/moon/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         MoonDto addedDto2 = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
@@ -133,8 +133,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
         //when
         response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         MoonDto updatedDto = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
@@ -149,8 +149,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         dto.getPlanet().setId(addedPlanet.getId());
         //when
         response = performRequest(put("/moon/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dto))
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
@@ -161,8 +161,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         MoonFilter filter = MoonFilter.builder().name("1uP").build();
         //when
         response = performRequest(post("/moon/get-list")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filter))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filter))
         );
         //then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
