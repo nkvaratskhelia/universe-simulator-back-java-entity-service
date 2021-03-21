@@ -37,6 +37,5 @@ out/
 .vscode/
 
 ### Application ###
-src/main/generated
 bootstrap-local.*
 application-local.*
