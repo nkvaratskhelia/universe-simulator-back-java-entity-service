@@ -1,25 +1,23 @@
 = Project setup
 
 == Java
-`Java 11` is the current version of java for the project.
+The project is built with `Java 11`.
 
 == Gradle
-`Gradle Wrapper` is used as a build tool for the project. You don't need to install gradle on your
-machine, it will be installed automatically by gradle wrapper. Gradle-related properties can be
-found in the `gradle-wrapper.properties` file in the `gradle/wrapper` directory. You can update the
-gradle wrapper version with the following command:
-`./gradlew wrapper --gradle-version=x.x.x --distribution-type=all`.
+`Gradle Wrapper` is used as a build tool for the project. Gradle-related properties can be found in
+the `gradle/wrapper/gradle-wrapper.properties` file. You can update gradle wrapper with the
+following command: `./gradlew wrapper --gradle-version=x.x.x --distribution-type=all`.
 
 == Spring Boot
-The project is built with the `Spring Boot v 2.4.x` framework.
+The project uses `Spring Boot v 2.4.x` framework.
 
 === Profiles
 You can have as many spring boot profiles as needed. Profiles usually map to environments (dev,
 staging, prod). If you need to override some properties for an environment, add a new
-`bootstrap-xxx.properties` or `application-xxx.properties` file where xxx is the name of your
-profile. Keep in mind that the `test` profile is used for testing purposes. For local development
-you can use the `local` profile. `bootstrap-local.properties` and `application-local.properties` are
-excluded from git.
+`bootstrap-xxx.properties` or `application-xxx.properties` file, where xxx is the name of your
+profile. Keep in mind that the `test` profile is reserved for testing purposes and the `local`
+profile for local development. `bootstrap-local.properties` and `application-local.properties` files
+are excluded from git.
 
 === Running the application
 You can run the application with your IDE or with the following command:
@@ -27,24 +25,25 @@ You can run the application with your IDE or with the following command:
 choice, for example `local`.
 
 == Docker
-You need to have `docker` and `docker-compose` installed on your machine. All software dependencies
+You need to have `Docker` and `Docker Compose` installed on your machine. All software dependencies
 for the project can be found in the `docker-compose.yml` file.
 
 == Database
-`Postgres` is currently used to store the project model entities. To run a database service locally,
-use the following command: `docker-compose -p universe-simulator up -d entity-service-postgres`.
-Don't forget to supply env variables to the docker-compose file.
+`Postgres` is used to store the project model data. To start a postgres instance locally, use the
+following command: `docker-compose -p universe-simulator up -d entity-service-postgres`. Don't
+forget to supply the necessary configuration in the docker-compose service.
 
 === Migration
-`Liquibase` is used to handle database migratons. Liquibase config is described in the
+`Liquibase` is used to handle database migrations. Liquibase config is described in the
 `db/changelog/db.changelog-master.yaml` file. Add changefiles to the `db/changelog/scripts`
-directory. Changefile naming scheme is as follows: `xxx-change-description.extension`.
+directory. Changefile naming scheme is as follows: `xxx-change-description.extension`, where xxx is
+a growing numeric sequence.
 
 == Vault
-`Hashicorp Vault` is used to store project secrets and other variable configuration. You can set up
-vault locally as a docker-compose service by running the following command:
+`Hashicorp Vault` is used to store project secrets and other variable configuration. To start a
+vault instance locally, use the following command:
 `docker-compose -p universe-simulator up -d vault`. If you stop or restart your container, vault
-gets sealed and you'll need to unseal it to be able to use it again.
+gets sealed, and you'll need to unseal it to be able to use it again.
 
 === Configuration
 When vault is up and running, go to vault ui at `localhost:8200` and follow the setup instructions.
@@ -53,7 +52,7 @@ to the `spring.cloud.vault.kv.backend` property in `bootstrap.properties`. In th
 a secret with `entity-service` as path. This path maps to the `spring.application.name` property in
 `bootstrap.properties`. Additionally, you can add as many profile-specific paths as needed. These
 paths map to spring boot profiles (e.g. dev, staging, prod). Now you can add secrets and config in
-vault's `universe-simulator/entity-service/xxx` directory, where xxx maps to spring boot profiles.
+the `universe-simulator/entity-service/xxx` path, where xxx maps to spring boot profiles.
 
 == CI/CD
 `Github Actions` is used for automating the project workflow. The workflow file can be found in the
@@ -69,15 +68,14 @@ certificate in the keystore can be either self-signed or provided by a CA.
 
 === Keystore
 You can use java's `keytool` utility for working with keystore. To create a keystore file with a
-self-signed certificate run the following command: `keytool -genkeypair -alias universe-simulator
+self-signed certificate, run the following command: `keytool -genkeypair -alias universe-simulator
 -keyalg RSA -validity <validity-in-days> -keystore universe-simulator.p12` and follow the
 instructions. You can verify the contents of the keystore file with the following command:
 `keytool -list -v -keystore universe-simulator.p12`. Keep in mind that TLS is disabled when running
 the application with `test` profile.
 
 == Code Coverage
-`JaCoCo` plugin is used to analyze code coverage. Find out more about Jacoco plugin here:
-https://docs.gradle.org/current/userguide/jacoco_plugin.html[Plugin Documentation]
+`JaCoCo` plugin is used to analyze code coverage.
 
 === Report
 You can generate the test coverage report with the following command: `./gradlew jacocoTestReport`.
@@ -86,9 +84,9 @@ The report can be viewed by opening the `build/reports/jacoco/test/html/index.ht
 === Exclusions
 Classes which are excluded from jacoco reports are described in the `jacocoExclusions` method in
 `build.gradle`. Additionally, all lombok generated code is also excluded. This is achieved with the
-`lombok.addLombokGeneratedAnnotation = true` parameter in `lombok.config` file. If this parameter is
-present, lombok will annotate all generated code with its `@Generated` annotation and jacoco
-automatically excludes such code from processing.
+`lombok.addLombokGeneratedAnnotation = true` parameter in the `lombok.config` file. If this
+parameter is present, lombok will annotate all generated code with its `@Generated` annotation and
+jacoco automatically excludes such code from processing.
 
 === Rules
 100% code coverage is enforced by the `jacocoTestCoverageVerification` task. You can run this task
@@ -97,5 +95,4 @@ with the following command: `./gradlew jacocoTestCoverageVerification`. If the c
 
 == Rest API
 Rest API documentation is generated automatically by `springdoc-openapi`. You can access OpenAPI
-definition at `/v3/api-docs` and swagger ui at `/swagger-ui.html`. Find out more about springdoc
-here: https://springdoc.org/[Springdoc Documentation].
+definition at `/v3/api-docs` and swagger ui at `/swagger-ui.html`.
