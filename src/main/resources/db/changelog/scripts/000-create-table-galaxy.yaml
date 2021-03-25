@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 000-create-table-galaxy
+      author: nikoloz.kvaratskhelia
+      changes:
+        - createTable:
+            tableName: galaxy
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: bigint
+                  constraints:
+                    nullable: false

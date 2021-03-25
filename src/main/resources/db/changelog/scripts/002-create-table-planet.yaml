@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-table-planet
+      author: nikoloz.kvaratskhelia
+      changes:
+        - createTable:
+            tableName: planet
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: star_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_planet_star
+                    references: star
+                    nullable: false
