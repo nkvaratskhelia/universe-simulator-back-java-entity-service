@@ -62,10 +62,16 @@ the `universe-simulator/entity-service/xxx` path, where xxx maps to spring boot 
 
 == CI/CD
 `Github Actions` is used for automating the project workflow. The workflow file can be found in the
-`.github/workflows` directory. After building and testing the code, test coverage is enforced by the
-`jacocoTestCoverageVerification` task and if it passes, then a docker image is built using gradle's
-`bootBuildImage` task and uploaded to `Docker Hub`. You need to add docker registry credentials to
-your repository secrets.
+`.github/workflows` directory.
+
+=== Steps
+
+1. Check out code from the repository
+2. Install java
+3. Validate `gradle-wrapper.jar`
+4. Build, test and check code coverage
+5. Build a docker image with gradle's `bootBuildImage` task and upload to `Docker Hub`. You need to
+add docker registry credentials to your repository secrets.
 
 == Https/TLS
 Application has support for `Https/TLS` with `http/2` protocol also enabled. You need to have a
