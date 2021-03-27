@@ -32,14 +32,15 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class MoonController {
 
-    private final ModelMapper modelMapper;
-
     private final MoonService service;
+    private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
     private Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-        Specification<Moon> specification = filter.map(item -> new MoonSpecification().getSpecification(item))
+
+        Specification<Moon> specification = filter
+            .map(item -> new MoonSpecification().getSpecification(item))
             .orElse(null);
         return () -> service.getList(specification, pageable)
             .map(item -> modelMapper.map(item, MoonDto.class));

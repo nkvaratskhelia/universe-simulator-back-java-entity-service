@@ -32,14 +32,15 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class PlanetController {
 
-    private final ModelMapper modelMapper;
-
     private final PlanetService service;
+    private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
     private Callable<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-        Specification<Planet> specification = filter.map(item -> new PlanetSpecification().getSpecification(item))
+
+        Specification<Planet> specification = filter
+            .map(item -> new PlanetSpecification().getSpecification(item))
             .orElse(null);
         return () -> service.getList(specification, pageable)
             .map(item -> modelMapper.map(item, PlanetDto.class));

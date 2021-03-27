@@ -108,3 +108,7 @@ with the following command: `./gradlew jacocoTestCoverageVerification`. If the c
 == Rest API
 Rest API documentation is generated automatically by `springdoc-openapi`. You can access OpenAPI
 definition at `/v3/api-docs` and swagger ui at `/swagger-ui.html`.
+
+== Messaging
+RabbitMQ is used for messaging purposes (to be defined later). To start a rabbitmq instance locally,
+use the following command: `docker-compose -p universe-simulator up -d rabbitmq`.

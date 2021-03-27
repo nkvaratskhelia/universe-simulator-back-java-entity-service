@@ -43,6 +43,19 @@ services:
       - vault-logs:/vault/logs
       - vault-file:/vault/file
 
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: universe-simulator-rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${US_RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${US_RABBITMQ_DEFAULT_PASS}
+    ports:
+      - ${US_RABBITMQ_PORT}:5672
+      - ${US_RABBITMQ_MANAGEMENT_PORT}:15672
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
   entity-service-app:
     image: universesimulator/entity-service
     container_name: universe-simulator-entity-service-app
@@ -56,3 +69,4 @@ volumes:
   entity-service-postgres:
   vault-logs:
   vault-file:
+  rabbitmq:

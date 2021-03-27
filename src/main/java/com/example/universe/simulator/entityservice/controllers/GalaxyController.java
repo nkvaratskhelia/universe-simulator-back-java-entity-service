@@ -32,14 +32,15 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class GalaxyController {
 
-    private final ModelMapper modelMapper;
-
     private final GalaxyService service;
+    private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
     private Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-        Specification<Galaxy> specification = filter.map(item -> new GalaxySpecification().getSpecification(item))
+
+        Specification<Galaxy> specification = filter
+            .map(item -> new GalaxySpecification().getSpecification(item))
             .orElse(null);
         return () -> service.getList(specification, pageable)
             .map(item -> modelMapper.map(item, GalaxyDto.class));

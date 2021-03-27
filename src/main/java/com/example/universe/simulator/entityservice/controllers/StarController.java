@@ -32,14 +32,15 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class StarController {
 
-    private final ModelMapper modelMapper;
-
     private final StarService service;
+    private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
     private Callable<Page<StarDto>> getList(@RequestBody Optional<StarFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-        Specification<Star> specification = filter.map(item -> new StarSpecification().getSpecification(item))
+
+        Specification<Star> specification = filter
+            .map(item -> new StarSpecification().getSpecification(item))
             .orElse(null);
         return () -> service.getList(specification, pageable)
             .map(item -> modelMapper.map(item, StarDto.class));
