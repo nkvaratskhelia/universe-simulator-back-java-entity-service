@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 003-create-table-moon.yaml
+      id: 003-create-table-moon
       author: nikoloz.kvaratskhelia
       changes:
         - createTable:
