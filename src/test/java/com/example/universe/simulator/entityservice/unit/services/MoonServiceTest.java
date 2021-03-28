@@ -2,6 +2,7 @@ package com.example.universe.simulator.entityservice.unit.services;
 
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
@@ -9,6 +10,7 @@ import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecification;
+import com.example.universe.simulator.entityservice.types.EventType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -40,6 +42,9 @@ class MoonServiceTest {
 
     @Mock
     private PlanetRepository planetRepository;
+
+    @Mock
+    private EventPublisher eventPublisher;
 
     @InjectMocks
     private MoonService service;
@@ -100,6 +105,7 @@ class MoonServiceTest {
         then(repository).should().existsByName(entity.getName());
         then(repository).should(never()).existsByNameAndIdNot(anyString(), any());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
@@ -117,12 +123,14 @@ class MoonServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_PLANET);
         then(planetRepository).should().existsById(entity.getPlanet().getId());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testAdd_successfulAdd() throws AppException {
         //given
         Moon entity = Moon.builder()
+            .id(UUID.randomUUID())
             .name("name")
             .planet(Planet.builder().id(UUID.randomUUID()).build())
             .build();
@@ -134,44 +142,44 @@ class MoonServiceTest {
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
+        then(eventPublisher).should().publishEvent(EventType.MOON_ADD, entity.getId().toString());
     }
 
     @Test
     void testUpdate_idNotFound() {
         //given
-        UUID id = UUID.randomUUID();
-        Moon entity = Moon.builder().id(id).build();
+        Moon entity = Moon.builder().id(UUID.randomUUID()).build();
         given(repository.existsById(any())).willReturn(false);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
-        then(repository).should().existsById(id);
+        then(repository).should().existsById(entity.getId());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testUpdate_duplicateName() {
         //given
-        UUID id = UUID.randomUUID();
-        Moon entity = Moon.builder().id(id).name("name").build();
+        Moon entity = Moon.builder().id(UUID.randomUUID()).name("name").build();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
-        then(repository).should().existsByNameAndIdNot(entity.getName(), id);
+        then(repository).should().existsByNameAndIdNot(entity.getName(), entity.getId());
         then(repository).should(never()).existsByName(any());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testUpdate_planetNotFound() {
         //given
-        UUID id = UUID.randomUUID();
         Moon entity = Moon.builder()
-            .id(id)
+            .id(UUID.randomUUID())
             .name("name")
             .planet(Planet.builder().id(UUID.randomUUID()).build())
             .build();
@@ -184,14 +192,14 @@ class MoonServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_PLANET);
         then(planetRepository).should().existsById(entity.getPlanet().getId());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testUpdate_successfulUpdate() throws AppException {
         //given
-        UUID id = UUID.randomUUID();
         Moon entity = Moon.builder()
-            .id(id)
+            .id(UUID.randomUUID())
             .name("name")
             .planet(Planet.builder().id(UUID.randomUUID()).build())
             .build();
@@ -204,6 +212,7 @@ class MoonServiceTest {
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
+        then(eventPublisher).should().publishEvent(EventType.MOON_UPDATE, entity.getId().toString());
     }
 
     @Test
@@ -214,5 +223,6 @@ class MoonServiceTest {
         service.delete(id);
         //then
         then(repository).should().deleteById(id);
+        then(eventPublisher).should().publishEvent(EventType.MOON_DELETE, id.toString());
     }
 }

@@ -1,11 +1,13 @@
 package com.example.universe.simulator.entityservice.services;
 
 import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
+import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ public class PlanetService extends SpaceEntityService<Planet> {
     private final PlanetRepository repository;
     private final StarRepository starRepository;
     private final MoonRepository moonRepository;
+    private final EventPublisher eventPublisher;
 
     public Page<Planet> getList(Specification<Planet> specification, Pageable pageable) {
         return repository.findAll(specification, pageable);
@@ -35,13 +38,23 @@ public class PlanetService extends SpaceEntityService<Planet> {
     @Transactional
     public Planet add(Planet entity) throws AppException {
         validate(entity, false, repository);
-        return repository.save(entity);
+        Planet result = repository.save(entity);
+
+        log.info("added [{}]", result.getId());
+        eventPublisher.publishEvent(EventType.PLANET_ADD, result.getId().toString());
+
+        return result;
     }
 
     @Transactional
     public Planet update(Planet entity) throws AppException {
         validate(entity, true, repository);
-        return repository.save(entity);
+        Planet result = repository.save(entity);
+
+        log.info("updated [{}]", entity.getId());
+        eventPublisher.publishEvent(EventType.PLANET_UPDATE, entity.getId().toString());
+
+        return result;
     }
 
     @Transactional
@@ -51,6 +64,9 @@ public class PlanetService extends SpaceEntityService<Planet> {
         }
 
         repository.deleteById(id);
+
+        log.info("deleted [{}]", id);
+        eventPublisher.publishEvent(EventType.PLANET_DELETE, id.toString());
     }
 
     @Override

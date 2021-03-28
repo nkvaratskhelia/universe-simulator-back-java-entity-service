@@ -21,9 +21,7 @@ import java.util.UUID;
 abstract class SpaceEntityDto {
 
     private UUID id;
-
     private String name;
-
     private Long version;
 
     public final void validate(boolean isUpdate) throws AppException {

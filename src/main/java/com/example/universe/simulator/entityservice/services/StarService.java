@@ -1,11 +1,13 @@
 package com.example.universe.simulator.entityservice.services;
 
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
+import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ public class StarService extends SpaceEntityService<Star> {
     private final StarRepository repository;
     private final GalaxyRepository galaxyRepository;
     private final PlanetRepository planetRepository;
+    private final EventPublisher eventPublisher;
 
     public Page<Star> getList(Specification<Star> specification, Pageable pageable) {
         return repository.findAll(specification, pageable);
@@ -35,13 +38,23 @@ public class StarService extends SpaceEntityService<Star> {
     @Transactional
     public Star add(Star entity) throws AppException {
         validate(entity, false, repository);
-        return repository.save(entity);
+        Star result = repository.save(entity);
+
+        log.info("added [{}]", result.getId());
+        eventPublisher.publishEvent(EventType.STAR_ADD, result.getId().toString());
+
+        return result;
     }
 
     @Transactional
     public Star update(Star entity) throws AppException {
         validate(entity, true, repository);
-        return repository.save(entity);
+        Star result = repository.save(entity);
+
+        log.info("updated [{}]", entity.getId());
+        eventPublisher.publishEvent(EventType.STAR_UPDATE, entity.getId().toString());
+
+        return result;
     }
 
     @Transactional
@@ -51,6 +64,9 @@ public class StarService extends SpaceEntityService<Star> {
         }
 
         repository.deleteById(id);
+
+        log.info("deleted [{}]", id);
+        eventPublisher.publishEvent(EventType.STAR_DELETE, id.toString());
     }
 
     @Override

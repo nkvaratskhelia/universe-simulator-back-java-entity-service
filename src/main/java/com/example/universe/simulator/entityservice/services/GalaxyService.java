@@ -1,10 +1,12 @@
 package com.example.universe.simulator.entityservice.services;
 
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
+import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,7 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
 
     private final GalaxyRepository repository;
     private final StarRepository starRepository;
+    private final EventPublisher eventPublisher;
 
     public Page<Galaxy> getList(Specification<Galaxy> specification, Pageable pageable) {
         return repository.findAll(specification, pageable);
@@ -33,13 +36,23 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
     @Transactional
     public Galaxy add(Galaxy entity) throws AppException {
         validate(entity, false, repository);
-        return repository.save(entity);
+        Galaxy result = repository.save(entity);
+
+        log.info("added [{}]", result.getId());
+        eventPublisher.publishEvent(EventType.GALAXY_ADD, result.getId().toString());
+
+        return result;
     }
 
     @Transactional
     public Galaxy update(Galaxy entity) throws AppException {
         validate(entity, true, repository);
-        return repository.save(entity);
+        Galaxy result = repository.save(entity);
+
+        log.info("updated [{}]", entity.getId());
+        eventPublisher.publishEvent(EventType.GALAXY_UPDATE, entity.getId().toString());
+
+        return result;
     }
 
     @Transactional
@@ -49,6 +62,9 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
         }
 
         repository.deleteById(id);
+
+        log.info("deleted [{}]", id);
+        eventPublisher.publishEvent(EventType.GALAXY_DELETE, id.toString());
     }
 
     @Override
