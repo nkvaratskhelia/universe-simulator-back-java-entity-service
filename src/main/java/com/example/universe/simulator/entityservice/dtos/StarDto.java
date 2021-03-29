@@ -13,8 +13,8 @@ import java.util.Objects;
 
 @Getter @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class StarDto extends SpaceEntityDto {
 

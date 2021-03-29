@@ -9,8 +9,8 @@ import lombok.experimental.SuperBuilder;
 
 @Getter @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class GalaxyDto extends SpaceEntityDto {
 

@@ -15,8 +15,8 @@ import java.util.UUID;
 
 @Getter @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @SuperBuilder
+@EqualsAndHashCode
 @ToString
 abstract class SpaceEntityDto {
 

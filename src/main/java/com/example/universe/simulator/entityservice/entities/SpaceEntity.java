@@ -13,8 +13,8 @@ import javax.persistence.Version;
 @MappedSuperclass
 @Getter @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 public abstract class SpaceEntity extends AbstractEntity {
 
     @Column(nullable = false, unique = true)

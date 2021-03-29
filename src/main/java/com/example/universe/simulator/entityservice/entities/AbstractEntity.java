@@ -14,8 +14,8 @@ import java.util.UUID;
 @MappedSuperclass
 @Getter @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @SuperBuilder
+@EqualsAndHashCode
 abstract class AbstractEntity {
 
     @Id

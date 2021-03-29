@@ -13,8 +13,8 @@ import javax.persistence.ManyToOne;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 public class Star extends SpaceEntity {
 
     @ManyToOne
