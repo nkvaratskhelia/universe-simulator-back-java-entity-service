@@ -1,7 +1,7 @@
 package com.example.universe.simulator.entityservice.unit.services;
 
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Moon;
-import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
@@ -53,7 +53,7 @@ class MoonServiceTest {
     void testGetList() {
         //given
         List<Moon> list = List.of(
-            Moon.builder().name("name").build()
+            TestUtils.buildMoon()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Moon> page = new PageImpl<>(list, pageable, list.size());
@@ -84,7 +84,7 @@ class MoonServiceTest {
     void testGet_successfulGet() throws AppException {
         //given
         UUID id = UUID.randomUUID();
-        Moon entity = Moon.builder().name("name").build();
+        Moon entity = TestUtils.buildMoon();
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         Moon result = service.get(id);
@@ -96,7 +96,7 @@ class MoonServiceTest {
     @Test
     void testAdd_duplicateName() {
         //given
-        Moon entity = Moon.builder().name("name").build();
+        Moon entity = TestUtils.buildMoon();
         given(repository.existsByName(anyString())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
@@ -111,10 +111,7 @@ class MoonServiceTest {
     @Test
     void testAdd_planetNotFound() {
         //given
-        Moon entity = Moon.builder()
-            .name("name")
-            .planet(Planet.builder().id(UUID.randomUUID()).build())
-            .build();
+        Moon entity = TestUtils.buildMoon();
         given(repository.existsByName(anyString())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(false);
         //when
@@ -129,11 +126,7 @@ class MoonServiceTest {
     @Test
     void testAdd_successfulAdd() throws AppException {
         //given
-        Moon entity = Moon.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .planet(Planet.builder().id(UUID.randomUUID()).build())
-            .build();
+        Moon entity = TestUtils.buildMoon();
         given(repository.existsByName(anyString())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
@@ -148,7 +141,7 @@ class MoonServiceTest {
     @Test
     void testUpdate_idNotFound() {
         //given
-        Moon entity = Moon.builder().id(UUID.randomUUID()).build();
+        Moon entity = TestUtils.buildMoon();
         given(repository.existsById(any())).willReturn(false);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
@@ -162,7 +155,7 @@ class MoonServiceTest {
     @Test
     void testUpdate_duplicateName() {
         //given
-        Moon entity = Moon.builder().id(UUID.randomUUID()).name("name").build();
+        Moon entity = TestUtils.buildMoon();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
         //when
@@ -178,11 +171,7 @@ class MoonServiceTest {
     @Test
     void testUpdate_planetNotFound() {
         //given
-        Moon entity = Moon.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .planet(Planet.builder().id(UUID.randomUUID()).build())
-            .build();
+        Moon entity = TestUtils.buildMoon();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(false);
@@ -198,11 +187,7 @@ class MoonServiceTest {
     @Test
     void testUpdate_successfulUpdate() throws AppException {
         //given
-        Moon entity = Moon.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .planet(Planet.builder().id(UUID.randomUUID()).build())
-            .build();
+        Moon entity = TestUtils.buildMoon();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(true);

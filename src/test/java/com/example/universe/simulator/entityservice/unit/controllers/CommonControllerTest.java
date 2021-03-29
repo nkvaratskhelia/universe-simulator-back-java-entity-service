@@ -34,7 +34,7 @@ class CommonControllerTest extends AbstractWebMvcTest {
     void testGetList_defaultPageable() throws Exception {
         //given
         List<Galaxy> entityList = List.of(
-            Galaxy.builder().name("name").build()
+            TestUtils.buildGalaxy()
         );
 
         Pageable pageable = TestUtils.getDefaultPageable();

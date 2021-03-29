@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.unit.services;
 
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
@@ -52,7 +53,7 @@ class GalaxyServiceTest {
     void testGetList() {
         //given
         List<Galaxy> list = List.of(
-            Galaxy.builder().name("name").build()
+            TestUtils.buildGalaxy()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Galaxy> page = new PageImpl<>(list, pageable, list.size());
@@ -83,7 +84,7 @@ class GalaxyServiceTest {
     void testGet_successfulGet() throws AppException {
         //given
         UUID id = UUID.randomUUID();
-        Galaxy entity = Galaxy.builder().name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         Galaxy result = service.get(id);
@@ -95,7 +96,7 @@ class GalaxyServiceTest {
     @Test
     void testAdd_duplicateName() {
         //given
-        Galaxy entity = Galaxy.builder().name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsByName(anyString())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
@@ -110,7 +111,7 @@ class GalaxyServiceTest {
     @Test
     void testAdd_successfulAdd() throws AppException {
         //given
-        Galaxy entity = Galaxy.builder().id(UUID.randomUUID()).name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsByName(anyString())).willReturn(false);
         given(repository.save(any())).willReturn(entity);
         //when
@@ -124,7 +125,7 @@ class GalaxyServiceTest {
     @Test
     void testUpdate_idNotFound() {
         //given
-        Galaxy entity = Galaxy.builder().id(UUID.randomUUID()).build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsById(any())).willReturn(false);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
@@ -138,7 +139,7 @@ class GalaxyServiceTest {
     @Test
     void testUpdate_duplicateName() {
         //given
-        Galaxy entity = Galaxy.builder().id(UUID.randomUUID()).name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
         //when
@@ -154,7 +155,7 @@ class GalaxyServiceTest {
     @Test
     void testUpdate_successfulUpdate() throws AppException {
         //given
-        Galaxy entity = Galaxy.builder().id(UUID.randomUUID()).name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(repository.save(any())).willReturn(entity);

@@ -38,7 +38,7 @@ class StarControllerTest extends AbstractWebMvcTest {
     void testGetList() throws Exception {
         //given
         List<Star> entityList = List.of(
-            Star.builder().name("name").build()
+            TestUtils.buildStar()
         );
 
         Sort sort = Sort.by(
@@ -66,7 +66,7 @@ class StarControllerTest extends AbstractWebMvcTest {
     void testGet() throws Exception {
         //given
         UUID id = UUID.randomUUID();
-        Star entity = Star.builder().name("name").build();
+        Star entity = TestUtils.buildStar();
         StarDto dto = modelMapper.map(entity, StarDto.class);
         given(service.get(any())).willReturn(entity);
         //when

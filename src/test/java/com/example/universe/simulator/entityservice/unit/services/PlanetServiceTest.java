@@ -1,7 +1,7 @@
 package com.example.universe.simulator.entityservice.unit.services;
 
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Planet;
-import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
@@ -57,7 +57,7 @@ class PlanetServiceTest {
     void testGetList() {
         //given
         List<Planet> list = List.of(
-            Planet.builder().name("name").build()
+            TestUtils.buildPlanet()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Planet> page = new PageImpl<>(list, pageable, list.size());
@@ -88,7 +88,7 @@ class PlanetServiceTest {
     void testGet_successfulGet() throws AppException {
         //given
         UUID id = UUID.randomUUID();
-        Planet entity = Planet.builder().name("name").build();
+        Planet entity = TestUtils.buildPlanet();
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         Planet result = service.get(id);
@@ -100,7 +100,7 @@ class PlanetServiceTest {
     @Test
     void testAdd_duplicateName() {
         //given
-        Planet entity = Planet.builder().name("name").build();
+        Planet entity = TestUtils.buildPlanet();
         given(repository.existsByName(anyString())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
@@ -115,10 +115,7 @@ class PlanetServiceTest {
     @Test
     void testAdd_starNotFound() {
         //given
-        Planet entity = Planet.builder()
-            .name("name")
-            .star(Star.builder().id(UUID.randomUUID()).build())
-            .build();
+        Planet entity = TestUtils.buildPlanet();
         given(repository.existsByName(anyString())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(false);
         //when
@@ -133,11 +130,7 @@ class PlanetServiceTest {
     @Test
     void testAdd_successfulAdd() throws AppException {
         //given
-        Planet entity = Planet.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .star(Star.builder().id(UUID.randomUUID()).build())
-            .build();
+        Planet entity = TestUtils.buildPlanet();
         given(repository.existsByName(anyString())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
@@ -152,7 +145,7 @@ class PlanetServiceTest {
     @Test
     void testUpdate_idNotFound() {
         //given
-        Planet entity = Planet.builder().id(UUID.randomUUID()).build();
+        Planet entity = TestUtils.buildPlanet();
         given(repository.existsById(any())).willReturn(false);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
@@ -166,7 +159,7 @@ class PlanetServiceTest {
     @Test
     void testUpdate_duplicateName() {
         //given
-        Planet entity = Planet.builder().id(UUID.randomUUID()).name("name").build();
+        Planet entity = TestUtils.buildPlanet();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
         //when
@@ -182,11 +175,7 @@ class PlanetServiceTest {
     @Test
     void testUpdate_starNotFound() {
         //given
-        Planet entity = Planet.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .star(Star.builder().id(UUID.randomUUID()).build())
-            .build();
+        Planet entity = TestUtils.buildPlanet();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(false);
@@ -202,11 +191,7 @@ class PlanetServiceTest {
     @Test
     void testUpdate_successfulUpdate() throws AppException {
         //given
-        Planet entity = Planet.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .star(Star.builder().id(UUID.randomUUID()).build())
-            .build();
+        Planet entity = TestUtils.buildPlanet();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(starRepository.existsById(any())).willReturn(true);

@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.unit.services;
 
-import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
@@ -57,7 +57,7 @@ class StarServiceTest {
     void testGetList() {
         //given
         List<Star> list = List.of(
-            Star.builder().name("name").build()
+            TestUtils.buildStar()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
@@ -88,7 +88,7 @@ class StarServiceTest {
     void testGet_successfulGet() throws AppException {
         //given
         UUID id = UUID.randomUUID();
-        Star entity = Star.builder().name("name").build();
+        Star entity = TestUtils.buildStar();
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         Star result = service.get(id);
@@ -100,7 +100,7 @@ class StarServiceTest {
     @Test
     void testAdd_duplicateName() {
         //given
-        Star entity = Star.builder().name("name").build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsByName(anyString())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
@@ -115,10 +115,7 @@ class StarServiceTest {
     @Test
     void testAdd_galaxyNotFound() {
         //given
-        Star entity = Star.builder()
-            .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-            .build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsByName(anyString())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(false);
         //when
@@ -133,11 +130,7 @@ class StarServiceTest {
     @Test
     void testAdd_successfulAdd() throws AppException {
         //given
-        Star entity = Star.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-            .build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsByName(anyString())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
@@ -152,7 +145,7 @@ class StarServiceTest {
     @Test
     void testUpdate_idNotFound() {
         //given
-        Star entity = Star.builder().id(UUID.randomUUID()).build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(false);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
@@ -166,7 +159,7 @@ class StarServiceTest {
     @Test
     void testUpdate_duplicateName() {
         //given
-        Star entity = Star.builder().id(UUID.randomUUID()).name("name").build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
         //when
@@ -182,11 +175,7 @@ class StarServiceTest {
     @Test
     void testUpdate_galaxyNotFound() {
         //given
-        Star entity = Star.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-            .build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(false);
@@ -202,11 +191,7 @@ class StarServiceTest {
     @Test
     void testUpdate_successfulUpdate() throws AppException {
         //given
-        Star entity = Star.builder()
-            .id(UUID.randomUUID())
-            .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-            .build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(true);
