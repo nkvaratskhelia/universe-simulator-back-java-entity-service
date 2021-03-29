@@ -4,6 +4,7 @@ import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
@@ -16,6 +17,7 @@ import java.time.OffsetDateTime;
 @Getter @Setter
 @NoArgsConstructor
 @SuperBuilder
+@ToString
 public class Event extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
