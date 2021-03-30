@@ -1,7 +1,8 @@
 package com.example.universe.simulator.entityservice.unit.services;
 
-import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
@@ -10,6 +11,7 @@ import com.example.universe.simulator.entityservice.repositories.PlanetRepositor
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecification;
+import com.example.universe.simulator.entityservice.types.EventType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -45,6 +47,9 @@ class StarServiceTest {
     @Mock
     private PlanetRepository planetRepository;
 
+    @Mock
+    private EventPublisher eventPublisher;
+
     @InjectMocks
     private StarService service;
 
@@ -52,7 +57,7 @@ class StarServiceTest {
     void testGetList() {
         //given
         List<Star> list = List.of(
-            Star.builder().name("name").build()
+            TestUtils.buildStar()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
@@ -83,7 +88,7 @@ class StarServiceTest {
     void testGet_successfulGet() throws AppException {
         //given
         UUID id = UUID.randomUUID();
-        Star entity = Star.builder().name("name").build();
+        Star entity = TestUtils.buildStar();
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         Star result = service.get(id);
@@ -95,7 +100,7 @@ class StarServiceTest {
     @Test
     void testAdd_duplicateName() {
         //given
-        Star entity = Star.builder().name("name").build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsByName(anyString())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
@@ -104,15 +109,13 @@ class StarServiceTest {
         then(repository).should().existsByName(entity.getName());
         then(repository).should(never()).existsByNameAndIdNot(anyString(), any());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testAdd_galaxyNotFound() {
         //given
-        Star entity = Star.builder()
-            .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-            .build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsByName(anyString())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(false);
         //when
@@ -121,15 +124,13 @@ class StarServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
         then(galaxyRepository).should().existsById(entity.getGalaxy().getId());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testAdd_successfulAdd() throws AppException {
         //given
-        Star entity = Star.builder()
-            .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-            .build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsByName(anyString())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
@@ -138,47 +139,43 @@ class StarServiceTest {
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
+        then(eventPublisher).should().publishEvent(EventType.STAR_ADD, entity.getId().toString());
     }
 
     @Test
     void testUpdate_idNotFound() {
         //given
-        UUID id = UUID.randomUUID();
-        Star entity = Star.builder().id(id).build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(false);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
-        then(repository).should().existsById(id);
+        then(repository).should().existsById(entity.getId());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testUpdate_duplicateName() {
         //given
-        UUID id = UUID.randomUUID();
-        Star entity = Star.builder().id(id).name("name").build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
-        then(repository).should().existsByNameAndIdNot(entity.getName(), id);
+        then(repository).should().existsByNameAndIdNot(entity.getName(), entity.getId());
         then(repository).should(never()).existsByName(any());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testUpdate_galaxyNotFound() {
         //given
-        UUID id = UUID.randomUUID();
-        Star entity = Star.builder()
-            .id(id)
-            .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-            .build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(false);
@@ -188,17 +185,13 @@ class StarServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
         then(galaxyRepository).should().existsById(entity.getGalaxy().getId());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testUpdate_successfulUpdate() throws AppException {
         //given
-        UUID id = UUID.randomUUID();
-        Star entity = Star.builder()
-            .id(id)
-            .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
-            .build();
+        Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(true);
@@ -208,6 +201,7 @@ class StarServiceTest {
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
+        then(eventPublisher).should().publishEvent(EventType.STAR_UPDATE, entity.getId().toString());
     }
 
     @Test
@@ -221,6 +215,7 @@ class StarServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
         then(planetRepository).should().existsByStarId(id);
         then(repository).should(never()).deleteById(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
@@ -232,5 +227,6 @@ class StarServiceTest {
         service.delete(id);
         //then
         then(repository).should().deleteById(id);
+        then(eventPublisher).should().publishEvent(EventType.STAR_DELETE, id.toString());
     }
 }

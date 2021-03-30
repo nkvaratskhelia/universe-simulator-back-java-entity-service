@@ -4,8 +4,12 @@ import com.example.universe.simulator.entityservice.entities.SpaceEntity;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.SpaceEntityRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class SpaceEntityService<T extends SpaceEntity> {
+
+    final Logger log = LoggerFactory.getLogger(this.getClass());
 
     void validate(T entity, boolean isUpdate, SpaceEntityRepository<T> repository) throws AppException {
         validateCommonRules(entity, isUpdate, repository);

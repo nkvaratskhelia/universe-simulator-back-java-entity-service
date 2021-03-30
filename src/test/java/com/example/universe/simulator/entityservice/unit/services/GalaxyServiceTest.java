@@ -1,6 +1,8 @@
 package com.example.universe.simulator.entityservice.unit.services;
 
+import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
@@ -8,6 +10,7 @@ import com.example.universe.simulator.entityservice.repositories.GalaxyRepositor
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecification;
+import com.example.universe.simulator.entityservice.types.EventType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -40,6 +43,9 @@ class GalaxyServiceTest {
     @Mock
     private StarRepository starRepository;
 
+    @Mock
+    private EventPublisher eventPublisher;
+
     @InjectMocks
     private GalaxyService service;
 
@@ -47,7 +53,7 @@ class GalaxyServiceTest {
     void testGetList() {
         //given
         List<Galaxy> list = List.of(
-            Galaxy.builder().name("name").build()
+            TestUtils.buildGalaxy()
         );
         Pageable pageable = Pageable.unpaged();
         Page<Galaxy> page = new PageImpl<>(list, pageable, list.size());
@@ -78,7 +84,7 @@ class GalaxyServiceTest {
     void testGet_successfulGet() throws AppException {
         //given
         UUID id = UUID.randomUUID();
-        Galaxy entity = Galaxy.builder().name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.findById(any())).willReturn(Optional.of(entity));
         //when
         Galaxy result = service.get(id);
@@ -90,7 +96,7 @@ class GalaxyServiceTest {
     @Test
     void testAdd_duplicateName() {
         //given
-        Galaxy entity = Galaxy.builder().name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsByName(anyString())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
@@ -99,12 +105,13 @@ class GalaxyServiceTest {
         then(repository).should().existsByName(entity.getName());
         then(repository).should(never()).existsByNameAndIdNot(anyString(), any());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testAdd_successfulAdd() throws AppException {
         //given
-        Galaxy entity = Galaxy.builder().name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsByName(anyString())).willReturn(false);
         given(repository.save(any())).willReturn(entity);
         //when
@@ -112,43 +119,43 @@ class GalaxyServiceTest {
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
+        then(eventPublisher).should().publishEvent(EventType.GALAXY_ADD, entity.getId().toString());
     }
 
     @Test
     void testUpdate_idNotFound() {
         //given
-        UUID id = UUID.randomUUID();
-        Galaxy entity = Galaxy.builder().id(id).build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsById(any())).willReturn(false);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
-        then(repository).should().existsById(id);
+        then(repository).should().existsById(entity.getId());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testUpdate_duplicateName() {
         //given
-        UUID id = UUID.randomUUID();
-        Galaxy entity = Galaxy.builder().id(id).name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
         //when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
-        then(repository).should().existsByNameAndIdNot(entity.getName(), id);
+        then(repository).should().existsByNameAndIdNot(entity.getName(), entity.getId());
         then(repository).should(never()).existsByName(any());
         then(repository).should(never()).save(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
     void testUpdate_successfulUpdate() throws AppException {
         //given
-        UUID id = UUID.randomUUID();
-        Galaxy entity = Galaxy.builder().id(id).name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(repository.save(any())).willReturn(entity);
@@ -157,6 +164,7 @@ class GalaxyServiceTest {
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
+        then(eventPublisher).should().publishEvent(EventType.GALAXY_UPDATE, entity.getId().toString());
     }
 
     @Test
@@ -170,6 +178,7 @@ class GalaxyServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
         then(starRepository).should().existsByGalaxyId(id);
         then(repository).should(never()).deleteById(any());
+        then(eventPublisher).shouldHaveNoInteractions();
     }
 
     @Test
@@ -181,5 +190,6 @@ class GalaxyServiceTest {
         service.delete(id);
         //then
         then(repository).should().deleteById(id);
+        then(eventPublisher).should().publishEvent(EventType.GALAXY_DELETE, id.toString());
     }
 }

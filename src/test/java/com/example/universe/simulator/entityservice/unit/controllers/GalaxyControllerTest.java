@@ -38,7 +38,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     void testGetList() throws Exception {
         //given
         List<Galaxy> entityList = List.of(
-            Galaxy.builder().name("name").build()
+            TestUtils.buildGalaxy()
         );
 
         Sort sort = Sort.by(
@@ -66,7 +66,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     void testGet() throws Exception {
         //given
         UUID id = UUID.randomUUID();
-        Galaxy entity = Galaxy.builder().name("name").build();
+        Galaxy entity = TestUtils.buildGalaxy();
         GalaxyDto dto = modelMapper.map(entity, GalaxyDto.class);
         given(service.get(any())).willReturn(entity);
         //when

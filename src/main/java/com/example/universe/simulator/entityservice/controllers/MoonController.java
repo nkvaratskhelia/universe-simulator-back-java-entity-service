@@ -48,7 +48,7 @@ public class MoonController {
 
     @GetMapping("get/{id}")
     private MoonDto get(@PathVariable UUID id) throws AppException {
-        log.info("calling get with id [{}}]", id);
+        log.info("calling get with id [{}]", id);
         return modelMapper.map(service.get(id), MoonDto.class);
     }
 
@@ -72,7 +72,7 @@ public class MoonController {
 
     @DeleteMapping("delete/{id}")
     private void delete(@PathVariable UUID id) {
-        log.info("calling delete with id [{}}]", id);
+        log.info("calling delete with id [{}]", id);
         service.delete(id);
     }
 }

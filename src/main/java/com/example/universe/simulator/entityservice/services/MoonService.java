@@ -1,10 +1,12 @@
 package com.example.universe.simulator.entityservice.services;
 
 import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
+import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,7 @@ public class MoonService extends SpaceEntityService<Moon> {
 
     private final MoonRepository repository;
     private final PlanetRepository planetRepository;
+    private final EventPublisher eventPublisher;
 
     public Page<Moon> getList(Specification<Moon> specification, Pageable pageable) {
         return repository.findAll(specification, pageable);
@@ -33,18 +36,31 @@ public class MoonService extends SpaceEntityService<Moon> {
     @Transactional
     public Moon add(Moon entity) throws AppException {
         validate(entity, false, repository);
-        return repository.save(entity);
+        Moon result = repository.save(entity);
+
+        log.info("added [{}]", result.getId());
+        eventPublisher.publishEvent(EventType.MOON_ADD, result.getId().toString());
+
+        return result;
     }
 
     @Transactional
     public Moon update(Moon entity) throws AppException {
         validate(entity, true, repository);
-        return repository.save(entity);
+        Moon result = repository.save(entity);
+
+        log.info("updated [{}]", entity.getId());
+        eventPublisher.publishEvent(EventType.MOON_UPDATE, entity.getId().toString());
+
+        return result;
     }
 
     @Transactional
     public void delete(UUID id) {
         repository.deleteById(id);
+
+        log.info("deleted [{}]", id);
+        eventPublisher.publishEvent(EventType.MOON_DELETE, id.toString());
     }
 
     @Override

@@ -4,6 +4,10 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
+import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.entities.Star;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,6 +36,13 @@ public final class TestUtils {
         return result;
     }
 
+    public static Galaxy buildGalaxy() {
+        return Galaxy.builder()
+            .id(UUID.randomUUID())
+            .name("name")
+            .build();
+    }
+
     public static StarDto buildStarDtoForAdd() {
         return StarDto.builder()
             .name("name")
@@ -45,6 +56,14 @@ public final class TestUtils {
         result.setVersion(0L);
 
         return result;
+    }
+
+    public static Star buildStar() {
+        return Star.builder()
+            .id(UUID.randomUUID())
+            .name("name")
+            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+            .build();
     }
 
     public static PlanetDto buildPlanetDtoForAdd() {
@@ -62,6 +81,14 @@ public final class TestUtils {
         return result;
     }
 
+    public static Planet buildPlanet() {
+        return Planet.builder()
+            .id(UUID.randomUUID())
+            .name("name")
+            .star(Star.builder().id(UUID.randomUUID()).build())
+            .build();
+    }
+
     public static MoonDto buildMoonDtoForAdd() {
         return MoonDto.builder()
             .name("name")
@@ -75,5 +102,13 @@ public final class TestUtils {
         result.setVersion(0L);
 
         return result;
+    }
+
+    public static Moon buildMoon() {
+        return Moon.builder()
+            .id(UUID.randomUUID())
+            .name("name")
+            .planet(Planet.builder().id(UUID.randomUUID()).build())
+            .build();
     }
 }

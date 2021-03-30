@@ -48,7 +48,7 @@ public class PlanetController {
 
     @GetMapping("get/{id}")
     private PlanetDto get(@PathVariable UUID id) throws AppException {
-        log.info("calling get with id [{}}]", id);
+        log.info("calling get with id [{}]", id);
         return modelMapper.map(service.get(id), PlanetDto.class);
     }
 
@@ -72,7 +72,7 @@ public class PlanetController {
 
     @DeleteMapping("delete/{id}")
     private void delete(@PathVariable UUID id) throws AppException {
-        log.info("calling delete with id [{}}]", id);
+        log.info("calling delete with id [{}]", id);
         service.delete(id);
     }
 }

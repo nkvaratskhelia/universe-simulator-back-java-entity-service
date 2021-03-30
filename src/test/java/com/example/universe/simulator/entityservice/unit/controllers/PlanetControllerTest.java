@@ -38,7 +38,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
     void testGetList() throws Exception {
         //given
         List<Planet> entityList = List.of(
-            Planet.builder().name("name").build()
+            TestUtils.buildPlanet()
         );
 
         Sort sort = Sort.by(
@@ -66,7 +66,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
     void testGet() throws Exception {
         //given
         UUID id = UUID.randomUUID();
-        Planet entity = Planet.builder().name("name").build();
+        Planet entity = TestUtils.buildPlanet();
         PlanetDto dto = modelMapper.map(entity, PlanetDto.class);
         given(service.get(any())).willReturn(entity);
         //when

@@ -6,20 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import java.util.UUID;
 
 @MappedSuperclass
 @Getter @Setter
 @NoArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public abstract class SpaceEntity extends AbstractEntity {
+@EqualsAndHashCode
+abstract class AbstractEntity {
 
-    @Column(nullable = false, unique = true)
-    private String name;
-
-    @Version
-    private long version;
+    @Id
+    @GeneratedValue
+    private UUID id;
 }

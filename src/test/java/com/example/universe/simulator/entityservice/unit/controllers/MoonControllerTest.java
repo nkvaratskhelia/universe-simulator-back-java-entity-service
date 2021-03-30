@@ -38,7 +38,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
     void testGetList() throws Exception {
         //given
         List<Moon> entityList = List.of(
-            Moon.builder().name("name").build()
+            TestUtils.buildMoon()
         );
 
         Sort sort = Sort.by(
@@ -66,7 +66,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
     void testGet() throws Exception {
         //given
         UUID id = UUID.randomUUID();
-        Moon entity = Moon.builder().name("name").build();
+        Moon entity = TestUtils.buildMoon();
         MoonDto dto = modelMapper.map(entity, MoonDto.class);
         given(service.get(any())).willReturn(entity);
         //when

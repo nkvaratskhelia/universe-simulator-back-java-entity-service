@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 003-create-table-moon
+      id: 004-create-table-event
       author: nikoloz.kvaratskhelia
       changes:
         - createTable:
-            tableName: moon
+            tableName: event
             columns:
               - column:
                   name: id
@@ -12,20 +12,17 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: name
+                  name: type
                   type: varchar
                   constraints:
-                    unique: true
                     nullable: false
               - column:
-                  name: version
-                  type: bigint
+                  name: data
+                  type: varchar
                   constraints:
                     nullable: false
               - column:
-                  name: planet_id
-                  type: uuid
+                  name: time
+                  type: java.sql.Types.TIMESTAMP_WITH_TIMEZONE
                   constraints:
-                    foreignKeyName: fk_moon_planet
-                    references: planet
                     nullable: false

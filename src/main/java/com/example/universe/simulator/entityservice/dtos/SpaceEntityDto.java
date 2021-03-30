@@ -15,15 +15,13 @@ import java.util.UUID;
 
 @Getter @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @SuperBuilder
+@EqualsAndHashCode
 @ToString
 abstract class SpaceEntityDto {
 
     private UUID id;
-
     private String name;
-
     private Long version;
 
     public final void validate(boolean isUpdate) throws AppException {
