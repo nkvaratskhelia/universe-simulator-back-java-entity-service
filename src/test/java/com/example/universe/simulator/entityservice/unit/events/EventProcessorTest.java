@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.unit.event;
+package com.example.universe.simulator.entityservice.unit.events;
 
 import com.example.universe.simulator.entityservice.entities.Event;
 import com.example.universe.simulator.entityservice.events.EventProcessor;
