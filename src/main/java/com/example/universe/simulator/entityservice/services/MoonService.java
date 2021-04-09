@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,12 +26,17 @@ public class MoonService extends SpaceEntityService<Moon> {
     private final EventPublisher eventPublisher;
 
     public Page<Moon> getList(Specification<Moon> specification, Pageable pageable) {
-        return repository.findAll(specification, pageable);
+        Page<Moon> result = repository.findAll(specification, pageable);
+        log.info("fetched [{}] record(s)", result.getNumberOfElements());
+
+        return result;
     }
 
     public Moon get(UUID id) throws AppException {
-        return repository.findById(id)
-            .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
+        Optional<Moon> result = repository.findById(id);
+        result.ifPresent(entity -> log.info("fetched [{}]", id));
+
+        return result.orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional

@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,12 +28,17 @@ public class StarService extends SpaceEntityService<Star> {
     private final EventPublisher eventPublisher;
 
     public Page<Star> getList(Specification<Star> specification, Pageable pageable) {
-        return repository.findAll(specification, pageable);
+        Page<Star> result = repository.findAll(specification, pageable);
+        log.info("fetched [{}] record(s)", result.getNumberOfElements());
+
+        return result;
     }
 
     public Star get(UUID id) throws AppException {
-        return repository.findById(id)
-            .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
+        Optional<Star> result = repository.findById(id);
+        result.ifPresent(entity -> log.info("fetched [{}]", id));
+
+        return result.orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
     }
 
     @Transactional
