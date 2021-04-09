@@ -40,7 +40,6 @@ public class PlanetService extends SpaceEntityService<Planet> {
         validate(entity, false, repository);
         Planet result = repository.save(entity);
 
-        log.info("added [{}]", result.getId());
         eventPublisher.publishEvent(EventType.PLANET_ADD, result.getId().toString());
 
         return result;
@@ -51,7 +50,6 @@ public class PlanetService extends SpaceEntityService<Planet> {
         validate(entity, true, repository);
         Planet result = repository.save(entity);
 
-        log.info("updated [{}]", entity.getId());
         eventPublisher.publishEvent(EventType.PLANET_UPDATE, entity.getId().toString());
 
         return result;
@@ -62,10 +60,8 @@ public class PlanetService extends SpaceEntityService<Planet> {
         if (moonRepository.existsByPlanetId(id)) {
             throw new AppException(ErrorCodeType.IN_USE);
         }
-
         repository.deleteById(id);
 
-        log.info("deleted [{}]", id);
         eventPublisher.publishEvent(EventType.PLANET_DELETE, id.toString());
     }
 

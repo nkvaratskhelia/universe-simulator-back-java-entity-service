@@ -38,7 +38,6 @@ public class MoonService extends SpaceEntityService<Moon> {
         validate(entity, false, repository);
         Moon result = repository.save(entity);
 
-        log.info("added [{}]", result.getId());
         eventPublisher.publishEvent(EventType.MOON_ADD, result.getId().toString());
 
         return result;
@@ -49,7 +48,6 @@ public class MoonService extends SpaceEntityService<Moon> {
         validate(entity, true, repository);
         Moon result = repository.save(entity);
 
-        log.info("updated [{}]", entity.getId());
         eventPublisher.publishEvent(EventType.MOON_UPDATE, entity.getId().toString());
 
         return result;
@@ -59,7 +57,6 @@ public class MoonService extends SpaceEntityService<Moon> {
     public void delete(UUID id) {
         repository.deleteById(id);
 
-        log.info("deleted [{}]", id);
         eventPublisher.publishEvent(EventType.MOON_DELETE, id.toString());
     }
 

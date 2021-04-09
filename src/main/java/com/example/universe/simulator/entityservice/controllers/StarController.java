@@ -42,14 +42,23 @@ public class StarController {
         Specification<Star> specification = filter
             .map(item -> new StarSpecification().getSpecification(item))
             .orElse(null);
-        return () -> service.getList(specification, pageable)
-            .map(item -> modelMapper.map(item, StarDto.class));
+
+        return () -> {
+            Page<StarDto> result = service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, StarDto.class));
+            log.info("fetched [{}] record(s)", result.getNumberOfElements());
+
+            return result;
+        };
     }
 
     @GetMapping("get/{id}")
     private StarDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
-        return modelMapper.map(service.get(id), StarDto.class);
+        StarDto result = modelMapper.map(service.get(id), StarDto.class);
+        log.info("fetched [{}]", result.getId());
+
+        return result;
     }
 
     @PostMapping("add")
@@ -58,7 +67,10 @@ public class StarController {
         dto.validate(false);
 
         Star entity = modelMapper.map(dto, Star.class);
-        return modelMapper.map(service.add(entity), StarDto.class);
+        StarDto result = modelMapper.map(service.add(entity), StarDto.class);
+        log.info("added [{}]", result.getId());
+
+        return result;
     }
 
     @PutMapping("update")
@@ -67,12 +79,16 @@ public class StarController {
         dto.validate(true);
 
         Star entity = modelMapper.map(dto, Star.class);
-        return modelMapper.map(service.update(entity), StarDto.class);
+        StarDto result = modelMapper.map(service.update(entity), StarDto.class);
+        log.info("updated [{}]", result.getId());
+
+        return result;
     }
 
     @DeleteMapping("delete/{id}")
     private void delete(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
+        log.info("deleted [{}]", id);
     }
 }
