@@ -15,12 +15,12 @@ jobs:
 #      build, test and code coverage  
       - uses: burrunan/gradle-cache-action@v1
         with:
-          arguments: build jacocoTestCoverageVerification --watch-fs --info --stacktrace
+          arguments: build jacocoTestCoverageVerification --info --stacktrace
 #      build docker image
       - uses: burrunan/gradle-cache-action@v1
         if: github.ref == 'refs/heads/master'
         with:
-          arguments: bootBuildImage --watch-fs --info --stacktrace
+          arguments: bootBuildImage --info --stacktrace
         env:
           US_DOCKER_REGISTRY_USER: ${{ secrets.US_DOCKER_REGISTRY_USER }}
           US_DOCKER_REGISTRY_PASSWORD: ${{ secrets.US_DOCKER_REGISTRY_PASSWORD }}
