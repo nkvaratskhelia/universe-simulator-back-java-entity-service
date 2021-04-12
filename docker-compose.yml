@@ -1,17 +1,4 @@
 services:
-  entity-service-postgres:
-    image: postgres
-    container_name: universe-simulator-entity-service-postgres
-    restart: always
-    environment:
-      - POSTGRES_DB=entity-service
-      - POSTGRES_USER=${US_ES_POSTGRES_USER}
-      - POSTGRES_PASSWORD=${US_ES_POSTGRES_PASSWORD}
-    ports:
-      - ${US_ES_POSTGRES_PORT}:5432
-    volumes:
-      - entity-service-postgres:/var/lib/postgresql/data
-
   vault:
     image: vault
     container_name: universe-simulator-vault
@@ -41,6 +28,15 @@ services:
       - vault-logs:/vault/logs
       - vault-file:/vault/file
 
+  entity-service-app:
+    image: universesimulator/entity-service
+    container_name: universe-simulator-entity-service-app
+    network_mode: host
+    env_file:
+      - docker-env-file
+    volumes:
+      - ~/universe-simulator/universe-simulator.p12:/home/cnb/universe-simulator/universe-simulator.p12:ro
+
   rabbitmq:
     image: rabbitmq:management
     container_name: universe-simulator-rabbitmq
@@ -54,17 +50,21 @@ services:
     volumes:
       - rabbitmq:/var/lib/rabbitmq
 
-  entity-service-app:
-    image: universesimulator/entity-service
-    container_name: universe-simulator-entity-service-app
-    network_mode: host
-    env_file:
-      - docker-env-file
+  entity-service-postgres:
+    image: postgres
+    container_name: universe-simulator-entity-service-postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=entity-service
+      - POSTGRES_USER=${US_ES_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${US_ES_POSTGRES_PASSWORD}
+    ports:
+      - ${US_ES_POSTGRES_PORT}:5432
     volumes:
-      - ~/universe-simulator/universe-simulator.p12:/home/cnb/universe-simulator/universe-simulator.p12:ro
+      - entity-service-postgres:/var/lib/postgresql/data
 
 volumes:
-  entity-service-postgres:
   vault-logs:
   vault-file:
   rabbitmq:
+  entity-service-postgres:

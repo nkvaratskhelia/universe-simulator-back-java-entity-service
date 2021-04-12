@@ -69,12 +69,12 @@ bootBuildImage {
     }
 }
 
-ext {
-    set('springdocOpenapiVersion', '1.5.7')
-}
-
 repositories {
     mavenCentral()
+}
+
+ext {
+    set('springdocOpenapiVersion', '1.5.7')
 }
 
 dependencyManagement {
