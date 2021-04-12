@@ -38,7 +38,6 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
         validate(entity, false, repository);
         Galaxy result = repository.save(entity);
 
-        log.info("added [{}]", result.getId());
         eventPublisher.publishEvent(EventType.GALAXY_ADD, result.getId().toString());
 
         return result;
@@ -49,7 +48,6 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
         validate(entity, true, repository);
         Galaxy result = repository.save(entity);
 
-        log.info("updated [{}]", entity.getId());
         eventPublisher.publishEvent(EventType.GALAXY_UPDATE, entity.getId().toString());
 
         return result;
@@ -60,10 +58,8 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
         if (starRepository.existsByGalaxyId(id)) {
             throw new AppException(ErrorCodeType.IN_USE);
         }
-
         repository.deleteById(id);
 
-        log.info("deleted [{}]", id);
         eventPublisher.publishEvent(EventType.GALAXY_DELETE, id.toString());
     }
 
