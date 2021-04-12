@@ -40,7 +40,6 @@ public class StarService extends SpaceEntityService<Star> {
         validate(entity, false, repository);
         Star result = repository.save(entity);
 
-        log.info("added [{}]", result.getId());
         eventPublisher.publishEvent(EventType.STAR_ADD, result.getId().toString());
 
         return result;
@@ -51,7 +50,6 @@ public class StarService extends SpaceEntityService<Star> {
         validate(entity, true, repository);
         Star result = repository.save(entity);
 
-        log.info("updated [{}]", entity.getId());
         eventPublisher.publishEvent(EventType.STAR_UPDATE, entity.getId().toString());
 
         return result;
@@ -62,10 +60,8 @@ public class StarService extends SpaceEntityService<Star> {
         if (planetRepository.existsByStarId(id)) {
             throw new AppException(ErrorCodeType.IN_USE);
         }
-
         repository.deleteById(id);
 
-        log.info("deleted [{}]", id);
         eventPublisher.publishEvent(EventType.STAR_DELETE, id.toString());
     }
 

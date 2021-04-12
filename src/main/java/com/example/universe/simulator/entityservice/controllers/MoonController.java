@@ -42,14 +42,23 @@ public class MoonController {
         Specification<Moon> specification = filter
             .map(item -> new MoonSpecification().getSpecification(item))
             .orElse(null);
-        return () -> service.getList(specification, pageable)
-            .map(item -> modelMapper.map(item, MoonDto.class));
+
+        return () -> {
+            Page<MoonDto> result = service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, MoonDto.class));
+            log.info("fetched [{}] record(s)", result.getNumberOfElements());
+
+            return result;
+        };
     }
 
     @GetMapping("get/{id}")
     private MoonDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
-        return modelMapper.map(service.get(id), MoonDto.class);
+        MoonDto result = modelMapper.map(service.get(id), MoonDto.class);
+        log.info("fetched [{}]", result.getId());
+
+        return result;
     }
 
     @PostMapping("add")
@@ -58,7 +67,10 @@ public class MoonController {
         dto.validate(false);
 
         Moon entity = modelMapper.map(dto, Moon.class);
-        return modelMapper.map(service.add(entity), MoonDto.class);
+        MoonDto result = modelMapper.map(service.add(entity), MoonDto.class);
+        log.info("added [{}]", result.getId());
+
+        return result;
     }
 
     @PutMapping("update")
@@ -67,12 +79,16 @@ public class MoonController {
         dto.validate(true);
 
         Moon entity = modelMapper.map(dto, Moon.class);
-        return modelMapper.map(service.update(entity), MoonDto.class);
+        MoonDto result = modelMapper.map(service.update(entity), MoonDto.class);
+        log.info("updated [{}]", result.getId());
+
+        return result;
     }
 
     @DeleteMapping("delete/{id}")
     private void delete(@PathVariable UUID id) {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
+        log.info("deleted [{}]", id);
     }
 }
