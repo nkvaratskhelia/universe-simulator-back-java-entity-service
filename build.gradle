@@ -91,6 +91,7 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:2.4.0'
     implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    runtimeOnly 'org.springframework.cloud:spring-cloud-starter-sleuth'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-vault-config'
     runtimeOnly 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'

@@ -42,14 +42,23 @@ public class GalaxyController {
         Specification<Galaxy> specification = filter
             .map(item -> new GalaxySpecification().getSpecification(item))
             .orElse(null);
-        return () -> service.getList(specification, pageable)
-            .map(item -> modelMapper.map(item, GalaxyDto.class));
+
+        return () -> {
+            Page<GalaxyDto> result = service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, GalaxyDto.class));
+            log.info("fetched [{}] record(s)", result.getNumberOfElements());
+
+            return result;
+        };
     }
 
     @GetMapping("get/{id}")
     private GalaxyDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
-        return modelMapper.map(service.get(id), GalaxyDto.class);
+        GalaxyDto result = modelMapper.map(service.get(id), GalaxyDto.class);
+        log.info("fetched [{}]", result.getId());
+
+        return result;
     }
 
     @PostMapping("add")
@@ -58,7 +67,10 @@ public class GalaxyController {
         dto.validate(false);
 
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
-        return modelMapper.map(service.add(entity), GalaxyDto.class);
+        GalaxyDto result = modelMapper.map(service.add(entity), GalaxyDto.class);
+        log.info("added [{}]", result.getId());
+
+        return result;
     }
 
     @PutMapping("update")
@@ -67,12 +79,16 @@ public class GalaxyController {
         dto.validate(true);
 
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
-        return modelMapper.map(service.update(entity), GalaxyDto.class);
+        GalaxyDto result = modelMapper.map(service.update(entity), GalaxyDto.class);
+        log.info("updated [{}]", result.getId());
+
+        return result;
     }
 
     @DeleteMapping("delete/{id}")
     private void delete(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
+        log.info("deleted [{}]", id);
     }
 }
