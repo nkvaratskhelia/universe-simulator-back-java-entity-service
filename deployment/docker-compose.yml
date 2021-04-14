@@ -1,0 +1,9 @@
+services:
+  entity-service-app:
+    image: universesimulator/entity-service
+    container_name: universe-simulator-entity-service-app
+    network_mode: host
+    env_file:
+      - docker-env-file
+    volumes:
+      - ~/universe-simulator/universe-simulator.p12:/home/cnb/universe-simulator/universe-simulator.p12:ro
