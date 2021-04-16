@@ -46,6 +46,7 @@ private jacocoExclusions(classDirectories) {
     classDirectories.setFrom(files(classDirectories.files.collect {
         fileTree(dir: it, exclude: [
                 'com/example/universe/simulator/entityservice/EntityServiceApplication.class',
+                'com/example/universe/simulator/entityservice/config/SchedulingConfig.class',
                 'com/example/universe/simulator/entityservice/entities/**_.class'
         ])
     }))
