@@ -1,114 +1,38 @@
 = Project setup
 
-== Java
-The project is built with `Java 11`.
-
-== Gradle
-`Gradle Wrapper` is used as a build tool for the project. Gradle-related properties can be found in
-the `gradle/wrapper/gradle-wrapper.properties` file.
-
-=== Updating
-
-You can update gradle wrapper with the
-following command: `./gradlew wrapper --gradle-version=x.x.x --distribution-type=all
---gradle-distribution-sha256-sum=some-checksome`. Valid gradle distribution checksomes can be found
-at gradle's https://gradle.org/release-checksums/[Checksome reference page].
-
-== Spring Boot
-The project uses `Spring Boot v 2.4.x` framework.
-
-=== Profiles
-You can have as many spring boot profiles as needed. Profiles usually map to environments (dev,
-staging, prod). If you need to override some properties for an environment, add a new
-`bootstrap-xxx.properties` or `application-xxx.properties` file, where xxx is the name of your
-profile. Keep in mind that the `test` profile is reserved for testing purposes and the `local`
-profile for local development. `bootstrap-local.properties` and `application-local.properties` files
-are excluded from git.
-
-=== Running the application
-You can run the application with your IDE or with the following command:
-`./gradlew bootRun --args='--spring.profiles.active=xxx'` where `xxx` is your spring boot profile of
-choice, for example `local`.
-
-== Docker
-You need to have `Docker` and `Docker Compose` installed on your machine. All software dependencies
-for the project can be found in the `docker-compose.yml` file.
-
-== Vault
-`Hashicorp Vault` is used to store project secrets and other variable configuration. To start a
-vault instance locally, use the following command:
-`docker-compose -p universe-simulator up -d vault`. If you stop or restart your container, vault
-gets sealed, and you'll need to unseal it to be able to use it again.
-
-=== Configuration
-When vault is up and running, go to vault ui at `localhost:8200` and follow the setup instructions.
-After logging in, enable a new `KV` engine with `universe-simulator` as path. This root path maps
-to the `spring.cloud.vault.kv.backend` property in `bootstrap.properties`. In the new engine create
-a secret with `entity-service/local` as path. `entity-service` maps to the `spring.application.name`
-property in `bootstrap.properties` and `local` maps to your spring boot profile used for local
-development. Additionally, you can add as many profile-specific paths as needed (e.g. dev, staging,
-prod).
-
-== CI/CD
-`Github Actions` is used for automating the project workflow. The workflow file can be found in the
-`.github/workflows` directory.
-
-=== Steps
-
-1. Check out code from the repository
-2. Install java
-3. Validate `gradle-wrapper.jar`
-4. Build, test and check code coverage
-5. Build a docker image with gradle's `bootBuildImage` task and upload to `Docker Hub`. You need to
-add docker registry credentials to your repository secrets.
+== Software
+Run `docker-compose -p universe-simulator up -d` to install all required software (`vault, rabbitmq,
+postgres`).
 
 == Https/TLS
-Application has support for `Https/TLS` with `http/2` protocol also enabled. You need to have a
-keystore file named `universe-simulator.p12` in your `${HOME}/universe-simulator` directory. The
-certificate in the keystore can be either self-signed or provided by a CA.
+You need to have a keystore file named `universe-simulator.p12` in your `${HOME}/universe-simulator`
+directory. The certificate in the keystore can be either self-signed or provided by a CA.
 
 === Keystore
 You can use java's `keytool` utility for working with keystore. To create a keystore file with a
 self-signed certificate, run the following command: `keytool -genkeypair -alias universe-simulator
--keyalg RSA -validity <validity-in-days> -keystore universe-simulator.p12` and follow the
-instructions. You can verify the contents of the keystore file with the following command:
-`keytool -list -v -keystore universe-simulator.p12`. Keep in mind that TLS is disabled when running
-the application with `test` profile.
+-keyalg RSA -validity 365 -keystore universe-simulator.p12` and follow the instructions.
 
-== Code Coverage
-`JaCoCo` plugin is used to analyze code coverage.
+== Vault
+* When vault is up and running, go to vault ui at `localhost:8200` and follow the setup instructions.
+* After the setup, log in and enable a new `KV` engine with `universe-simulator` as path. This root
+path maps to the `spring.cloud.vault.kv.backend` property in `bootstrap.properties`.
+* In the `universe-simulator` engine create a secret with `entity-service/local` as path.
+`entity-service` maps to the `spring.application.name` property in `bootstrap.properties` and `local`
+maps to your spring boot profile used for local development. Similarly, you can add as many
+profile-specific paths as needed (e.g. `entity-service/staging, entity-service/prod`).
+* Add all required properties from the `bootstrap.properties` file to the
+`universe-simulator/entity-service/local` path. You can identify such properties by the kebab-case
+syntax (e.g. `${server-port}`).
 
-=== Report
-You can generate the test coverage report with the following command: `./gradlew jacocoTestReport`.
-The report can be viewed by opening the `build/reports/jacoco/test/html/index.html` file.
+== Environment variables
+Add the following OS environment variables: `US_VAULT_HOST, US_VAULT_PORT, US_VAULT_TOKEN`. These are
+needed for the vault connection.
 
-=== Exclusions
-Classes which are excluded from jacoco reports are described in the `jacocoExclusions` method in
-`build.gradle`. Additionally, all lombok generated code is also excluded. This is achieved with the
-`lombok.addLombokGeneratedAnnotation = true` parameter in the `lombok.config` file. If this
-parameter is present, lombok will annotate all generated code with its `@Generated` annotation and
-jacoco automatically excludes such code from processing.
+== Properties file
+Add `bootstrap-local.properties` file and if needed, override any properties from the
+`bootstrap.properties` file.
 
-=== Rules
-100% code coverage is enforced by the `jacocoTestCoverageVerification` task. You can run this task
-with the following command: `./gradlew jacocoTestCoverageVerification`. If the coverage falls below
-100%, the task will fail.
-
-== Database
-`Postgres` is used to store the project model data. To start a postgres instance locally, use the
-following command: `docker-compose -p universe-simulator up -d entity-service-postgres`. Don't
-forget to supply the necessary configuration in the docker-compose service.
-
-=== Migration
-`Liquibase` is used to handle database migrations. Liquibase config is described in the
-`db/changelog/db.changelog-master.yaml` file. Add changefiles to the `db/changelog/scripts`
-directory. Changefile naming scheme is as follows: `xxx-change-description.extension`, where xxx is
-a growing numeric sequence.
-
-== Rest API
-Rest API documentation is generated automatically by `springdoc-openapi`. You can access OpenAPI
-definition at `/v3/api-docs` and swagger ui at `/swagger-ui.html`.
-
-== Messaging
-RabbitMQ is used for messaging purposes (to be defined later). To start a rabbitmq instance locally,
-use the following command: `docker-compose -p universe-simulator up -d rabbitmq`.
+== Running the application
+You can run the application with the `local` profile from your IDE or with the following command:
+`./gradlew bootRun --args='--spring.profiles.active=local'`.
