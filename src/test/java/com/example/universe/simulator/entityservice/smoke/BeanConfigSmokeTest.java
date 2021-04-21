@@ -14,18 +14,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BeanConfigSmokeTest {
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
     @Qualifier("applicationTaskExecutor")
     private AsyncTaskExecutor asyncTaskExecutor;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Test
     void test() {
-        //-----------------------------------modelMapper-----------------------------------
-        //then
-        assertThat(modelMapper).isNotNull();
-
         //-----------------------------------asyncTaskExecutor-----------------------------------
         //given
         int numProcessors = Runtime.getRuntime().availableProcessors();
@@ -36,5 +32,9 @@ class BeanConfigSmokeTest {
         ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) asyncTaskExecutor;
         assertThat(executor.getCorePoolSize()).isEqualTo(numProcessors);
         assertThat(executor.getMaxPoolSize()).isEqualTo(numProcessors);
+
+        //-----------------------------------modelMapper-----------------------------------
+        //then
+        assertThat(modelMapper).isNotNull();
     }
 }
