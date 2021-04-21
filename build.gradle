@@ -46,6 +46,7 @@ private jacocoExclusions(classDirectories) {
     classDirectories.setFrom(files(classDirectories.files.collect {
         fileTree(dir: it, exclude: [
                 'com/example/universe/simulator/entityservice/EntityServiceApplication.class',
+                'com/example/universe/simulator/entityservice/config/SchedulingConfig.class',
                 'com/example/universe/simulator/entityservice/entities/**_.class'
         ])
     }))
@@ -89,7 +90,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.modelmapper:modelmapper:2.4.0'
     implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
-//    validation and bootstrap dependencies should be removed after switch to ConfigData API
     runtimeOnly 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-sleuth'
@@ -98,6 +98,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"
     compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

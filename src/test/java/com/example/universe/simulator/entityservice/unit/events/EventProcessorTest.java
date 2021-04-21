@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-public class EventProcessorTest {
+class EventProcessorTest {
 
     @Mock
     private EventRepository eventRepository;
