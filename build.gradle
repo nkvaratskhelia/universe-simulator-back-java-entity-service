@@ -94,6 +94,7 @@ dependencies {
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-sleuth'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-vault-config'
+    runtimeOnly 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
     runtimeOnly 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"

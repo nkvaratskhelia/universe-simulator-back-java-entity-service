@@ -22,6 +22,10 @@ follow these steps:
 * Extract the private key from the keystore with:
 `openssl pkcs12 -in universe-simulator.p12 -out universe-simulator-key.pem -nodes -nocerts`
 
+== Software
+Run `docker-compose -p universe-simulator up -d` to install all required software (`vault, zipkin,
+rabbitmq, postgres`).
+
 == Vault
 * When vault is up and running, go to vault ui at `localhost:8200` and follow the setup instructions.
 

@@ -31,6 +31,13 @@ services:
       - ~/universe-simulator/universe-simulator-cert.pem:/vault/universe-simulator-cert.pem:ro
       - ~/universe-simulator/universe-simulator-key.pem:/vault/universe-simulator-key.pem:ro
 
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: universe-simulator-zipkin
+    restart: always
+    ports:
+      - 9411:9411
+
   rabbitmq:
     image: rabbitmq:management
     container_name: universe-simulator-rabbitmq

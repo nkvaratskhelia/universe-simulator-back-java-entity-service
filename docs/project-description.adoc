@@ -83,3 +83,6 @@ a growing numeric sequence.
 
 == Messaging
 RabbitMQ is used for messaging purposes.
+
+== Tracing
+Sleuth and Zipkin are used for distributed log tracing.
