@@ -85,11 +85,11 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.modelmapper:modelmapper:2.4.0'
+    implementation 'org.modelmapper:modelmapper:2.4.1'
     implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-amqp'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-sleuth'
@@ -97,7 +97,6 @@ dependencies {
     runtimeOnly 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"
-    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
     annotationProcessor 'org.projectlombok:lombok'
