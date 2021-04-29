@@ -87,7 +87,7 @@ dependencyManagement {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.modelmapper:modelmapper:2.4.1'
+    implementation 'org.modelmapper:modelmapper:2.4.2'
     implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-amqp'
