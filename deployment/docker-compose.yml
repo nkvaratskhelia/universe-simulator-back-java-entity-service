@@ -6,4 +6,4 @@ services:
     env_file:
       - docker-env-file
     volumes:
-      - ~/universe-simulator/universe-simulator.p12:/home/cnb/universe-simulator/universe-simulator.p12:ro
+      - ~/universe-simulator/universe-simulator.p12:/home/cnb/universe-simulator/universe-simulator.p12
