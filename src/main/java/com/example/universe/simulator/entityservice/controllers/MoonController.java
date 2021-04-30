@@ -36,7 +36,7 @@ public class MoonController {
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
-    private Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, @ParameterObject Pageable pageable) {
+    public Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
 
         Specification<Moon> specification = filter
@@ -53,7 +53,7 @@ public class MoonController {
     }
 
     @GetMapping("get/{id}")
-    private MoonDto get(@PathVariable UUID id) throws AppException {
+    public MoonDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
         MoonDto result = modelMapper.map(service.get(id), MoonDto.class);
         log.info("fetched [{}]", result.getId());
@@ -62,7 +62,7 @@ public class MoonController {
     }
 
     @PostMapping("add")
-    private MoonDto add(@RequestBody MoonDto dto) throws AppException {
+    public MoonDto add(@RequestBody MoonDto dto) throws AppException {
         log.info("calling add with {}", dto);
         dto.validate(false);
 
@@ -74,7 +74,7 @@ public class MoonController {
     }
 
     @PutMapping("update")
-    private MoonDto update(@RequestBody MoonDto dto) throws AppException {
+    public MoonDto update(@RequestBody MoonDto dto) throws AppException {
         log.info("calling update with {}", dto);
         dto.validate(true);
 
@@ -86,7 +86,7 @@ public class MoonController {
     }
 
     @DeleteMapping("delete/{id}")
-    private void delete(@PathVariable UUID id) {
+    public void delete(@PathVariable UUID id) {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);

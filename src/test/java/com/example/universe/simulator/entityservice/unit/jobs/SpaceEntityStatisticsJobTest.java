@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-public class SpaceEntityStatisticsJobTest {
+class SpaceEntityStatisticsJobTest {
 
     @Mock
     private GalaxyRepository galaxyRepository;

@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.entities;
 
 import com.example.universe.simulator.entityservice.types.EventType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.time.OffsetDateTime;
 @Getter @Setter
 @NoArgsConstructor
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString
 public class Event extends AbstractEntity {
 

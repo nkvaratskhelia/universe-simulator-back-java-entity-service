@@ -5,6 +5,9 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
@@ -14,35 +17,15 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 /**
  * Common space entity validation is tested using GalaxyDto.
  */
-public class SpaceEntityDtoTest {
+class SpaceEntityDtoTest {
 
-    @Test
-    void testValidateCommonFields_add_nullName() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = " ")
+    void testValidateCommonFields_add_invalidName(String name) {
         //given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        dto.setName(null);
-        //when
-        AppException exception = catchThrowableOfType(() -> dto.validate(false), AppException.class);
-        //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_NAME);
-    }
-
-    @Test
-    void testValidateCommonFields_add_emptyName() {
-        //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        dto.setName("");
-        //when
-        AppException exception = catchThrowableOfType(() -> dto.validate(false), AppException.class);
-        //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_NAME);
-    }
-
-    @Test
-    void testValidateCommonFields_add_blankName() {
-        //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        dto.setName(" ");
+        dto.setName(name);
         //when
         AppException exception = catchThrowableOfType(() -> dto.validate(false), AppException.class);
         //then
@@ -60,33 +43,13 @@ public class SpaceEntityDtoTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_ID);
     }
 
-    @Test
-    void testValidateCommonFields_update_nullName() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = " ")
+    void testValidateCommonFields_update_invalidName(String name) {
         //given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
-        dto.setName(null);
-        //when
-        AppException exception = catchThrowableOfType(() -> dto.validate(true), AppException.class);
-        //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_NAME);
-    }
-
-    @Test
-    void testValidateCommonFields_update_emptyName() {
-        //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
-        dto.setName("");
-        //when
-        AppException exception = catchThrowableOfType(() -> dto.validate(true), AppException.class);
-        //then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_NAME);
-    }
-
-    @Test
-    void testValidateCommonFields_update_blankName() {
-        //given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
-        dto.setName(" ");
+        dto.setName(name);
         //when
         AppException exception = catchThrowableOfType(() -> dto.validate(true), AppException.class);
         //then
