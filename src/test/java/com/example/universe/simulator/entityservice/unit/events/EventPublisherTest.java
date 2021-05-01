@@ -2,32 +2,32 @@ package com.example.universe.simulator.entityservice.unit.events;
 
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Event;
-import com.example.universe.simulator.entityservice.events.EventProcessor;
-import com.example.universe.simulator.entityservice.repositories.EventRepository;
+import com.example.universe.simulator.entityservice.events.EventPublisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-class EventProcessorTest {
+class EventPublisherTest {
 
     @Mock
-    private EventRepository eventRepository;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
-    private EventProcessor eventProcessor;
+    private EventPublisher eventPublisher;
 
     @Test
     void testProcess() {
-        //given
+        // given
         Event event = TestUtils.buildEvent();
         //when
-        eventProcessor.process(event);
+        eventPublisher.publishEvent(event.getType(), event.getData());
         //then
-        then(eventRepository).should().save(event);
+        then(applicationEventPublisher).should().publishEvent(event);
     }
 }
