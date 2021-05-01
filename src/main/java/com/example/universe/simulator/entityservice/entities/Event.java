@@ -30,5 +30,6 @@ public class Event extends AbstractEntity {
     private String data;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Exclude
     private OffsetDateTime time;
 }
