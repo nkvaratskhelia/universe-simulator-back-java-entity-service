@@ -214,7 +214,7 @@ class PlanetServiceTest {
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
         then(moonRepository).should().existsByPlanetId(id);
-        then(repository).should(never()).deleteById(any());
+        then(repository).shouldHaveNoInteractions();
         then(eventPublisher).shouldHaveNoInteractions();
     }
 

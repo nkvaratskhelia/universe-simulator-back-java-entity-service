@@ -6,14 +6,13 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
+import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -32,6 +31,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class GalaxyControllerTest extends AbstractWebMvcTest {
 
     @MockBean
+    private GalaxyDtoValidator validator;
+
+    @MockBean
     private GalaxyService service;
 
     @Test
@@ -41,19 +43,15 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
             TestUtils.buildGalaxy()
         );
 
-        Sort sort = Sort.by(
-            Sort.Order.desc("version"),
-            Sort.Order.asc("name")
-        );
-        Pageable pageable = PageRequest.of(1, 2, sort);
+        Pageable pageable = TestUtils.getSpaceEntityPageable();
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
         //when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
-            .param("page", "1")
-            .param("size", "2")
+            .param("page", String.valueOf(pageable.getPageNumber()))
+            .param("size", String.valueOf(pageable.getPageSize()))
             .param("sort", "version,desc")
             .param("sort", "name,asc")
         );
@@ -90,6 +88,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         );
         //then
         verifySuccessfulResponse(response, resultDto);
+        then(validator).should().validate(inputDto, false);
         then(service).should().add(entity);
     }
 
@@ -107,6 +106,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         );
         //then
         verifySuccessfulResponse(response, resultDto);
+        then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
     }
 

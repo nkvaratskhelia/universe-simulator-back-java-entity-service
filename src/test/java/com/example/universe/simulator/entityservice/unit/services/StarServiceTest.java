@@ -214,7 +214,7 @@ class StarServiceTest {
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
         then(planetRepository).should().existsByStarId(id);
-        then(repository).should(never()).deleteById(any());
+        then(repository).shouldHaveNoInteractions();
         then(eventPublisher).shouldHaveNoInteractions();
     }
 

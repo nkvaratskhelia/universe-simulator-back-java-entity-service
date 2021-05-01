@@ -1,13 +1,17 @@
-package com.example.universe.simulator.entityservice.unit.dtos;
+package com.example.universe.simulator.entityservice.unit.validators;
 
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -15,9 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 /**
- * Common space entity validation is tested using GalaxyDto.
+ * Common space entity dto validation is tested using GalaxyDtoValidator.
  */
-class SpaceEntityDtoTest {
+@ExtendWith(MockitoExtension.class)
+class SpaceEntityDtoValidatorTest {
+
+    @InjectMocks
+    private GalaxyDtoValidator validator;
 
     @ParameterizedTest
     @NullAndEmptySource
@@ -27,7 +35,7 @@ class SpaceEntityDtoTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName(name);
         //when
-        AppException exception = catchThrowableOfType(() -> dto.validate(false), AppException.class);
+        AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_NAME);
     }
@@ -38,7 +46,7 @@ class SpaceEntityDtoTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setId(null);
         //when
-        AppException exception = catchThrowableOfType(() -> dto.validate(true), AppException.class);
+        AppException exception = catchThrowableOfType(() -> validator.validate(dto, true), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_ID);
     }
@@ -51,7 +59,7 @@ class SpaceEntityDtoTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setName(name);
         //when
-        AppException exception = catchThrowableOfType(() -> dto.validate(true), AppException.class);
+        AppException exception = catchThrowableOfType(() -> validator.validate(dto, true), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_NAME);
     }
@@ -62,7 +70,7 @@ class SpaceEntityDtoTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setVersion(null);
         //when
-        AppException exception = catchThrowableOfType(() -> dto.validate(true), AppException.class);
+        AppException exception = catchThrowableOfType(() -> validator.validate(dto, true), AppException.class);
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_VERSION);
     }
@@ -75,7 +83,7 @@ class SpaceEntityDtoTest {
         dto.setName(" name ");
         dto.setVersion(1L);
         //when
-        dto.validate(false);
+        validator.validate(dto, false);
         //then
         assertThat(dto.getId()).isNull();
         assertThat(dto.getName()).isEqualTo("name");
@@ -88,7 +96,7 @@ class SpaceEntityDtoTest {
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setName(" name ");
         //when
-        dto.validate(true);
+        validator.validate(dto, true);
         //then
         assertThat(dto.getName()).isEqualTo("name");
     }

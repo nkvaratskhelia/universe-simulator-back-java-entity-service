@@ -6,6 +6,7 @@ import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecification;
+import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,7 @@ import java.util.concurrent.Callable;
 public class StarController {
 
     private final StarService service;
+    private final StarDtoValidator validator;
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
@@ -64,7 +66,7 @@ public class StarController {
     @PostMapping("add")
     public StarDto add(@RequestBody StarDto dto) throws AppException {
         log.info("calling add with {}", dto);
-        dto.validate(false);
+        validator.validate(dto, false);
 
         Star entity = modelMapper.map(dto, Star.class);
         StarDto result = modelMapper.map(service.add(entity), StarDto.class);
@@ -76,7 +78,7 @@ public class StarController {
     @PutMapping("update")
     public StarDto update(@RequestBody StarDto dto) throws AppException {
         log.info("calling update with {}", dto);
-        dto.validate(true);
+        validator.validate(dto, true);
 
         Star entity = modelMapper.map(dto, Star.class);
         StarDto result = modelMapper.map(service.update(entity), StarDto.class);
