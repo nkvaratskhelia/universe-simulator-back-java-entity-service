@@ -4,10 +4,12 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
+import com.example.universe.simulator.entityservice.entities.Event;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.types.EventType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +22,13 @@ public final class TestUtils {
 
     public static Pageable getDefaultPageable() {
         return PageRequest.of(0, 20, Sort.unsorted());
+    }
+
+    public static Event buildEvent() {
+        return Event.builder()
+            .type(EventType.SPACE_ENTITY_STATISTICS)
+            .data("data")
+            .build();
     }
 
     public static GalaxyDto buildGalaxyDtoForAdd() {
