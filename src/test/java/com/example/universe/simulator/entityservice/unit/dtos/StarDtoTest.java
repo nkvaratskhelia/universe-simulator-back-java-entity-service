@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-public class StarDtoTest {
+class StarDtoTest {
 
     @Test
     void testValidateDtoFields_nullGalaxy() {

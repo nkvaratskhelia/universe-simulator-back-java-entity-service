@@ -64,5 +64,7 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
     }
 
     @Override
-    void validateEntity(Galaxy entity, boolean isUpdate) {}
+    void validateEntity(Galaxy entity, boolean isUpdate) {
+        // there is no entity-specific validation yet
+    }
 }

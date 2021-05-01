@@ -11,8 +11,8 @@ public class BeanConfig {
 
     //https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-async-configuration-spring-mvc
     //https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-task-execution-scheduling
-    @Bean
-    AsyncTaskExecutor applicationTaskExecutor(TaskExecutorBuilder taskExecutorBuilder) {
+    @Bean({"taskExecutor", "applicationTaskExecutor"})
+    AsyncTaskExecutor asyncTaskExecutor(TaskExecutorBuilder taskExecutorBuilder) {
         int numProcessors = Runtime.getRuntime().availableProcessors();
         return taskExecutorBuilder
             .corePoolSize(numProcessors)

@@ -32,5 +32,7 @@ public class StarDto extends SpaceEntityDto {
     }
 
     @Override
-    void fixDtoDirtyFields() {}
+    void fixDtoDirtyFields() {
+        // there are no dto-specific fields to fix yet
+    }
 }

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-public class MoonDtoTest {
+class MoonDtoTest {
 
     @Test
     void testValidateDtoFields_nullPlanet() {

@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-public class PlanetIntegrationTest extends AbstractIntegrationTest {
+class PlanetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {

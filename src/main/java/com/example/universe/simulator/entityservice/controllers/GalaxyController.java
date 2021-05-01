@@ -36,7 +36,7 @@ public class GalaxyController {
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
-    private Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, @ParameterObject Pageable pageable) {
+    public Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
 
         Specification<Galaxy> specification = filter
@@ -53,7 +53,7 @@ public class GalaxyController {
     }
 
     @GetMapping("get/{id}")
-    private GalaxyDto get(@PathVariable UUID id) throws AppException {
+    public GalaxyDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
         GalaxyDto result = modelMapper.map(service.get(id), GalaxyDto.class);
         log.info("fetched [{}]", result.getId());
@@ -62,7 +62,7 @@ public class GalaxyController {
     }
 
     @PostMapping("add")
-    private GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
+    public GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
         log.info("calling add with {}", dto);
         dto.validate(false);
 
@@ -74,7 +74,7 @@ public class GalaxyController {
     }
 
     @PutMapping("update")
-    private GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
+    public GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
         log.info("calling update with {}", dto);
         dto.validate(true);
 
@@ -86,7 +86,7 @@ public class GalaxyController {
     }
 
     @DeleteMapping("delete/{id}")
-    private void delete(@PathVariable UUID id) throws AppException {
+    public void delete(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);
