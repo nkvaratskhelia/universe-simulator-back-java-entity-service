@@ -6,6 +6,7 @@ import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecification;
+import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,7 @@ import java.util.concurrent.Callable;
 public class GalaxyController {
 
     private final GalaxyService service;
+    private final GalaxyDtoValidator validator;
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
@@ -64,7 +66,7 @@ public class GalaxyController {
     @PostMapping("add")
     public GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
         log.info("calling add with {}", dto);
-        dto.validate(false);
+        validator.validate(dto, false);
 
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
         GalaxyDto result = modelMapper.map(service.add(entity), GalaxyDto.class);
@@ -76,7 +78,7 @@ public class GalaxyController {
     @PutMapping("update")
     public GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
         log.info("calling update with {}", dto);
-        dto.validate(true);
+        validator.validate(dto, true);
 
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
         GalaxyDto result = modelMapper.map(service.update(entity), GalaxyDto.class);

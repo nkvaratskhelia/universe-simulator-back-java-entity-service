@@ -6,6 +6,7 @@ import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecification;
+import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,7 @@ import java.util.concurrent.Callable;
 public class MoonController {
 
     private final MoonService service;
+    private final MoonDtoValidator validator;
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
@@ -64,7 +66,7 @@ public class MoonController {
     @PostMapping("add")
     public MoonDto add(@RequestBody MoonDto dto) throws AppException {
         log.info("calling add with {}", dto);
-        dto.validate(false);
+        validator.validate(dto, false);
 
         Moon entity = modelMapper.map(dto, Moon.class);
         MoonDto result = modelMapper.map(service.add(entity), MoonDto.class);
@@ -76,7 +78,7 @@ public class MoonController {
     @PutMapping("update")
     public MoonDto update(@RequestBody MoonDto dto) throws AppException {
         log.info("calling update with {}", dto);
-        dto.validate(true);
+        validator.validate(dto, true);
 
         Moon entity = modelMapper.map(dto, Moon.class);
         MoonDto result = modelMapper.map(service.update(entity), MoonDto.class);

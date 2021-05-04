@@ -24,6 +24,14 @@ public final class TestUtils {
         return PageRequest.of(0, 20, Sort.unsorted());
     }
 
+    public static Pageable getSpaceEntityPageable() {
+        Sort sort = Sort.by(
+            Sort.Order.desc("version"),
+            Sort.Order.asc("name")
+        );
+        return PageRequest.of(1, 2, sort);
+    }
+
     public static Event buildEvent() {
         return Event.builder()
             .type(EventType.SPACE_ENTITY_STATISTICS)

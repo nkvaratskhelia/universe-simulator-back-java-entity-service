@@ -12,15 +12,4 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class GalaxyDto extends SpaceEntityDto {
-
-    @Override
-    void validateDtoFields() {
-        // there is no dto-specific validation yet
-    }
-
-    @Override
-    void fixDtoDirtyFields() {
-        // there are no dto-specific fields to fix yet
-    }
-}
+public class GalaxyDto extends SpaceEntityDto {}

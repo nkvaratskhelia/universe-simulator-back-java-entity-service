@@ -8,6 +8,7 @@ import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
+import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,6 +39,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  */
 @WebMvcTest(GalaxyController.class)
 class RestExceptionHandlerTest extends AbstractWebMvcTest {
+
+    @MockBean
+    private GalaxyDtoValidator validator;
 
     @MockBean
     private GalaxyService service;
@@ -78,7 +81,8 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
-        then(service).should(never()).add(any());
+        then(validator).shouldHaveNoInteractions();
+        then(service).shouldHaveNoInteractions();
     }
 
     @Test
@@ -92,7 +96,8 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
-        then(service).should(never()).add(any());
+        then(validator).shouldHaveNoInteractions();
+        then(service).shouldHaveNoInteractions();
     }
 
     @Test
@@ -101,7 +106,8 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         MockHttpServletResponse response = performRequest(post("/galaxy/add"));
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_BODY);
-        then(service).should(never()).add(any());
+        then(validator).shouldHaveNoInteractions();
+        then(service).shouldHaveNoInteractions();
     }
 
     @Test
@@ -112,7 +118,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         MockHttpServletResponse response = performRequest(get("/galaxy/delete/{id}", id));
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_HTTP_METHOD);
-        then(service).should(never()).delete(any());
+        then(service).shouldHaveNoInteractions();
     }
 
     @Test
@@ -123,7 +129,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
         //then
         verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_PARAMETER);
-        then(service).should(never()).get(any());
+        then(service).shouldHaveNoInteractions();
     }
 
     @Test
@@ -139,6 +145,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         );
         //then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
+        then(validator).should().validate(dto, true);
         then(service).should().update(entity);
     }
 

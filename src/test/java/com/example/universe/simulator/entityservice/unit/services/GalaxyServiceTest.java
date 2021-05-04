@@ -177,7 +177,7 @@ class GalaxyServiceTest {
         //then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
         then(starRepository).should().existsByGalaxyId(id);
-        then(repository).should(never()).deleteById(any());
+        then(repository).shouldHaveNoInteractions();
         then(eventPublisher).shouldHaveNoInteractions();
     }
 
