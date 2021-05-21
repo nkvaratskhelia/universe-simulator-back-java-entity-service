@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.common;
+package com.example.universe.simulator.entityservice.common.abstractions;
 
 import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.exception.RestErrorResponse;

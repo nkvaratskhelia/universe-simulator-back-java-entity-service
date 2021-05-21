@@ -15,11 +15,10 @@ class SchedulingProperties {
     /**
      * Enables app-wide scheduling.
      */
-    @NotNull
-    private Boolean enabled;
+    private boolean enabled = true;
 
     /**
-     * Job interval cron expression.
+     * SpaceEntityStatisticsJob cron expression.
      */
     @NotNull
     private String spaceEntityStatisticsJobCron;

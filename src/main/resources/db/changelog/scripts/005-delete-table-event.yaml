@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-delete-table-event
+      author: nikoloz.kvaratskhelia
+      changes:
+        - dropTable:
+            tableName: event

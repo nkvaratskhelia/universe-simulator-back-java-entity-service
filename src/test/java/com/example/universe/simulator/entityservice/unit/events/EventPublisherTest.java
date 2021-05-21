@@ -1,7 +1,7 @@
 package com.example.universe.simulator.entityservice.unit.events;
 
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.entities.Event;
+import com.example.universe.simulator.entityservice.events.Event;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

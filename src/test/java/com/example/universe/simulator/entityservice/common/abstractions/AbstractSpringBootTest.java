@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.common;
+package com.example.universe.simulator.entityservice.common.abstractions;
 
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
