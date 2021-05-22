@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.smoke;
 
-import com.example.universe.simulator.entityservice.common.AbstractSpringBootTest;
+import com.example.universe.simulator.entityservice.common.abstractions.AbstractSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
