@@ -69,7 +69,7 @@ repositories {
 }
 
 ext {
-    set('springdocOpenapiVersion', '1.5.8')
+    set('springdocOpenapiVersion', '1.5.9')
 }
 
 dependencyManagement {
