@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.events;
 
+import com.example.universe.simulator.common.events.Event;
 import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ public class EventPublisher {
 
     public void publishEvent(EventType type, String data) {
         var event = Event.builder()
-            .type(type)
+            .type(type.toString())
             .data(data)
             .time(OffsetDateTime.now())
             .build();
