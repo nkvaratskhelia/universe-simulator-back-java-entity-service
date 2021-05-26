@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.events;
 
+import com.example.universe.simulator.common.events.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
