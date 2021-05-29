@@ -3,7 +3,7 @@ plugins {
     id 'idea'
     id 'jacoco'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.springframework.boot' version '2.4.6'
+    id 'org.springframework.boot' version '2.5.0'
 }
 
 group = 'com.example.universe.simulator'
@@ -91,7 +91,7 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'com.example.universe.simulator.common:common:0.0.2'
+    implementation 'com.example.universe.simulator.common:common:0.0.3'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
