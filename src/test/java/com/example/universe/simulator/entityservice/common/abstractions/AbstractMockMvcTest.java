@@ -1,7 +1,7 @@
 package com.example.universe.simulator.entityservice.common.abstractions;
 
-import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
-import com.example.universe.simulator.entityservice.exception.RestErrorResponse;
+import com.example.universe.simulator.entityservice.exception.ErrorResponse;
+import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,10 @@ public abstract class AbstractMockMvcTest {
 
     protected final void verifyErrorResponse(MockHttpServletResponse response, ErrorCodeType errorCode)
         throws JsonProcessingException, UnsupportedEncodingException {
-        RestErrorResponse restErrorResponse = objectMapper.readValue(response.getContentAsString(), RestErrorResponse.class);
-        assertThat(restErrorResponse.getError()).isEqualTo(errorCode);
-        assertThat(restErrorResponse.getStatus()).isEqualTo(errorCode.getHttpStatus().value());
+        assertThat(response.getStatus()).isEqualTo(errorCode.getHttpStatus().value());
+
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertThat(errorResponse.getError()).isEqualTo(errorCode);
     }
 
     //handles sync and async requests

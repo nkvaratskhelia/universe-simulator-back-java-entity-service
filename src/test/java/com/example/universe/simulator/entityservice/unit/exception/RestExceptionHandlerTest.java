@@ -5,8 +5,8 @@ import com.example.universe.simulator.entityservice.controllers.GalaxyController
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
+import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
