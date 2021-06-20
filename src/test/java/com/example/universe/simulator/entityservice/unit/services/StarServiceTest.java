@@ -139,7 +139,7 @@ class StarServiceTest {
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
-        then(eventPublisher).should().publishEvent(EventType.STAR_ADD, entity.getId().toString());
+        then(eventPublisher).should().publishEvent(EventType.STAR_ADD, entity.getId());
     }
 
     @Test
@@ -201,7 +201,7 @@ class StarServiceTest {
         //then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
-        then(eventPublisher).should().publishEvent(EventType.STAR_UPDATE, entity.getId().toString());
+        then(eventPublisher).should().publishEvent(EventType.STAR_UPDATE, entity.getId());
     }
 
     @Test
@@ -227,6 +227,6 @@ class StarServiceTest {
         service.delete(id);
         //then
         then(repository).should().deleteById(id);
-        then(eventPublisher).should().publishEvent(EventType.STAR_DELETE, id.toString());
+        then(eventPublisher).should().publishEvent(EventType.STAR_DELETE, id);
     }
 }

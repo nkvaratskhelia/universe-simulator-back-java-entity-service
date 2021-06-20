@@ -16,10 +16,10 @@ public class EventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public void publishEvent(EventType type, String data) {
+    public void publishEvent(EventType type, Object data) {
         var event = Event.builder()
             .type(type.toString())
-            .data(data)
+            .data(data.toString())
             .time(OffsetDateTime.now())
             .build();
         applicationEventPublisher.publishEvent(event);

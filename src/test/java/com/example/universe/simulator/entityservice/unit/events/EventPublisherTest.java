@@ -27,7 +27,7 @@ class EventPublisherTest {
         // given
         Event event = TestUtils.buildEvent();
         //when
-        eventPublisher.publishEvent(Enum.valueOf(EventType.class, event.getType()), event.getData());
+        eventPublisher.publishEvent(EventType.valueOf(event.getType()), event.getData());
         //then
         then(applicationEventPublisher).should().publishEvent(event);
     }
