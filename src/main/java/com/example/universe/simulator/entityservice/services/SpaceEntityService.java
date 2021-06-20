@@ -2,8 +2,8 @@ package com.example.universe.simulator.entityservice.services;
 
 import com.example.universe.simulator.entityservice.entities.SpaceEntity;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
 import com.example.universe.simulator.entityservice.repositories.SpaceEntityRepository;
+import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 
 abstract class SpaceEntityService<T extends SpaceEntity> {
 
