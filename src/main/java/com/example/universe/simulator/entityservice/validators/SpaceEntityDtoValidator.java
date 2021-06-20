@@ -2,7 +2,7 @@ package com.example.universe.simulator.entityservice.validators;
 
 import com.example.universe.simulator.entityservice.dtos.SpaceEntityDto;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.exception.ErrorCodeType;
+import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.utils.Utils;
 
 import java.util.Objects;

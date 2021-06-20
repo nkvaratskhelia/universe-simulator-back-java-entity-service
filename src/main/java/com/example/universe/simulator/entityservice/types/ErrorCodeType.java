@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.exception;
+package com.example.universe.simulator.entityservice.types;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

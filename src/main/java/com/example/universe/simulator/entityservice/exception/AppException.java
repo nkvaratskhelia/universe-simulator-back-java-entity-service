@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.exception;
 
+import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import lombok.Getter;
 
 @Getter
