@@ -40,7 +40,7 @@ public class StarService extends SpaceEntityService<Star> {
         validate(entity, false, repository);
         Star result = repository.save(entity);
 
-        eventPublisher.publishEvent(EventType.STAR_ADD, result.getId().toString());
+        eventPublisher.publishEvent(EventType.STAR_ADD, result.getId());
 
         return result;
     }
@@ -50,7 +50,7 @@ public class StarService extends SpaceEntityService<Star> {
         validate(entity, true, repository);
         Star result = repository.save(entity);
 
-        eventPublisher.publishEvent(EventType.STAR_UPDATE, entity.getId().toString());
+        eventPublisher.publishEvent(EventType.STAR_UPDATE, entity.getId());
 
         return result;
     }
@@ -62,7 +62,7 @@ public class StarService extends SpaceEntityService<Star> {
         }
         repository.deleteById(id);
 
-        eventPublisher.publishEvent(EventType.STAR_DELETE, id.toString());
+        eventPublisher.publishEvent(EventType.STAR_DELETE, id);
     }
 
     @Override

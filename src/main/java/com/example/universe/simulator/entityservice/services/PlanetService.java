@@ -40,7 +40,7 @@ public class PlanetService extends SpaceEntityService<Planet> {
         validate(entity, false, repository);
         Planet result = repository.save(entity);
 
-        eventPublisher.publishEvent(EventType.PLANET_ADD, result.getId().toString());
+        eventPublisher.publishEvent(EventType.PLANET_ADD, result.getId());
 
         return result;
     }
@@ -50,7 +50,7 @@ public class PlanetService extends SpaceEntityService<Planet> {
         validate(entity, true, repository);
         Planet result = repository.save(entity);
 
-        eventPublisher.publishEvent(EventType.PLANET_UPDATE, entity.getId().toString());
+        eventPublisher.publishEvent(EventType.PLANET_UPDATE, entity.getId());
 
         return result;
     }
@@ -62,7 +62,7 @@ public class PlanetService extends SpaceEntityService<Planet> {
         }
         repository.deleteById(id);
 
-        eventPublisher.publishEvent(EventType.PLANET_DELETE, id.toString());
+        eventPublisher.publishEvent(EventType.PLANET_DELETE, id);
     }
 
     @Override

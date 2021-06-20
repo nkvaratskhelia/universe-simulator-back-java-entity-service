@@ -1,12 +1,13 @@
 package com.example.universe.simulator.entityservice;
 
+import com.example.universe.simulator.common.config.RabbitMQConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@ConfigurationPropertiesScan
+@Import(RabbitMQConfig.class)
 @EnableAsync
 public class EntityServiceApplication {
 

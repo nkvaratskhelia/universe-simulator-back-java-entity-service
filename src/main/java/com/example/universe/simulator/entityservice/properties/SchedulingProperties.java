@@ -1,16 +1,16 @@
-package com.example.universe.simulator.entityservice.config;
+package com.example.universe.simulator.entityservice.properties;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @ConfigurationProperties(prefix = "app.scheduling", ignoreUnknownFields = false)
-@Getter @Setter
 @Validated
-class SchedulingProperties {
+@Getter @Setter
+public class SchedulingProperties {
 
     /**
      * Enables app-wide scheduling.
@@ -20,6 +20,6 @@ class SchedulingProperties {
     /**
      * SpaceEntityStatisticsJob cron expression.
      */
-    @NotNull
+    @NotBlank
     private String spaceEntityStatisticsJobCron;
 }
