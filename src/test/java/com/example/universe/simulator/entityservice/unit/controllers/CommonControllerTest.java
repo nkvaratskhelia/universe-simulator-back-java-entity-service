@@ -36,7 +36,7 @@ class CommonControllerTest extends AbstractWebMvcTest {
 
     @Test
     void testGetList_defaultPageable() throws Exception {
-        //given
+        // given
         List<Galaxy> entityList = List.of(
             TestUtils.buildGalaxy()
         );
@@ -46,9 +46,9 @@ class CommonControllerTest extends AbstractWebMvcTest {
         Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list"));
-        //then
+        // then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);
     }

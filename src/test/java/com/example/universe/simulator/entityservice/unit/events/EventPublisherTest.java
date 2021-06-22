@@ -26,9 +26,9 @@ class EventPublisherTest {
     void testProcess() {
         // given
         Event event = TestUtils.buildEvent();
-        //when
+        // when
         eventPublisher.publishEvent(EventType.valueOf(event.getType()), event.getData());
-        //then
+        // then
         then(applicationEventPublisher).should().publishEvent(event);
     }
 }

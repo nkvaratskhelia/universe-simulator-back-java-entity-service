@@ -23,199 +23,199 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        //-----------------------------------should add galaxy-----------------------------------
+        // -----------------------------------should add galaxy-----------------------------------
 
-        //given
+        // given
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(galaxyDto))
         );
-        //then
+        // then
         GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
-        //-----------------------------------should add star-----------------------------------
+        // -----------------------------------should add star-----------------------------------
 
-        //given
+        // given
         StarDto starDto = TestUtils.buildStarDtoForAdd();
         starDto.getGalaxy().setId(addedGalaxy.getId());
-        //when
+        // when
         response = performRequest(post("/star/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(starDto))
         );
-        //then
+        // then
         StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
-        //-----------------------------------should add planet-----------------------------------
+        // -----------------------------------should add planet-----------------------------------
 
-        //given
+        // given
         PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
         planetDto.getStar().setId(addedStar.getId());
-        //when
+        // when
         response = performRequest(post("/planet/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(planetDto))
         );
-        //then
+        // then
         PlanetDto addedPlanet = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
-        //-----------------------------------should throw sort parameter error-----------------------------------
+        // -----------------------------------should throw sort parameter error-----------------------------------
 
-        //when
+        // when
         response = performRequest(post("/moon/get-list")
             .param("sort", "invalid")
         );
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
 
-        //-----------------------------------should return empty list-----------------------------------
+        // -----------------------------------should return empty list-----------------------------------
 
-        //when
+        // when
         response = performRequest(post("/moon/get-list"));
-        //then
+        // then
         JsonPage<MoonDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        //-----------------------------------should add entity-----------------------------------
+        // -----------------------------------should add entity-----------------------------------
 
-        //given
+        // given
         MoonDto dto = TestUtils.buildMoonDtoForAdd();
         dto.setName("name1");
         dto.getPlanet().setId(addedPlanet.getId());
-        //when
+        // when
         response = performRequest(post("/moon/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         MoonDto addedDto1 = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
 
-        //-----------------------------------should add entity-----------------------------------
+        // -----------------------------------should add entity-----------------------------------
 
-        //given
+        // given
         dto = TestUtils.buildMoonDtoForAdd();
         dto.setName("name2");
         dto.getPlanet().setId(addedPlanet.getId());
-        //when
+        // when
         response = performRequest(post("/moon/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         MoonDto addedDto2 = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
 
-        //-----------------------------------should return list with 2 elements-----------------------------------
+        // -----------------------------------should return list with 2 elements-----------------------------------
 
-        //when
+        // when
         response = performRequest(post("/moon/get-list"));
-        //then
+        // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
 
-        //-----------------------------------should return entity-----------------------------------
+        // -----------------------------------should return entity-----------------------------------
 
-        //when
+        // when
         response = performRequest(get("/moon/get/{id}", addedDto1.getId()));
-        //then
+        // then
         MoonDto resultDto = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
         assertThat(resultDto).isEqualTo(addedDto1);
         assertThat(resultDto.getPlanet().getId()).isEqualTo(addedPlanet.getId());
 
-        //-----------------------------------should update entity-----------------------------------
+        // -----------------------------------should update entity-----------------------------------
 
-        //given
+        // given
         dto = TestUtils.buildMoonDtoForUpdate();
         dto.setId(addedDto1.getId());
         dto.setName("name1Update");
         dto.getPlanet().setId(addedPlanet.getId());
 
-        //when
+        // when
         response = performRequest(put("/moon/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         MoonDto updatedDto = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
         assertThat(updatedDto.getName()).isEqualTo(dto.getName());
         assertThat(updatedDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
-        //-----------------------------------should throw entity modified error-----------------------------------
+        // -----------------------------------should throw entity modified error-----------------------------------
 
-        //given
+        // given
         dto = TestUtils.buildMoonDtoForUpdate();
         dto.setId(addedDto1.getId());
         dto.getPlanet().setId(addedPlanet.getId());
-        //when
+        // when
         response = performRequest(put("/moon/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 
-        //-----------------------------------should return list with 1 element-----------------------------------
+        // -----------------------------------should return list with 1 element-----------------------------------
 
-        //given
+        // given
         MoonFilter filter = MoonFilter.builder().name("1uP").build();
-        //when
+        // when
         response = performRequest(post("/moon/get-list")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(filter))
         );
-        //then
+        // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
 
-        //-----------------------------------should delete entity-----------------------------------
+        // -----------------------------------should delete entity-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/moon/delete/{id}", addedDto1.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
 
-        //-----------------------------------should delete entity-----------------------------------
+        // -----------------------------------should delete entity-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/moon/delete/{id}", addedDto2.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
 
-        //-----------------------------------should throw not found error-----------------------------------
+        // -----------------------------------should throw not found error-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/moon/delete/{id}", addedDto1.getId()));
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
 
-        //-----------------------------------should return empty list-----------------------------------
+        // -----------------------------------should return empty list-----------------------------------
 
-        //when
+        // when
         response = performRequest(post("/moon/get-list"));
-        //then
+        // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        //-----------------------------------should delete planet-----------------------------------
+        // -----------------------------------should delete planet-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/planet/delete/{id}", addedPlanet.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
 
-        //-----------------------------------should delete star-----------------------------------
+        // -----------------------------------should delete star-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/star/delete/{id}", addedStar.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
 
-        //-----------------------------------should delete galaxy-----------------------------------
+        // -----------------------------------should delete galaxy-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
     }
 }

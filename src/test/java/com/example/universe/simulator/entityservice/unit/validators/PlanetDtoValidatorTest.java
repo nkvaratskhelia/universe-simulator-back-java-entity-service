@@ -21,23 +21,23 @@ class PlanetDtoValidatorTest {
 
     @Test
     void testValidateDtoFields_nullStar() {
-        //given
+        // given
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.setStar(null);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_STAR);
     }
 
     @Test
     void testValidateDtoFields_nullStarId() {
-        //given
+        // given
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.getStar().setId(null);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_STAR_ID);
     }
 }

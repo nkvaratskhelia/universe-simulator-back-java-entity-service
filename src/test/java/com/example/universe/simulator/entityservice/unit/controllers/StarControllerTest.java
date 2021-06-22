@@ -38,7 +38,7 @@ class StarControllerTest extends AbstractWebMvcTest {
 
     @Test
     void testGetList() throws Exception {
-        //given
+        // given
         List<Star> entityList = List.of(
             TestUtils.buildStar()
         );
@@ -48,45 +48,45 @@ class StarControllerTest extends AbstractWebMvcTest {
         Page<StarDto> dtoPage = entityPage.map(item -> modelMapper.map(item, StarDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/star/get-list")
             .param("page", String.valueOf(pageable.getPageNumber()))
             .param("size", String.valueOf(pageable.getPageSize()))
             .param("sort", "version,desc")
             .param("sort", "name,asc")
         );
-        //then
+        // then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);
     }
 
     @Test
     void testGet() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         Star entity = TestUtils.buildStar();
         StarDto dto = modelMapper.map(entity, StarDto.class);
         given(service.get(any())).willReturn(entity);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(get("/star/get/{id}", id));
-        //then
+        // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
     }
 
     @Test
     void testAdd() throws Exception {
-        //given
+        // given
         StarDto inputDto = TestUtils.buildStarDtoForAdd();
         Star entity = modelMapper.map(inputDto, Star.class);
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
         given(service.add(any())).willReturn(entity);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/star/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(inputDto))
         );
-        //then
+        // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
         then(service).should().add(entity);
@@ -94,17 +94,17 @@ class StarControllerTest extends AbstractWebMvcTest {
 
     @Test
     void testUpdate() throws Exception {
-        //given
+        // given
         StarDto inputDto = TestUtils.buildStarDtoForUpdate();
         Star entity = modelMapper.map(inputDto, Star.class);
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
         given(service.update(any())).willReturn(entity);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(put("/star/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(inputDto))
         );
-        //then
+        // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
@@ -112,11 +112,11 @@ class StarControllerTest extends AbstractWebMvcTest {
 
     @Test
     void testDelete() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
-        //when
+        // when
         MockHttpServletResponse response = performRequest(delete("/star/delete/{id}", id));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);
     }

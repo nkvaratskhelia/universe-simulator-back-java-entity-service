@@ -51,7 +51,7 @@ class MoonServiceTest {
 
     @Test
     void testGetList() {
-        //given
+        // given
         List<Moon> list = List.of(
             TestUtils.buildMoon()
         );
@@ -61,46 +61,46 @@ class MoonServiceTest {
 
         given(repository.findAll(ArgumentMatchers.<Specification<Moon>>any(), any(Pageable.class)))
             .willReturn(page);
-        //when
+        // when
         Page<Moon> result = service.getList(specification, pageable);
-        //then
+        // then
         assertThat(result).isEqualTo(page);
         then(repository).should().findAll(specification, pageable);
     }
 
     @Test
     void testGet_idNotFound() {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         given(repository.findById(any())).willReturn(Optional.empty());
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> service.get(id), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().findById(id);
     }
 
     @Test
     void testGet_successfulGet() throws AppException {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         Moon entity = TestUtils.buildMoon();
         given(repository.findById(any())).willReturn(Optional.of(entity));
-        //when
+        // when
         Moon result = service.get(id);
-        //then
+        // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().findById(id);
     }
 
     @Test
     void testAdd_duplicateName() {
-        //given
+        // given
         Moon entity = TestUtils.buildMoon();
         given(repository.existsByName(anyString())).willReturn(true);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
         then(repository).should().existsByName(entity.getName());
         then(repository).should(never()).existsByNameAndIdNot(anyString(), any());
@@ -110,13 +110,13 @@ class MoonServiceTest {
 
     @Test
     void testAdd_planetNotFound() {
-        //given
+        // given
         Moon entity = TestUtils.buildMoon();
         given(repository.existsByName(anyString())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(false);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_PLANET);
         then(planetRepository).should().existsById(entity.getPlanet().getId());
         then(repository).should(never()).save(any());
@@ -125,14 +125,14 @@ class MoonServiceTest {
 
     @Test
     void testAdd_successfulAdd() throws AppException {
-        //given
+        // given
         Moon entity = TestUtils.buildMoon();
         given(repository.existsByName(anyString())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
-        //when
+        // when
         Moon result = service.add(entity);
-        //then
+        // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
         then(eventPublisher).should().publishEvent(EventType.MOON_ADD, entity.getId());
@@ -140,12 +140,12 @@ class MoonServiceTest {
 
     @Test
     void testUpdate_idNotFound() {
-        //given
+        // given
         Moon entity = TestUtils.buildMoon();
         given(repository.existsById(any())).willReturn(false);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().existsById(entity.getId());
         then(repository).should(never()).save(any());
@@ -154,13 +154,13 @@ class MoonServiceTest {
 
     @Test
     void testUpdate_duplicateName() {
-        //given
+        // given
         Moon entity = TestUtils.buildMoon();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
         then(repository).should().existsByNameAndIdNot(entity.getName(), entity.getId());
         then(repository).should(never()).existsByName(any());
@@ -170,14 +170,14 @@ class MoonServiceTest {
 
     @Test
     void testUpdate_planetNotFound() {
-        //given
+        // given
         Moon entity = TestUtils.buildMoon();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(false);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_PLANET);
         then(planetRepository).should().existsById(entity.getPlanet().getId());
         then(repository).should(never()).save(any());
@@ -186,15 +186,15 @@ class MoonServiceTest {
 
     @Test
     void testUpdate_successfulUpdate() throws AppException {
-        //given
+        // given
         Moon entity = TestUtils.buildMoon();
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(planetRepository.existsById(any())).willReturn(true);
         given(repository.save(any())).willReturn(entity);
-        //when
+        // when
         Moon result = service.update(entity);
-        //then
+        // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
         then(eventPublisher).should().publishEvent(EventType.MOON_UPDATE, entity.getId());
@@ -202,11 +202,11 @@ class MoonServiceTest {
 
     @Test
     void testDelete_successfulDelete() {
-        //given
+        // given
         UUID id = UUID.randomUUID();
-        //when
+        // when
         service.delete(id);
-        //then
+        // then
         then(repository).should().deleteById(id);
         then(eventPublisher).should().publishEvent(EventType.MOON_DELETE, id);
     }

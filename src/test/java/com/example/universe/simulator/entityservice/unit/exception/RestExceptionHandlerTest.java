@@ -48,38 +48,38 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @Test
     void testAppException() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         AppException exception = new AppException(ErrorCodeType.IN_USE);
         willThrow(exception).given(service).delete(any());
-        //when
+        // when
         MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
-        //then
+        // then
         verifyErrorResponse(response, exception.getErrorCode());
         then(service).should().delete(id);
     }
 
     @Test
     void testEmptyResultDataAccessException() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         willThrow(EmptyResultDataAccessException.class).given(service).delete(any());
-        //when
+        // when
         MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
         then(service).should().delete(id);
     }
 
     @Test
     void testHttpMediaTypeNotSupportedException_missingContentType() throws Exception {
-        //given
+        // given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
         then(validator).shouldHaveNoInteractions();
         then(service).shouldHaveNoInteractions();
@@ -87,14 +87,14 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @Test
     void testHttpMediaTypeNotSupportedException_invalidContentType() throws Exception {
-        //given
+        // given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
             .contentType(MediaType.APPLICATION_XML)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
         then(validator).shouldHaveNoInteractions();
         then(service).shouldHaveNoInteractions();
@@ -102,9 +102,9 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @Test
     void testHttpMessageNotReadableException() throws Exception {
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/galaxy/add"));
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_BODY);
         then(validator).shouldHaveNoInteractions();
         then(service).shouldHaveNoInteractions();
@@ -112,38 +112,38 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @Test
     void testHttpRequestMethodNotSupportedException() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
-        //when
+        // when
         MockHttpServletResponse response = performRequest(get("/galaxy/delete/{id}", id));
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_HTTP_METHOD);
         then(service).shouldHaveNoInteractions();
     }
 
     @Test
     void testMethodArgumentTypeMismatchException() throws Exception {
-        //given
+        // given
         String id = "id";
-        //when
+        // when
         MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_PARAMETER);
         then(service).shouldHaveNoInteractions();
     }
 
     @Test
     void testObjectOptimisticLockingFailureException() throws Exception {
-        //given
+        // given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
         given(service.update(any())).willThrow(ObjectOptimisticLockingFailureException.class);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(put("/galaxy/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
         then(validator).should().validate(dto, true);
         then(service).should().update(entity);
@@ -151,7 +151,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @Test
     void testPropertyReferenceException() throws Exception {
-        //given
+        // given
         String property = "invalid";
         Sort sort = Sort.by(Sort.Order.asc(property));
         Pageable defaultPageable = TestUtils.getDefaultPageable();
@@ -159,23 +159,23 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
         PropertyReferenceException exception = new PropertyReferenceException(property, ClassTypeInformation.from(Galaxy.class), List.of());
         given(service.getList(any(), any())).willThrow(exception);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
             .param("sort", property)
         );
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
         then(service).should().getList(null, pageable);
     }
 
     @Test
     void testUnknownException() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         willThrow(RuntimeException.class).given(service).delete(any());
-        //when
+        // when
         MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.SERVER_ERROR);
         then(service).should().delete(id);
     }

@@ -21,23 +21,23 @@ class StarDtoValidatorTest {
 
     @Test
     void testValidateDtoFields_nullGalaxy() {
-        //given
+        // given
         StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.setGalaxy(null);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_GALAXY);
     }
 
     @Test
     void testValidateDtoFields_nullGalaxyId() {
-        //given
+        // given
         StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.getGalaxy().setId(null);
-        //when
+        // when
         AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
-        //then
+        // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_GALAXY_ID);
     }
 }
