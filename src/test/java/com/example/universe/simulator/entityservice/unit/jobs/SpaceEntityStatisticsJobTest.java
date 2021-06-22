@@ -46,9 +46,9 @@ class SpaceEntityStatisticsJobTest {
         given(starRepository.count()).willReturn(numStars);
         given(planetRepository.count()).willReturn(numPlanets);
         given(moonRepository.count()).willReturn(numMoons);
-        //when
+        // when
         spaceEntityStatisticsJob.logStatistics();
-        //then
+        // then
         then(galaxyRepository).should().count();
         then(starRepository).should().count();
         then(planetRepository).should().count();

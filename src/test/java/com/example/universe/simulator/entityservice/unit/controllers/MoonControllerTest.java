@@ -38,7 +38,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
 
     @Test
     void testGetList() throws Exception {
-        //given
+        // given
         List<Moon> entityList = List.of(
             TestUtils.buildMoon()
         );
@@ -48,45 +48,45 @@ class MoonControllerTest extends AbstractWebMvcTest {
         Page<MoonDto> dtoPage = entityPage.map(item -> modelMapper.map(item, MoonDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/moon/get-list")
             .param("page", String.valueOf(pageable.getPageNumber()))
             .param("size", String.valueOf(pageable.getPageSize()))
             .param("sort", "version,desc")
             .param("sort", "name,asc")
         );
-        //then
+        // then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);
     }
 
     @Test
     void testGet() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         Moon entity = TestUtils.buildMoon();
         MoonDto dto = modelMapper.map(entity, MoonDto.class);
         given(service.get(any())).willReturn(entity);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(get("/moon/get/{id}", id));
-        //then
+        // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
     }
 
     @Test
     void testAdd() throws Exception {
-        //given
+        // given
         MoonDto inputDto = TestUtils.buildMoonDtoForAdd();
         Moon entity = modelMapper.map(inputDto, Moon.class);
         MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
         given(service.add(any())).willReturn(entity);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/moon/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(inputDto))
         );
-        //then
+        // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
         then(service).should().add(entity);
@@ -94,17 +94,17 @@ class MoonControllerTest extends AbstractWebMvcTest {
 
     @Test
     void testUpdate() throws Exception {
-        //given
+        // given
         MoonDto inputDto = TestUtils.buildMoonDtoForUpdate();
         Moon entity = modelMapper.map(inputDto, Moon.class);
         MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
         given(service.update(any())).willReturn(entity);
-        //when
+        // when
         MockHttpServletResponse response = performRequest(put("/moon/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(inputDto))
         );
-        //then
+        // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
@@ -112,11 +112,11 @@ class MoonControllerTest extends AbstractWebMvcTest {
 
     @Test
     void testDelete() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
-        //when
+        // when
         MockHttpServletResponse response = performRequest(delete("/moon/delete/{id}", id));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);
     }

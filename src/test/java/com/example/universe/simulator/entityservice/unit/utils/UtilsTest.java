@@ -14,19 +14,19 @@ class UtilsTest {
     @NullAndEmptySource
     @ValueSource(strings = " ")
     void testIsNullOrBlank_invalidString(String argument) {
-        //when
+        // when
         boolean result = Utils.isNullOrBlank(argument);
-        //then
+        // then
         assertThat(result).isTrue();
     }
 
     @Test
     void testIsNullOrBlank_validString() {
-        //given
+        // given
         String str = "str";
-        //when
+        // when
         boolean result = Utils.isNullOrBlank(str);
-        //then
+        // then
         assertThat(result).isFalse();
     }
 }

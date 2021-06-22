@@ -24,13 +24,16 @@ class RabbitMQConfigSmokeTest {
 
     @Test
     void test() {
-        //-----------------------------------messageConverter-----------------------------------
-        //then
+        // -----------------------------------messageConverter-----------------------------------
+
+        // then
         assertThat(messageConverter)
             .isNotNull()
             .isInstanceOf(Jackson2JsonMessageConverter.class);
-        //-----------------------------------topicExchange-----------------------------------
-        //then
+
+        // -----------------------------------topicExchange-----------------------------------
+
+        // then
         assertThat(topicExchange).isNotNull();
         assertThat(topicExchange.getName()).isEqualTo(exchangeName);
     }

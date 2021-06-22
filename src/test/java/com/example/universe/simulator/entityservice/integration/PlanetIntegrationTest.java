@@ -22,179 +22,179 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        //-----------------------------------should add galaxy-----------------------------------
+        // -----------------------------------should add galaxy-----------------------------------
 
-        //given
+        // given
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
-        //when
+        // when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(galaxyDto))
         );
-        //then
+        // then
         GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
-        //-----------------------------------should add star-----------------------------------
+        // -----------------------------------should add star-----------------------------------
 
-        //given
+        // given
         StarDto starDto = TestUtils.buildStarDtoForAdd();
         starDto.getGalaxy().setId(addedGalaxy.getId());
-        //when
+        // when
         response = performRequest(post("/star/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(starDto))
         );
-        //then
+        // then
         StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
-        //-----------------------------------should throw sort parameter error-----------------------------------
+        // -----------------------------------should throw sort parameter error-----------------------------------
 
-        //when
+        // when
         response = performRequest(post("/planet/get-list")
             .param("sort", "invalid")
         );
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
 
-        //-----------------------------------should return empty list-----------------------------------
+        // -----------------------------------should return empty list-----------------------------------
 
-        //when
+        // when
         response = performRequest(post("/planet/get-list"));
-        //then
+        // then
         JsonPage<PlanetDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        //-----------------------------------should add entity-----------------------------------
+        // -----------------------------------should add entity-----------------------------------
 
-        //given
+        // given
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName("name1");
         dto.getStar().setId(addedStar.getId());
-        //when
+        // when
         response = performRequest(post("/planet/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         PlanetDto addedDto1 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
-        //-----------------------------------should add entity-----------------------------------
+        // -----------------------------------should add entity-----------------------------------
 
-        //given
+        // given
         dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName("name2");
         dto.getStar().setId(addedStar.getId());
-        //when
+        // when
         response = performRequest(post("/planet/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         PlanetDto addedDto2 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
-        //-----------------------------------should return list with 2 elements-----------------------------------
+        // -----------------------------------should return list with 2 elements-----------------------------------
 
-        //when
+        // when
         response = performRequest(post("/planet/get-list"));
-        //then
+        // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
 
-        //-----------------------------------should return entity-----------------------------------
+        // -----------------------------------should return entity-----------------------------------
 
-        //when
+        // when
         response = performRequest(get("/planet/get/{id}", addedDto1.getId()));
-        //then
+        // then
         PlanetDto resultDto = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
         assertThat(resultDto).isEqualTo(addedDto1);
         assertThat(resultDto.getStar().getId()).isEqualTo(addedStar.getId());
 
-        //-----------------------------------should update entity-----------------------------------
+        // -----------------------------------should update entity-----------------------------------
 
-        //given
+        // given
         dto = TestUtils.buildPlanetDtoForUpdate();
         dto.setId(addedDto1.getId());
         dto.setName("name1Update");
         dto.getStar().setId(addedStar.getId());
 
-        //when
+        // when
         response = performRequest(put("/planet/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         PlanetDto updatedDto = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
         assertThat(updatedDto.getName()).isEqualTo(dto.getName());
         assertThat(updatedDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
-        //-----------------------------------should throw entity modified error-----------------------------------
+        // -----------------------------------should throw entity modified error-----------------------------------
 
-        //given
+        // given
         dto = TestUtils.buildPlanetDtoForUpdate();
         dto.setId(addedDto1.getId());
         dto.getStar().setId(addedStar.getId());
-        //when
+        // when
         response = performRequest(put("/planet/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 
-        //-----------------------------------should return list with 1 element-----------------------------------
+        // -----------------------------------should return list with 1 element-----------------------------------
 
-        //given
+        // given
         PlanetFilter filter = PlanetFilter.builder().name("1uP").build();
-        //when
+        // when
         response = performRequest(post("/planet/get-list")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(filter))
         );
-        //then
+        // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
 
-        //-----------------------------------should delete entity-----------------------------------
+        // -----------------------------------should delete entity-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/planet/delete/{id}", addedDto1.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
 
-        //-----------------------------------should delete entity-----------------------------------
+        // -----------------------------------should delete entity-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/planet/delete/{id}", addedDto2.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
 
-        //-----------------------------------should throw not found error-----------------------------------
+        // -----------------------------------should throw not found error-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/planet/delete/{id}", addedDto1.getId()));
-        //then
+        // then
         verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
 
-        //-----------------------------------should return empty list-----------------------------------
+        // -----------------------------------should return empty list-----------------------------------
 
-        //when
+        // when
         response = performRequest(post("/planet/get-list"));
-        //then
+        // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        //-----------------------------------should delete star-----------------------------------
+        // -----------------------------------should delete star-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/star/delete/{id}", addedStar.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
 
-        //-----------------------------------should delete galaxy-----------------------------------
+        // -----------------------------------should delete galaxy-----------------------------------
 
-        //when
+        // when
         response = performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
-        //then
+        // then
         verifyOkStatus(response.getStatus());
     }
 }
