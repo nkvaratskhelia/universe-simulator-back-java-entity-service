@@ -25,6 +25,7 @@ class BeanConfigSmokeTest {
     @Test
     void test() {
         // -----------------------------------taskExecutor-----------------------------------
+
         // given
         int numProcessors = Runtime.getRuntime().availableProcessors();
         // then
@@ -37,10 +38,12 @@ class BeanConfigSmokeTest {
         assertThat(threadPoolTaskExecutor.getMaxPoolSize()).isEqualTo(numProcessors);
 
         // -----------------------------------applicationTaskExecutor-----------------------------------
+
         // then
         assertThat(applicationTaskExecutor).isSameAs(taskExecutor);
 
         // -----------------------------------modelMapper-----------------------------------
+
         // then
         assertThat(modelMapper).isNotNull();
     }
