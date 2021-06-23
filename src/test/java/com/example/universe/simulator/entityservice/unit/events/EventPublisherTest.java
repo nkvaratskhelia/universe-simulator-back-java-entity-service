@@ -23,11 +23,11 @@ class EventPublisherTest {
     private EventPublisher eventPublisher;
 
     @Test
-    void testPublishEvent() {
+    void testPublish() {
         // given
         Event event = TestUtils.buildEvent();
         // when
-        eventPublisher.publishEvent(EventType.valueOf(event.getType()), event.getData());
+        eventPublisher.publish(EventType.valueOf(event.getType()), event.getData());
         // then
         then(applicationEventPublisher).should().publishEvent(event);
     }

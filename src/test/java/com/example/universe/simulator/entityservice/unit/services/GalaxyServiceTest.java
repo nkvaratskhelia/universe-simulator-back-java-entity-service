@@ -119,7 +119,7 @@ class GalaxyServiceTest {
         // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
-        then(eventPublisher).should().publishEvent(EventType.GALAXY_ADD, entity.getId());
+        then(eventPublisher).should().publish(EventType.GALAXY_ADD, entity.getId());
     }
 
     @Test
@@ -164,7 +164,7 @@ class GalaxyServiceTest {
         // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
-        then(eventPublisher).should().publishEvent(EventType.GALAXY_UPDATE, entity.getId());
+        then(eventPublisher).should().publish(EventType.GALAXY_UPDATE, entity.getId());
     }
 
     @Test
@@ -190,6 +190,6 @@ class GalaxyServiceTest {
         service.delete(id);
         // then
         then(repository).should().deleteById(id);
-        then(eventPublisher).should().publishEvent(EventType.GALAXY_DELETE, id);
+        then(eventPublisher).should().publish(EventType.GALAXY_DELETE, id);
     }
 }

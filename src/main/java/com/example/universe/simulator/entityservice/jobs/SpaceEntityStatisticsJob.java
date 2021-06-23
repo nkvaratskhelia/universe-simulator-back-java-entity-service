@@ -33,6 +33,6 @@ public class SpaceEntityStatisticsJob {
         String statistics = String.format("galaxies [%d], stars [%d], planets [%d], moons [%d]", numGalaxies, numStars, numPlanets, numMoons);
         log.info("space entity statistics: {}", statistics);
 
-        eventPublisher.publishEvent(EventType.SPACE_ENTITY_STATISTICS, statistics);
+        eventPublisher.publish(EventType.SPACE_ENTITY_STATISTICS, statistics);
     }
 }
