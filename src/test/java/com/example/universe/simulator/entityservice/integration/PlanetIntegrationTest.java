@@ -6,7 +6,6 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
-import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -46,15 +45,6 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         );
         // then
         StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
-
-        // -----------------------------------should throw sort parameter error-----------------------------------
-
-        // when
-        response = performRequest(post("/planet/get-list")
-            .param("sort", "invalid")
-        );
-        // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
 
         // -----------------------------------should return empty list-----------------------------------
 
@@ -118,28 +108,16 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         dto.getStar().setId(addedStar.getId());
 
         // when
-        response = performRequest(put("/planet/update")
+        performRequest(put("/planet/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        // then
-        PlanetDto updatedDto = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
-        assertThat(updatedDto.getName()).isEqualTo(dto.getName());
-        assertThat(updatedDto.getVersion()).isEqualTo(dto.getVersion() + 1);
+        response = performRequest(get("/planet/get/{id}", addedDto1.getId()));
 
-        // -----------------------------------should throw entity modified error-----------------------------------
-
-        // given
-        dto = TestUtils.buildPlanetDtoForUpdate();
-        dto.setId(addedDto1.getId());
-        dto.getStar().setId(addedStar.getId());
-        // when
-        response = performRequest(put("/planet/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
         // then
-        verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
+        resultDto = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
+        assertThat(resultDto.getName()).isEqualTo(dto.getName());
+        assertThat(resultDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
         // -----------------------------------should return list with 1 element-----------------------------------
 
@@ -167,13 +145,6 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(delete("/planet/delete/{id}", addedDto2.getId()));
         // then
         verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should throw not found error-----------------------------------
-
-        // when
-        response = performRequest(delete("/planet/delete/{id}", addedDto1.getId()));
-        // then
-        verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
 
         // -----------------------------------should return empty list-----------------------------------
 

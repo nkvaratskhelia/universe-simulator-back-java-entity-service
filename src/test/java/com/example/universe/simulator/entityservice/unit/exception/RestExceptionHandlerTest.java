@@ -157,6 +157,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         Pageable defaultPageable = TestUtils.getDefaultPageable();
         Pageable pageable = PageRequest.of(defaultPageable.getPageNumber(), defaultPageable.getPageSize(), sort);
 
+        // JUnit cannot construct a proper instance of PropertyReferenceException, so we need to create it ourselves
         PropertyReferenceException exception = new PropertyReferenceException(property, ClassTypeInformation.from(Galaxy.class), List.of());
         given(service.getList(any(), any())).willThrow(exception);
         // when
