@@ -41,7 +41,7 @@ private jacocoExclusions(classDirectories) {
         fileTree(dir: it, exclude: [
                 'com/example/universe/simulator/entityservice/EntityServiceApplication.class',
                 'com/example/universe/simulator/entityservice/config/SchedulingConfig.class',
-                'com/example/universe/simulator/entityservice/entities/**_.class',
+                'com/example/universe/simulator/entityservice/entities/*_.class',
                 'com/example/universe/simulator/entityservice/properties/SchedulingProperties.class'
         ])
     }))
@@ -88,6 +88,7 @@ ext {
 dependencyManagement {
     imports {
         mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.3'
+        mavenBom 'org.testcontainers:testcontainers-bom:1.15.3'
     }
 }
 
@@ -113,5 +114,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:rabbitmq'
     testRuntimeOnly 'com.h2database:h2'
 }
