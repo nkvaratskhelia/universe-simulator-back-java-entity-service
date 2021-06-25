@@ -1,6 +1,5 @@
 package com.example.universe.simulator.entityservice.common.abstractions;
 
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.annotation.ElementType;
@@ -12,5 +11,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @AbstractTest
 @SpringBootTest
-@AutoConfigureTestDatabase
 public @interface AbstractSpringBootTest {}
