@@ -16,7 +16,7 @@ public class EventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public void publishEvent(EventType type, Object data) {
+    public void publish(EventType type, Object data) {
         var event = Event.builder()
             .type(type.toString())
             .data(data.toString())
