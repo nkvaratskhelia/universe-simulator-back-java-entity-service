@@ -135,7 +135,7 @@ class MoonServiceTest {
         // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
-        then(eventPublisher).should().publishEvent(EventType.MOON_ADD, entity.getId());
+        then(eventPublisher).should().publish(EventType.MOON_ADD, entity.getId());
     }
 
     @Test
@@ -197,7 +197,7 @@ class MoonServiceTest {
         // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
-        then(eventPublisher).should().publishEvent(EventType.MOON_UPDATE, entity.getId());
+        then(eventPublisher).should().publish(EventType.MOON_UPDATE, entity.getId());
     }
 
     @Test
@@ -208,6 +208,6 @@ class MoonServiceTest {
         service.delete(id);
         // then
         then(repository).should().deleteById(id);
-        then(eventPublisher).should().publishEvent(EventType.MOON_DELETE, id);
+        then(eventPublisher).should().publish(EventType.MOON_DELETE, id);
     }
 }
