@@ -53,6 +53,6 @@ class SpaceEntityStatisticsJobTest {
         then(starRepository).should().count();
         then(planetRepository).should().count();
         then(moonRepository).should().count();
-        then(eventPublisher).should().publishEvent(EventType.SPACE_ENTITY_STATISTICS, statistics);
+        then(eventPublisher).should().publish(EventType.SPACE_ENTITY_STATISTICS, statistics);
     }
 }

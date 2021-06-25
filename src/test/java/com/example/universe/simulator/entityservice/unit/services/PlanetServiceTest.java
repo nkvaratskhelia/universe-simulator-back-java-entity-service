@@ -139,7 +139,7 @@ class PlanetServiceTest {
         // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
-        then(eventPublisher).should().publishEvent(EventType.PLANET_ADD, entity.getId());
+        then(eventPublisher).should().publish(EventType.PLANET_ADD, entity.getId());
     }
 
     @Test
@@ -201,7 +201,7 @@ class PlanetServiceTest {
         // then
         assertThat(result).isEqualTo(entity);
         then(repository).should().save(entity);
-        then(eventPublisher).should().publishEvent(EventType.PLANET_UPDATE, entity.getId());
+        then(eventPublisher).should().publish(EventType.PLANET_UPDATE, entity.getId());
     }
 
     @Test
@@ -227,6 +227,6 @@ class PlanetServiceTest {
         service.delete(id);
         // then
         then(repository).should().deleteById(id);
-        then(eventPublisher).should().publishEvent(EventType.PLANET_DELETE, id);
+        then(eventPublisher).should().publish(EventType.PLANET_DELETE, id);
     }
 }
