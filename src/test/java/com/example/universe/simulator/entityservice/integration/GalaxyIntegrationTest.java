@@ -4,7 +4,6 @@ import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
-import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -20,19 +19,10 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        // -----------------------------------should throw sort parameter error-----------------------------------
-
-        // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
-            .param("sort", "invalid")
-        );
-        // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
-
         // -----------------------------------should return empty list-----------------------------------
 
         // when
-        response = performRequest(post("/galaxy/get-list"));
+        MockHttpServletResponse response = performRequest(post("/galaxy/get-list"));
         // then
         JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -87,27 +77,16 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         dto.setName("name1Update");
 
         // when
-        response = performRequest(put("/galaxy/update")
+        performRequest(put("/galaxy/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        // then
-        GalaxyDto updatedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
-        assertThat(updatedDto.getName()).isEqualTo(dto.getName());
-        assertThat(updatedDto.getVersion()).isEqualTo(dto.getVersion() + 1);
+        response = performRequest(get("/galaxy/get/{id}", addedDto1.getId()));
 
-        // -----------------------------------should throw entity modified error-----------------------------------
-
-        // given
-        dto = TestUtils.buildGalaxyDtoForUpdate();
-        dto.setId(addedDto1.getId());
-        // when
-        response = performRequest(put("/galaxy/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
         // then
-        verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
+        resultDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        assertThat(resultDto.getName()).isEqualTo(dto.getName());
+        assertThat(resultDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
         // -----------------------------------should return list with 1 element-----------------------------------
 
@@ -135,13 +114,6 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(delete("/galaxy/delete/{id}", addedDto2.getId()));
         // then
         verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should throw not found error-----------------------------------
-
-        // when
-        response = performRequest(delete("/galaxy/delete/{id}", addedDto1.getId()));
-        // then
-        verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
 
         // -----------------------------------should return empty list-----------------------------------
 
