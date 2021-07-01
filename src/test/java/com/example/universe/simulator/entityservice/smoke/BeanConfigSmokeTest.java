@@ -1,6 +1,5 @@
 package com.example.universe.simulator.entityservice.smoke;
 
-import com.example.universe.simulator.entityservice.common.abstractions.AbstractSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@AbstractSpringBootTest
-class BeanConfigSmokeTest {
+class BeanConfigSmokeTest extends AbstractSmokeTest {
 
     @Autowired
     private TaskExecutor taskExecutor;

@@ -1,6 +1,5 @@
 package com.example.universe.simulator.entityservice.smoke;
 
-import com.example.universe.simulator.entityservice.common.abstractions.AbstractSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -10,8 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@AbstractSpringBootTest
-class RabbitMQConfigSmokeTest {
+class RabbitMQConfigSmokeTest extends AbstractSmokeTest {
 
     @Autowired
     private MessageConverter messageConverter;
