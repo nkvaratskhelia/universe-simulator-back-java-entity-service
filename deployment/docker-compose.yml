@@ -2,6 +2,7 @@ services:
   entity-service-app:
     image: universesimulator/entity-service
     container_name: universe-simulator-entity-service-app
+    restart: always
     network_mode: host
     env_file:
       - docker-env-file
