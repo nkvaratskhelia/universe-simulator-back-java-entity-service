@@ -5,7 +5,7 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
-import com.example.universe.simulator.entityservice.specifications.GalaxySpecification;
+import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,15 +35,13 @@ public class GalaxyController {
 
     private final GalaxyService service;
     private final GalaxyDtoValidator validator;
+    private final GalaxySpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
     public Callable<Page<GalaxyDto>> getList(@RequestBody Optional<GalaxyFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-
-        Specification<Galaxy> specification = filter
-            .map(item -> new GalaxySpecification().getSpecification(item))
-            .orElse(null);
+        Specification<Galaxy> specification = specificationBuilder.build(filter.orElse(null));
 
         return () -> {
             Page<GalaxyDto> result = service.getList(specification, pageable)

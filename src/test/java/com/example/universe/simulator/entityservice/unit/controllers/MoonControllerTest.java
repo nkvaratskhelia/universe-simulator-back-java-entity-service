@@ -4,7 +4,9 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.MoonController;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.services.MoonService;
+import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import org.junit.jupiter.api.Test;
@@ -31,10 +33,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class MoonControllerTest extends AbstractWebMvcTest {
 
     @MockBean
+    private MoonService service;
+
+    @MockBean
     private MoonDtoValidator validator;
 
     @MockBean
-    private MoonService service;
+    private MoonSpecificationBuilder specificationBuilder;
+
+    @Test
+    void testGetList_nullFilter() throws Exception {
+        // given
+        List<Moon> entityList = List.of(
+            TestUtils.buildMoon()
+        );
+
+        Pageable pageable = TestUtils.getDefaultPageable();
+        Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<MoonDto> dtoPage = entityPage.map(item -> modelMapper.map(item, MoonDto.class));
+
+        given(service.getList(any(), any())).willReturn(entityPage);
+        // when
+        MockHttpServletResponse response = performRequest(post("/moon/get-list"));
+        // then
+        verifySuccessfulResponse(response, dtoPage);
+        then(specificationBuilder).should().build(null);
+        then(service).should().getList(null, pageable);
+    }
 
     @Test
     void testGetList() throws Exception {
@@ -43,20 +68,20 @@ class MoonControllerTest extends AbstractWebMvcTest {
             TestUtils.buildMoon()
         );
 
-        Pageable pageable = TestUtils.getSpaceEntityPageable();
+        MoonFilter filter = TestUtils.buildMoonFilter();
+        Pageable pageable = TestUtils.getDefaultPageable();
         Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<MoonDto> dtoPage = entityPage.map(item -> modelMapper.map(item, MoonDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
         MockHttpServletResponse response = performRequest(post("/moon/get-list")
-            .param("page", String.valueOf(pageable.getPageNumber()))
-            .param("size", String.valueOf(pageable.getPageSize()))
-            .param("sort", "version,desc")
-            .param("sort", "name,asc")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filter))
         );
         // then
         verifySuccessfulResponse(response, dtoPage);
+        then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
 

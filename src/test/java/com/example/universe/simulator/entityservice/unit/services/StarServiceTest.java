@@ -4,12 +4,11 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.StarService;
-import com.example.universe.simulator.entityservice.specifications.StarSpecification;
+import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import org.junit.jupiter.api.Test;
@@ -61,7 +60,7 @@ class StarServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
-        Specification<Star> specification = new StarSpecification().getSpecification(new StarFilter());
+        Specification<Star> specification = new StarSpecificationBuilder().build(null);
 
         given(repository.findAll(ArgumentMatchers.<Specification<Star>>any(), any(Pageable.class)))
             .willReturn(page);

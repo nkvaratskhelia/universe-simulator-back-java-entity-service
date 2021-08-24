@@ -136,7 +136,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return list with 1 element-----------------------------------
 
         // given
-        MoonFilter filter = MoonFilter.builder().name("1uP").build();
+        MoonFilter filter = TestUtils.buildMoonFilter();
+        filter.setName("1uP");
         // when
         response = performRequest(post("/moon/get-list")
             .contentType(MediaType.APPLICATION_JSON)

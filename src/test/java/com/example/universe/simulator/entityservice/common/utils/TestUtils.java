@@ -9,6 +9,10 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.types.EventType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +57,12 @@ public final class TestUtils {
         return result;
     }
 
+    public static GalaxyFilter buildGalaxyFilter() {
+        return GalaxyFilter.builder()
+            .name("name")
+            .build();
+    }
+
     public static Galaxy buildGalaxy() {
         return Galaxy.builder()
             .id(UUID.randomUUID())
@@ -73,6 +83,12 @@ public final class TestUtils {
         result.setVersion(0L);
 
         return result;
+    }
+
+    public static StarFilter buildStarFilter() {
+        return StarFilter.builder()
+            .name("name")
+            .build();
     }
 
     public static Star buildStar() {
@@ -98,6 +114,12 @@ public final class TestUtils {
         return result;
     }
 
+    public static PlanetFilter buildPlanetFilter() {
+        return PlanetFilter.builder()
+            .name("name")
+            .build();
+    }
+
     public static Planet buildPlanet() {
         return Planet.builder()
             .id(UUID.randomUUID())
@@ -119,6 +141,12 @@ public final class TestUtils {
         result.setVersion(0L);
 
         return result;
+    }
+
+    public static MoonFilter buildMoonFilter() {
+        return MoonFilter.builder()
+            .name("name")
+            .build();
     }
 
     public static Moon buildMoon() {

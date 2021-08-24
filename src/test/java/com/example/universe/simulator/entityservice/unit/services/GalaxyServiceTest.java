@@ -4,11 +4,10 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
-import com.example.universe.simulator.entityservice.specifications.GalaxySpecification;
+import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import org.junit.jupiter.api.Test;
@@ -57,7 +56,7 @@ class GalaxyServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Galaxy> page = new PageImpl<>(list, pageable, list.size());
-        Specification<Galaxy> specification = new GalaxySpecification().getSpecification(new GalaxyFilter());
+        Specification<Galaxy> specification = new GalaxySpecificationBuilder().build(null);
 
         given(repository.findAll(ArgumentMatchers.<Specification<Galaxy>>any(), any(Pageable.class)))
             .willReturn(page);

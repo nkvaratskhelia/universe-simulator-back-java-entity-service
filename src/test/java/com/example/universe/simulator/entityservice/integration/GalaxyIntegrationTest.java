@@ -91,7 +91,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return list with 1 element-----------------------------------
 
         // given
-        GalaxyFilter filter = GalaxyFilter.builder().name("1uP").build();
+        GalaxyFilter filter = TestUtils.buildGalaxyFilter();
+        filter.setName("1uP");
         // when
         response = performRequest(post("/galaxy/get-list")
             .contentType(MediaType.APPLICATION_JSON)
