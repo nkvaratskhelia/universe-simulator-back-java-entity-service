@@ -6,6 +6,7 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
+import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
@@ -41,10 +42,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @MockBean
+    private GalaxyService service;
+
+    @MockBean
     private GalaxyDtoValidator validator;
 
     @MockBean
-    private GalaxyService service;
+    private GalaxySpecificationBuilder specificationBuilder;
 
     @Test
     void testAppException() throws Exception {
@@ -81,7 +85,6 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         );
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
-        then(validator).shouldHaveNoInteractions();
         then(service).shouldHaveNoInteractions();
     }
 
@@ -96,7 +99,6 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         );
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
-        then(validator).shouldHaveNoInteractions();
         then(service).shouldHaveNoInteractions();
     }
 
@@ -106,7 +108,6 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         MockHttpServletResponse response = performRequest(post("/galaxy/add"));
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_BODY);
-        then(validator).shouldHaveNoInteractions();
         then(service).shouldHaveNoInteractions();
     }
 
@@ -145,7 +146,6 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         );
         // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
-        then(validator).should().validate(dto, true);
         then(service).should().update(entity);
     }
 

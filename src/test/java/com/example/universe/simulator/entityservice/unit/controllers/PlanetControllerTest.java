@@ -4,7 +4,9 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.PlanetController;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.services.PlanetService;
+import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import org.junit.jupiter.api.Test;
@@ -31,10 +33,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class PlanetControllerTest extends AbstractWebMvcTest {
 
     @MockBean
+    private PlanetService service;
+
+    @MockBean
     private PlanetDtoValidator validator;
 
     @MockBean
-    private PlanetService service;
+    private PlanetSpecificationBuilder specificationBuilder;
+
+    @Test
+    void testGetList_nullFilter() throws Exception {
+        // given
+        List<Planet> entityList = List.of(
+            TestUtils.buildPlanet()
+        );
+
+        Pageable pageable = TestUtils.getDefaultPageable();
+        Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<PlanetDto> dtoPage = entityPage.map(item -> modelMapper.map(item, PlanetDto.class));
+
+        given(service.getList(any(), any())).willReturn(entityPage);
+        // when
+        MockHttpServletResponse response = performRequest(post("/planet/get-list"));
+        // then
+        verifySuccessfulResponse(response, dtoPage);
+        then(specificationBuilder).should().build(null);
+        then(service).should().getList(null, pageable);
+    }
 
     @Test
     void testGetList() throws Exception {
@@ -43,20 +68,20 @@ class PlanetControllerTest extends AbstractWebMvcTest {
             TestUtils.buildPlanet()
         );
 
-        Pageable pageable = TestUtils.getSpaceEntityPageable();
+        PlanetFilter filter = TestUtils.buildPlanetFilter();
+        Pageable pageable = TestUtils.getDefaultPageable();
         Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<PlanetDto> dtoPage = entityPage.map(item -> modelMapper.map(item, PlanetDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
         MockHttpServletResponse response = performRequest(post("/planet/get-list")
-            .param("page", String.valueOf(pageable.getPageNumber()))
-            .param("size", String.valueOf(pageable.getPageSize()))
-            .param("sort", "version,desc")
-            .param("sort", "name,asc")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filter))
         );
         // then
         verifySuccessfulResponse(response, dtoPage);
+        then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
 

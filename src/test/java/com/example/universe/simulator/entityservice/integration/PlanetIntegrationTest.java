@@ -122,7 +122,8 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return list with 1 element-----------------------------------
 
         // given
-        PlanetFilter filter = PlanetFilter.builder().name("1uP").build();
+        PlanetFilter filter = TestUtils.buildPlanetFilter();
+        filter.setName("1uP");
         // when
         response = performRequest(post("/planet/get-list")
             .contentType(MediaType.APPLICATION_JSON)

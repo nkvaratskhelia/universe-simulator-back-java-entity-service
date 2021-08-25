@@ -108,7 +108,8 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return list with 1 element-----------------------------------
 
         // given
-        StarFilter filter = StarFilter.builder().name("1uP").build();
+        StarFilter filter = TestUtils.buildStarFilter();
+        filter.setName("1uP");
         // when
         response = performRequest(post("/star/get-list")
             .contentType(MediaType.APPLICATION_JSON)

@@ -5,7 +5,7 @@ import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.services.PlanetService;
-import com.example.universe.simulator.entityservice.specifications.PlanetSpecification;
+import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,15 +35,13 @@ public class PlanetController {
 
     private final PlanetService service;
     private final PlanetDtoValidator validator;
+    private final PlanetSpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
     public Callable<Page<PlanetDto>> getList(@RequestBody Optional<PlanetFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-
-        Specification<Planet> specification = filter
-            .map(item -> new PlanetSpecification().getSpecification(item))
-            .orElse(null);
+        Specification<Planet> specification = specificationBuilder.build(filter.orElse(null));
 
         return () -> {
             Page<PlanetDto> result = service.getList(specification, pageable)

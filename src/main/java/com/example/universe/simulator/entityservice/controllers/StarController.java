@@ -5,7 +5,7 @@ import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.services.StarService;
-import com.example.universe.simulator.entityservice.specifications.StarSpecification;
+import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,15 +35,13 @@ public class StarController {
 
     private final StarService service;
     private final StarDtoValidator validator;
+    private final StarSpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
     public Callable<Page<StarDto>> getList(@RequestBody Optional<StarFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-
-        Specification<Star> specification = filter
-            .map(item -> new StarSpecification().getSpecification(item))
-            .orElse(null);
+        Specification<Star> specification = specificationBuilder.build(filter.orElse(null));
 
         return () -> {
             Page<StarDto> result = service.getList(specification, pageable)

@@ -5,6 +5,7 @@ import com.example.universe.simulator.entityservice.controllers.GalaxyController
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
+import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
@@ -29,10 +30,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class CommonControllerTest extends AbstractWebMvcTest {
 
     @MockBean
+    private GalaxyService service;
+
+    @MockBean
     private GalaxyDtoValidator validator;
 
     @MockBean
-    private GalaxyService service;
+    private GalaxySpecificationBuilder specificationBuilder;
 
     @Test
     void testGetList_defaultPageable() throws Exception {
@@ -48,6 +52,30 @@ class CommonControllerTest extends AbstractWebMvcTest {
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
         MockHttpServletResponse response = performRequest(post("/galaxy/get-list"));
+        // then
+        verifySuccessfulResponse(response, dtoPage);
+        then(service).should().getList(null, pageable);
+    }
+
+    @Test
+    void testGetList_customPageable() throws Exception {
+        // given
+        List<Galaxy> entityList = List.of(
+            TestUtils.buildGalaxy()
+        );
+
+        Pageable pageable = TestUtils.getSpaceEntityPageable();
+        Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
+
+        given(service.getList(any(), any())).willReturn(entityPage);
+        // when
+        MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
+            .param("page", String.valueOf(pageable.getPageNumber()))
+            .param("size", String.valueOf(pageable.getPageSize()))
+            .param("sort", "version,desc")
+            .param("sort", "name,asc")
+        );
         // then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);

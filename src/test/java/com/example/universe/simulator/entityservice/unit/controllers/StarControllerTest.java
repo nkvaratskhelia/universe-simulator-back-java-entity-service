@@ -4,7 +4,9 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.StarController;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.services.StarService;
+import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
 import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import org.junit.jupiter.api.Test;
@@ -31,10 +33,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class StarControllerTest extends AbstractWebMvcTest {
 
     @MockBean
+    private StarService service;
+
+    @MockBean
     private StarDtoValidator validator;
 
     @MockBean
-    private StarService service;
+    private StarSpecificationBuilder specificationBuilder;
+
+    @Test
+    void testGetList_nullFilter() throws Exception {
+        // given
+        List<Star> entityList = List.of(
+            TestUtils.buildStar()
+        );
+
+        Pageable pageable = TestUtils.getDefaultPageable();
+        Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<StarDto> dtoPage = entityPage.map(item -> modelMapper.map(item, StarDto.class));
+
+        given(service.getList(any(), any())).willReturn(entityPage);
+        // when
+        MockHttpServletResponse response = performRequest(post("/star/get-list"));
+        // then
+        verifySuccessfulResponse(response, dtoPage);
+        then(specificationBuilder).should().build(null);
+        then(service).should().getList(null, pageable);
+    }
 
     @Test
     void testGetList() throws Exception {
@@ -43,20 +68,20 @@ class StarControllerTest extends AbstractWebMvcTest {
             TestUtils.buildStar()
         );
 
-        Pageable pageable = TestUtils.getSpaceEntityPageable();
+        StarFilter filter = TestUtils.buildStarFilter();
+        Pageable pageable = TestUtils.getDefaultPageable();
         Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<StarDto> dtoPage = entityPage.map(item -> modelMapper.map(item, StarDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
         MockHttpServletResponse response = performRequest(post("/star/get-list")
-            .param("page", String.valueOf(pageable.getPageNumber()))
-            .param("size", String.valueOf(pageable.getPageSize()))
-            .param("sort", "version,desc")
-            .param("sort", "name,asc")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filter))
         );
         // then
         verifySuccessfulResponse(response, dtoPage);
+        then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
 

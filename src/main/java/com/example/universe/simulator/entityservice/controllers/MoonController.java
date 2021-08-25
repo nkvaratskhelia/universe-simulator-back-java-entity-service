@@ -5,7 +5,7 @@ import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.services.MoonService;
-import com.example.universe.simulator.entityservice.specifications.MoonSpecification;
+import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,15 +35,13 @@ public class MoonController {
 
     private final MoonService service;
     private final MoonDtoValidator validator;
+    private final MoonSpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
     @PostMapping("get-list")
     public Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, @ParameterObject Pageable pageable) {
         log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-
-        Specification<Moon> specification = filter
-            .map(item -> new MoonSpecification().getSpecification(item))
-            .orElse(null);
+        Specification<Moon> specification = specificationBuilder.build(filter.orElse(null));
 
         return () -> {
             Page<MoonDto> result = service.getList(specification, pageable)
