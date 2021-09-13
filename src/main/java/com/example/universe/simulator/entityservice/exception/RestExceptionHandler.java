@@ -15,8 +15,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.time.Instant;
 
-@Slf4j
 @RestControllerAdvice
+@Slf4j
 class RestExceptionHandler {
 
     @ExceptionHandler(AppException.class)
