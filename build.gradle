@@ -21,11 +21,30 @@ test {
     useJUnitPlatform()
 }
 
+def coverageExclusions = [
+        '**/com/example/universe/simulator/entityservice/EntityServiceApplication.*',
+        '**/com/example/universe/simulator/entityservice/config/SchedulingConfig.*',
+        '**/com/example/universe/simulator/entityservice/entities/*_.*',
+        '**/com/example/universe/simulator/entityservice/properties/SchedulingProperties.*'
+]
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: coverageExclusions)
+        }))
+    }
+    reports {
+        xml.required = true
+    }
+}
+
 jacocoTestCoverageVerification {
     afterEvaluate {
-        jacocoExclusions(classDirectories)
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: coverageExclusions)
+        }))
     }
-
     violationRules {
         rule {
             limit {
@@ -35,31 +54,12 @@ jacocoTestCoverageVerification {
     }
 }
 
-private jacocoExclusions(classDirectories) {
-    classDirectories.setFrom(files(classDirectories.files.collect {
-        fileTree(dir: it, exclude: [
-                'com/example/universe/simulator/entityservice/EntityServiceApplication.class',
-                'com/example/universe/simulator/entityservice/config/SchedulingConfig.class',
-                'com/example/universe/simulator/entityservice/entities/*_.class',
-                'com/example/universe/simulator/entityservice/properties/SchedulingProperties.class'
-        ])
-    }))
-}
-
-jacocoTestReport {
-    afterEvaluate {
-        jacocoExclusions(classDirectories)
-    }
-    reports {
-        xml.required = true
-    }
-}
-
 sonarqube {
     properties {
-        property 'sonar.host.url', "https://sonarcloud.io"
-        property 'sonar.organization', "universe-simulator"
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.organization', 'universe-simulator'
         property 'sonar.login', System.getenv('US_SONARQUBE_TOKEN')
+        property 'sonar.coverage.exclusions', coverageExclusions
     }
 }
 
