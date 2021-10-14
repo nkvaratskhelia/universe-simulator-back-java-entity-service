@@ -18,8 +18,8 @@ abstract class SpaceEntityService<T extends SpaceEntity> {
         }
 
         boolean existsByName = isUpdate
-            ? repository.existsByNameAndIdNot(entity.getName(), entity.getId())
-            : repository.existsByName(entity.getName());
+                               ? repository.existsByNameAndIdNot(entity.getName(), entity.getId())
+                               : repository.existsByName(entity.getName());
         if (existsByName) {
             throw new AppException(ErrorCodeType.EXISTS_NAME);
         }

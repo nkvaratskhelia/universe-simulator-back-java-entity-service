@@ -41,7 +41,7 @@ public abstract class AbstractMockMvcTest {
     protected final MockHttpServletResponse performRequest(RequestBuilder requestBuilder) throws Exception {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
         return mvcResult.getRequest().isAsyncStarted()
-            ? mockMvc.perform(asyncDispatch(mvcResult)).andReturn().getResponse()
-            : mvcResult.getResponse();
+               ? mockMvc.perform(asyncDispatch(mvcResult)).andReturn().getResponse()
+               : mvcResult.getResponse();
     }
 }
