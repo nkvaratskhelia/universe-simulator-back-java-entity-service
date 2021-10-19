@@ -8,18 +8,14 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
 
 @MappedSuperclass
 @Getter @Setter
 @NoArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public abstract class SpaceEntity extends AbstractEntity {
 
     @Column(nullable = false, unique = true)
     private String name;
-
-    @Version
-    private long version;
 }
