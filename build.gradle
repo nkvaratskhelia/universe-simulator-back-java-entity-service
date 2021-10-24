@@ -96,13 +96,13 @@ repositories {
 }
 
 ext {
-    set('springdocOpenapiVersion', '1.5.11')
+    set('springdocOpenapiVersion', '1.5.12')
 }
 
 dependencyManagement {
     imports {
         mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.4'
-        mavenBom 'org.testcontainers:testcontainers-bom:1.16.1'
+        mavenBom 'org.testcontainers:testcontainers-bom:1.16.2'
     }
 }
 
