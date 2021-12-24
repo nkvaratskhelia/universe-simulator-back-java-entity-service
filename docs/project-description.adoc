@@ -3,7 +3,7 @@
 Service that manages the data model of the distributed application.
 
 == Web
-`Spring Web MVC (Servlet Stack)`.
+`Spring Web MVC`
 
 === Rest API
 Rest API documentation is generated automatically by `springdoc-openapi`. You can access OpenAPI
