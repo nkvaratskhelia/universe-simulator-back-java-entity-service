@@ -17,7 +17,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
 
     static {
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.1");
-        RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.9.11-management");
+        RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.9.12-management");
 
         RABBITMQ_CONTAINER.start();
         POSTGRESQL_CONTAINER.start();
