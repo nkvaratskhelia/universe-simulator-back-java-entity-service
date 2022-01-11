@@ -1,11 +1,11 @@
 services:
   entity-service-postgres:
-    image: postgres
+    image: postgres:14.1
     container_name: universe-simulator-entity-service-postgres
     restart: always
     environment:
       - POSTGRES_DB=entity-service
-      - POSTGRES_USER=username
+      - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     ports:
       - 5432:5432

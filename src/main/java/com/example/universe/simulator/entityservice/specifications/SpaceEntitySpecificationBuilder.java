@@ -12,9 +12,9 @@ abstract class SpaceEntitySpecificationBuilder<E extends SpaceEntity, F extends 
 
     public final Specification<E> build(F filter) {
         return Objects.nonNull(filter)
-            ? buildCommonSpecification(filter)
-            .and(buildEntitySpecification(filter))
-            : null;
+               ? buildCommonSpecification(filter)
+                   .and(buildEntitySpecification(filter))
+               : null;
     }
 
     private Specification<E> buildCommonSpecification(F filter) {
@@ -23,8 +23,8 @@ abstract class SpaceEntitySpecificationBuilder<E extends SpaceEntity, F extends 
 
     private Specification<E> nameLike(String name) {
         return !Utils.isNullOrBlank(name)
-            ? AbstractSpecifications.like(SpaceEntity_.NAME, name)
-            : null;
+               ? AbstractSpecifications.like(SpaceEntity_.NAME, name)
+               : null;
     }
 
     abstract Specification<E> buildEntitySpecification(F filter);

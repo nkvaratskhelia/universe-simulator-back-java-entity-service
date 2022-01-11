@@ -3,13 +3,13 @@ plugins {
     id 'idea'
     id 'jacoco'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.springframework.boot' version '2.5.5'
+    id 'org.springframework.boot' version '2.6.2'
     id 'org.sonarqube' version '3.3'
-    id 'org.owasp.dependencycheck' version '6.3.1'
+    id 'org.owasp.dependencycheck' version '6.5.2.1'
 }
 
 group = 'com.example.universe.simulator'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 sourceCompatibility = '17'
 
 idea {
@@ -69,12 +69,12 @@ dependencyCheck {
 }
 
 bootBuildImage {
-    imageName = "universesimulator/${project.name}"
+    imageName = "universesimulator/${project.name}:${System.getenv('GITHUB_RUN_NUMBER')}"
     publish = true
     docker {
         publishRegistry {
             username = System.getenv('US_DOCKER_REGISTRY_USER')
-            password = System.getenv('US_DOCKER_REGISTRY_PASSWORD')
+            password = System.getenv('US_DOCKER_REGISTRY_TOKEN')
         }
     }
 }
@@ -84,7 +84,7 @@ repositories {
     mavenLocal()
     maven {
         name = 'GitHubPackages'
-        url = System.getenv('US_GITHUB_PACKAGES_URL')
+        url = 'https://maven.pkg.github.com/nkvaratskhelia/universe-simulator-back-java-common'
         credentials {
             username = System.getenv('US_GITHUB_PACKAGES_USER')
             password = System.getenv('US_GITHUB_PACKAGES_TOKEN')
@@ -95,33 +95,29 @@ repositories {
     }
 }
 
-ext {
-    set('springdocOpenapiVersion', '1.5.10')
-}
-
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.4'
-        mavenBom 'org.testcontainers:testcontainers-bom:1.16.0'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.0'
+        mavenBom 'org.testcontainers:testcontainers-bom:1.16.2'
+        mavenBom 'org.springdoc:springdoc-openapi:1.6.4'
     }
 }
 
 dependencies {
-    implementation 'com.example.universe.simulator:common:0.1.6'
+    implementation 'com.example.universe.simulator:common:0.3.4'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.modelmapper:modelmapper:2.4.4'
-    implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
+    implementation 'org.modelmapper:modelmapper:3.0.0'
+    implementation 'org.springdoc:springdoc-openapi-data-rest'
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-sleuth'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-vault-config'
     runtimeOnly 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
     runtimeOnly 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"
+    runtimeOnly 'org.springdoc:springdoc-openapi-ui'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:rabbitmq'
@@ -131,5 +127,4 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
     annotationProcessor 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }
