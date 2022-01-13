@@ -3,8 +3,7 @@ package com.example.universe.simulator.entityservice.smoke;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,33 +11,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BeanConfigSmokeTest extends AbstractSmokeTest {
 
     @Autowired
-    private TaskExecutor taskExecutor;
+    @Qualifier("applicationTaskExecutor")
+    private ThreadPoolTaskExecutor applicationTaskExecutor;
 
     @Autowired
-    private AsyncTaskExecutor applicationTaskExecutor;
+    @Qualifier("taskExecutor")
+    private ThreadPoolTaskExecutor taskExecutor;
 
     @Autowired
     private ModelMapper modelMapper;
 
     @Test
     void test() {
-        // -----------------------------------taskExecutor-----------------------------------
+        // -----------------------------------applicationTaskExecutor-----------------------------------
 
         // given
         int numProcessors = Runtime.getRuntime().availableProcessors();
         // then
-        assertThat(taskExecutor)
-            .isNotNull()
-            .isInstanceOf(ThreadPoolTaskExecutor.class);
+        assertThat(applicationTaskExecutor).isNotNull();
+        assertThat(applicationTaskExecutor.getCorePoolSize()).isEqualTo(numProcessors);
+        assertThat(applicationTaskExecutor.getMaxPoolSize()).isEqualTo(numProcessors);
 
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = (ThreadPoolTaskExecutor) taskExecutor;
-        assertThat(threadPoolTaskExecutor.getCorePoolSize()).isEqualTo(numProcessors);
-        assertThat(threadPoolTaskExecutor.getMaxPoolSize()).isEqualTo(numProcessors);
-
-        // -----------------------------------applicationTaskExecutor-----------------------------------
+        // -----------------------------------taskExecutor-----------------------------------
 
         // then
-        assertThat(applicationTaskExecutor).isSameAs(taskExecutor);
+        assertThat(taskExecutor).isSameAs(applicationTaskExecutor);
 
         // -----------------------------------modelMapper-----------------------------------
 
