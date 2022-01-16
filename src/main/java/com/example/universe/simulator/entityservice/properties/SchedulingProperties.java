@@ -15,7 +15,7 @@ public class SchedulingProperties {
     /**
      * Enables app-wide scheduling.
      */
-    private boolean enabled = true;
+    private boolean enabled;
 
     /**
      * SpaceEntityStatisticsJob cron expression.
