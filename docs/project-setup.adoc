@@ -1,0 +1,8 @@
+= Project setup
+
+== Configuration
+You need to have the following properties in your `application-local.properties` file:
+
+* `spring.datasource.url`
+* `spring.datasource.username`
+* `spring.datasource.password`
