@@ -99,7 +99,7 @@ dependencyManagement {
     imports {
         mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.0'
         mavenBom 'org.testcontainers:testcontainers-bom:1.16.3'
-        mavenBom 'org.springdoc:springdoc-openapi:1.6.4'
+        mavenBom 'org.springdoc:springdoc-openapi:1.6.5'
     }
 }
 
