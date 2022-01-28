@@ -95,11 +95,14 @@ repositories {
     }
 }
 
+ext {
+    set('springdocOpenapiVersion', '1.6.5')
+}
+
 dependencyManagement {
     imports {
         mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2021.0.0'
         mavenBom 'org.testcontainers:testcontainers-bom:1.16.3'
-        mavenBom 'org.springdoc:springdoc-openapi:1.6.5'
     }
 }
 
@@ -109,7 +112,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.modelmapper:modelmapper:3.0.0'
-    implementation 'org.springdoc:springdoc-openapi-data-rest'
+    implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-config'
@@ -118,7 +121,7 @@ dependencies {
     runtimeOnly 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
     runtimeOnly 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly 'org.springdoc:springdoc-openapi-ui'
+    runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:rabbitmq'
