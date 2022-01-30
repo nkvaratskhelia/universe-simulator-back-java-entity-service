@@ -16,6 +16,12 @@ public class AppProperties {
     @Valid
     private SchedulingProperties scheduling = new SchedulingProperties();
 
+    /**
+     * Logstash connection URL, in the form of host:port.
+     */
+    @NotBlank
+    private String logstashUrl;
+
     @Getter @Setter
     public static class SchedulingProperties {
 
