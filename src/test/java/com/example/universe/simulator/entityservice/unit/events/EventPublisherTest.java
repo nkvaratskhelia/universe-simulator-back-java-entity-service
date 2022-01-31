@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.unit.events;
 
-import com.example.universe.simulator.common.events.Event;
+import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.types.EventType;
@@ -25,7 +25,7 @@ class EventPublisherTest {
     @Test
     void testPublish() {
         // given
-        Event event = TestUtils.buildEvent();
+        EventDto event = TestUtils.buildEventDto();
         // when
         eventPublisher.publish(EventType.valueOf(event.getType()), event.getData());
         // then

@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.events;
 
-import com.example.universe.simulator.common.events.Event;
+import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ public class EventPublisher {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public void publish(EventType type, Object data) {
-        var event = Event.builder()
+        var event = EventDto.builder()
             .type(type.toString())
             .data(data.toString())
             .time(OffsetDateTime.now())

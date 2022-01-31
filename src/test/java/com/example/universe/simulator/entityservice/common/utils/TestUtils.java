@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.common.utils;
 
-import com.example.universe.simulator.common.events.Event;
+import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
@@ -36,8 +36,8 @@ public final class TestUtils {
         return PageRequest.of(1, 2, sort);
     }
 
-    public static Event buildEvent() {
-        return Event.builder()
+    public static EventDto buildEventDto() {
+        return EventDto.builder()
             .type(EventType.SPACE_ENTITY_STATISTICS.toString())
             .data("data")
             .build();

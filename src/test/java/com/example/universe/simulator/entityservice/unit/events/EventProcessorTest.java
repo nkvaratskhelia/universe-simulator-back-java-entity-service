@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.unit.events;
 
-import com.example.universe.simulator.common.events.Event;
+import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.events.EventProcessor;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class EventProcessorTest {
     @Test
     void testProcess() {
         // given
-        Event event = TestUtils.buildEvent();
+        EventDto event = TestUtils.buildEventDto();
         // when
         eventProcessor.process(event);
         // then
