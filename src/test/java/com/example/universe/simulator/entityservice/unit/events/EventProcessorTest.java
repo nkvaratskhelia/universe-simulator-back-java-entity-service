@@ -10,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+import java.time.Clock;
+
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,7 +26,7 @@ class EventProcessorTest {
     @Test
     void testProcess() {
         // given
-        EventDto event = TestUtils.buildEventDto();
+        EventDto event = TestUtils.buildEventDto(Clock.systemDefaultZone());
         // when
         eventProcessor.process(event);
         // then

@@ -18,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.time.Clock;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public final class TestUtils {
@@ -36,10 +38,11 @@ public final class TestUtils {
         return PageRequest.of(1, 2, sort);
     }
 
-    public static EventDto buildEventDto() {
+    public static EventDto buildEventDto(Clock clock) {
         return EventDto.builder()
             .type(EventType.SPACE_ENTITY_STATISTICS.toString())
             .data("data")
+            .time(OffsetDateTime.now(clock))
             .build();
     }
 

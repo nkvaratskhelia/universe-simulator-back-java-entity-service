@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
 import java.time.OffsetDateTime;
 
 @Component
@@ -15,12 +16,13 @@ import java.time.OffsetDateTime;
 public class EventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final Clock clock;
 
     public void publish(EventType type, Object data) {
         var event = EventDto.builder()
             .type(type.toString())
             .data(data.toString())
-            .time(OffsetDateTime.now())
+            .time(OffsetDateTime.now(clock))
             .build();
         applicationEventPublisher.publishEvent(event);
 

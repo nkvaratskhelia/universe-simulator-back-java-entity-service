@@ -11,6 +11,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
@@ -19,13 +24,20 @@ class EventPublisherTest {
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
+    @Mock
+    private Clock clock;
+
     @InjectMocks
     private EventPublisher eventPublisher;
 
     @Test
     void testPublish() {
         // given
-        EventDto event = TestUtils.buildEventDto();
+        Clock fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+        EventDto event = TestUtils.buildEventDto(fixedClock);
+
+        given(clock.instant()).willReturn(fixedClock.instant());
+        given(clock.getZone()).willReturn(fixedClock.getZone());
         // when
         eventPublisher.publish(EventType.valueOf(event.getType()), event.getData());
         // then
