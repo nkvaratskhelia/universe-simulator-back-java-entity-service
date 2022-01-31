@@ -10,7 +10,7 @@ Service that manages the data model of the distributed application.
 definition at `/v3/api-docs` and `Swagger` ui at `/swagger-ui.html`.
 
 == Database
-`Postgres`
+`PostgreSQL`
 
 === Migration
 `Liquibase` is used to handle database migrations. Liquibase config is described in the
