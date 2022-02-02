@@ -1,15 +1,20 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -21,29 +26,25 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        // -----------------------------------should add galaxy-----------------------------------
+        // -----------------------------------add galaxy-----------------------------------
 
-        // given
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
-        // when
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(galaxyDto))
         );
-        // then
         GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
-        // -----------------------------------should add star-----------------------------------
+        // -----------------------------------add star-----------------------------------
 
-        // given
         StarDto starDto = TestUtils.buildStarDtoForAdd();
         starDto.getGalaxy().setId(addedGalaxy.getId());
-        // when
+
         response = performRequest(post("/star/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(starDto))
         );
-        // then
+
         StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
         // -----------------------------------should return empty list-----------------------------------
@@ -54,32 +55,30 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         JsonPage<PlanetDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------should add entity-----------------------------------
+        // -----------------------------------add entity-----------------------------------
 
-        // given
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName("name1");
         dto.getStar().setId(addedStar.getId());
-        // when
+
         response = performRequest(post("/planet/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        // then
+
         PlanetDto addedDto1 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
-        // -----------------------------------should add entity-----------------------------------
+        // -----------------------------------add another entity-----------------------------------
 
-        // given
         dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName("name2");
         dto.getStar().setId(addedStar.getId());
-        // when
+
         response = performRequest(post("/planet/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        // then
+
         PlanetDto addedDto2 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
         // -----------------------------------should return list with 2 elements-----------------------------------
@@ -155,18 +154,29 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------should delete star-----------------------------------
+        // -----------------------------------delete star-----------------------------------
 
-        // when
-        response = performRequest(delete("/star/delete/{id}", addedStar.getId()));
+        performRequest(delete("/star/delete/{id}", addedStar.getId()));
+
+        // -----------------------------------delete galaxy-----------------------------------
+
+        performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
+
+        // -----------------------------------should have fired application events-----------------------------------
+
+        // given
+        Map<String, Long> eventsByType = applicationEvents.stream(EventDto.class)
+            .collect(Collectors.groupingBy(EventDto::getType, Collectors.counting()));
+
         // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should delete galaxy-----------------------------------
-
-        // when
-        response = performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
+        assertThat(eventsByType).isEqualTo(Map.ofEntries(
+            Map.entry(EventType.GALAXY_ADD.toString(), 1L),
+            Map.entry(EventType.STAR_ADD.toString(), 1L),
+            Map.entry(EventType.PLANET_ADD.toString(), 2L),
+            Map.entry(EventType.PLANET_UPDATE.toString(), 1L),
+            Map.entry(EventType.PLANET_DELETE.toString(), 2L),
+            Map.entry(EventType.STAR_DELETE.toString(), 1L),
+            Map.entry(EventType.GALAXY_DELETE.toString(), 1L)
+        ));
     }
 }

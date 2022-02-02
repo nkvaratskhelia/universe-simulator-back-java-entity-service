@@ -29,7 +29,7 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
 
         // -----------------------------------should throw entity modified error-----------------------------------
 
-        // -----------------------------------given-----------------------------------
+        // ====================given====================
 
         // add entity
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
@@ -53,14 +53,14 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
         dto = TestUtils.buildGalaxyDtoForUpdate();
         dto.setId(addedDto.getId());
 
-        // -----------------------------------when-----------------------------------
+        // ====================when====================
 
         response = performRequest(put("/galaxy/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
 
-        // -----------------------------------then-----------------------------------
+        // ====================then====================
 
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 

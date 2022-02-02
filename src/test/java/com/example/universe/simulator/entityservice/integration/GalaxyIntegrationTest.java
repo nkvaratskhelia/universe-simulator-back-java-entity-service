@@ -1,13 +1,18 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -27,30 +32,28 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------should add entity-----------------------------------
+        // -----------------------------------add entity-----------------------------------
 
-        // given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName("name1");
-        // when
+
         response = performRequest(post("/galaxy/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        // then
+
         GalaxyDto addedDto1 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
-        // -----------------------------------should add entity-----------------------------------
+        // -----------------------------------add another entity-----------------------------------
 
-        // given
         dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setName("name2");
-        // when
+
         response = performRequest(post("/galaxy/add")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-        // then
+
         GalaxyDto addedDto2 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
         // -----------------------------------should return list with 2 elements-----------------------------------
@@ -123,5 +126,18 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
+
+        // -----------------------------------should have fired application events-----------------------------------
+
+        // given
+        Map<String, Long> eventsByType = applicationEvents.stream(EventDto.class)
+            .collect(Collectors.groupingBy(EventDto::getType, Collectors.counting()));
+
+        // then
+        assertThat(eventsByType).isEqualTo(Map.ofEntries(
+            Map.entry(EventType.GALAXY_ADD.toString(), 2L),
+            Map.entry(EventType.GALAXY_UPDATE.toString(), 1L),
+            Map.entry(EventType.GALAXY_DELETE.toString(), 2L)
+        ));
     }
 }
