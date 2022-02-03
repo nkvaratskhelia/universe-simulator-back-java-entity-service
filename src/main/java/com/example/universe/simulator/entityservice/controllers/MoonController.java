@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -38,10 +38,13 @@ public class MoonController {
     private final MoonSpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
-    @PostMapping("get-list")
-    public Callable<Page<MoonDto>> getList(@RequestBody Optional<MoonFilter> filter, @ParameterObject Pageable pageable) {
-        log.info("calling getList with filter [{}] and {}", filter.orElse(null), pageable);
-        Specification<Moon> specification = specificationBuilder.build(filter.orElse(null));
+    @GetMapping("get-list")
+    public Callable<Page<MoonDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
+        var filter = MoonFilter.builder()
+            .name(name)
+            .build();
+        log.info("calling getList with filter [{}] and {}", filter, pageable);
+        Specification<Moon> specification = specificationBuilder.build(filter);
 
         return () -> {
             Page<MoonDto> result = service.getList(specification, pageable)

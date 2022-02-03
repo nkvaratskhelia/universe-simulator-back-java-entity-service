@@ -42,26 +42,6 @@ class PlanetControllerTest extends AbstractWebMvcTest {
     private PlanetSpecificationBuilder specificationBuilder;
 
     @Test
-    void testGetList_nullFilter() throws Exception {
-        // given
-        List<Planet> entityList = List.of(
-            TestUtils.buildPlanet()
-        );
-
-        Pageable pageable = TestUtils.getDefaultPageable();
-        Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<PlanetDto> dtoPage = entityPage.map(item -> modelMapper.map(item, PlanetDto.class));
-
-        given(service.getList(any(), any())).willReturn(entityPage);
-        // when
-        MockHttpServletResponse response = performRequest(post("/planet/get-list"));
-        // then
-        verifySuccessfulResponse(response, dtoPage);
-        then(specificationBuilder).should().build(null);
-        then(service).should().getList(null, pageable);
-    }
-
-    @Test
     void testGetList() throws Exception {
         // given
         List<Planet> entityList = List.of(
@@ -75,9 +55,8 @@ class PlanetControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(post("/planet/get-list")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filter))
+        MockHttpServletResponse response = performRequest(get("/planet/get-list")
+            .param("name", filter.getName())
         );
         // then
         verifySuccessfulResponse(response, dtoPage);

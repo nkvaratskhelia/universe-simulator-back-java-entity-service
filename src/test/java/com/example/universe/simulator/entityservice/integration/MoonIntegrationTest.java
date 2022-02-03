@@ -7,7 +7,6 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
-import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return empty list-----------------------------------
 
         // when
-        response = performRequest(post("/moon/get-list"));
+        response = performRequest(get("/moon/get-list"));
         // then
         JsonPage<MoonDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -97,7 +96,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return list with 2 elements-----------------------------------
 
         // when
-        response = performRequest(post("/moon/get-list"));
+        response = performRequest(get("/moon/get-list"));
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
@@ -133,13 +132,9 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
         // -----------------------------------should return list with 1 element-----------------------------------
 
-        // given
-        MoonFilter filter = TestUtils.buildMoonFilter();
-        filter.setName("1uP");
         // when
-        response = performRequest(post("/moon/get-list")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filter))
+        response = performRequest(get("/moon/get-list")
+            .param("name", "1uP")
         );
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -162,7 +157,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return empty list-----------------------------------
 
         // when
-        response = performRequest(post("/moon/get-list"));
+        response = performRequest(get("/moon/get-list"));
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();

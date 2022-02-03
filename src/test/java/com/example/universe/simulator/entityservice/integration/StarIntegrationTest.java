@@ -5,7 +5,6 @@ import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
-import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return empty list-----------------------------------
 
         // when
-        response = performRequest(post("/star/get-list"));
+        response = performRequest(get("/star/get-list"));
         // then
         JsonPage<StarDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -71,7 +70,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return list with 2 elements-----------------------------------
 
         // when
-        response = performRequest(post("/star/get-list"));
+        response = performRequest(get("/star/get-list"));
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
@@ -107,13 +106,9 @@ class StarIntegrationTest extends AbstractIntegrationTest {
 
         // -----------------------------------should return list with 1 element-----------------------------------
 
-        // given
-        StarFilter filter = TestUtils.buildStarFilter();
-        filter.setName("1uP");
         // when
-        response = performRequest(post("/star/get-list")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filter))
+        response = performRequest(get("/star/get-list")
+            .param("name", "1uP")
         );
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -136,7 +131,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return empty list-----------------------------------
 
         // when
-        response = performRequest(post("/star/get-list"));
+        response = performRequest(get("/star/get-list"));
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();

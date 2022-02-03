@@ -22,14 +22,6 @@ class SpaceEntitySpecificationBuilderTest {
     private GalaxySpecificationBuilder specificationBuilder;
 
     @Test
-    void testBuild_nullFilter() {
-        // when
-        Specification<Galaxy> result = specificationBuilder.build(null);
-        // then
-        assertThat(result).isNull();
-    }
-
-    @Test
     void testBuild_nullName() {
         // given
         GalaxyFilter filter = TestUtils.buildGalaxyFilter();

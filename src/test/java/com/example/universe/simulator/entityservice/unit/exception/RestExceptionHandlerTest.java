@@ -161,7 +161,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         PropertyReferenceException exception = new PropertyReferenceException(property, ClassTypeInformation.from(Galaxy.class), List.of());
         given(service.getList(any(), any())).willThrow(exception);
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
             .param("sort", property)
         );
         // then

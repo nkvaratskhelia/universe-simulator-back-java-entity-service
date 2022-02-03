@@ -42,26 +42,6 @@ class MoonControllerTest extends AbstractWebMvcTest {
     private MoonSpecificationBuilder specificationBuilder;
 
     @Test
-    void testGetList_nullFilter() throws Exception {
-        // given
-        List<Moon> entityList = List.of(
-            TestUtils.buildMoon()
-        );
-
-        Pageable pageable = TestUtils.getDefaultPageable();
-        Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<MoonDto> dtoPage = entityPage.map(item -> modelMapper.map(item, MoonDto.class));
-
-        given(service.getList(any(), any())).willReturn(entityPage);
-        // when
-        MockHttpServletResponse response = performRequest(post("/moon/get-list"));
-        // then
-        verifySuccessfulResponse(response, dtoPage);
-        then(specificationBuilder).should().build(null);
-        then(service).should().getList(null, pageable);
-    }
-
-    @Test
     void testGetList() throws Exception {
         // given
         List<Moon> entityList = List.of(
@@ -75,9 +55,8 @@ class MoonControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(post("/moon/get-list")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filter))
+        MockHttpServletResponse response = performRequest(get("/moon/get-list")
+            .param("name", filter.getName())
         );
         // then
         verifySuccessfulResponse(response, dtoPage);

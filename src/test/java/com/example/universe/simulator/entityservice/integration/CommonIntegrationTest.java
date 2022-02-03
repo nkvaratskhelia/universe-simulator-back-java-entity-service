@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
@@ -21,7 +22,7 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should throw sort parameter error-----------------------------------
 
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
             .param("sort", "invalid")
         );
         // then

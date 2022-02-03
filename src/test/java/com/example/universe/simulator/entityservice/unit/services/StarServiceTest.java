@@ -4,6 +4,7 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
+import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
@@ -60,7 +61,7 @@ class StarServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
-        Specification<Star> specification = new StarSpecificationBuilder().build(null);
+        Specification<Star> specification = new StarSpecificationBuilder().build(new StarFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Star>>any(), any(Pageable.class)))
             .willReturn(page);

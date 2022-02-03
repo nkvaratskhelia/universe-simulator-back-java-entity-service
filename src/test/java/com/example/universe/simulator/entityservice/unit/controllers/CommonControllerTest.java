@@ -21,7 +21,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 /**
  * Common controller cases are tested using GalaxyController.
@@ -51,7 +51,7 @@ class CommonControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/get-list"));
+        MockHttpServletResponse response = performRequest(get("/galaxy/get-list"));
         // then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);
@@ -70,7 +70,7 @@ class CommonControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
             .param("page", String.valueOf(pageable.getPageNumber()))
             .param("size", String.valueOf(pageable.getPageSize()))
             .param("sort", "version,desc")

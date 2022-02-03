@@ -6,15 +6,11 @@ import com.example.universe.simulator.entityservice.filters.SpaceEntityFilter;
 import com.example.universe.simulator.entityservice.utils.Utils;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.Objects;
-
 abstract class SpaceEntitySpecificationBuilder<E extends SpaceEntity, F extends SpaceEntityFilter> {
 
     public final Specification<E> build(F filter) {
-        return Objects.nonNull(filter)
-               ? buildCommonSpecification(filter)
-                   .and(buildEntitySpecification(filter))
-               : null;
+        return buildCommonSpecification(filter)
+            .and(buildEntitySpecification(filter));
     }
 
     private Specification<E> buildCommonSpecification(F filter) {

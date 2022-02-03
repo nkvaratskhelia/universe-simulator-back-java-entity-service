@@ -42,26 +42,6 @@ class StarControllerTest extends AbstractWebMvcTest {
     private StarSpecificationBuilder specificationBuilder;
 
     @Test
-    void testGetList_nullFilter() throws Exception {
-        // given
-        List<Star> entityList = List.of(
-            TestUtils.buildStar()
-        );
-
-        Pageable pageable = TestUtils.getDefaultPageable();
-        Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<StarDto> dtoPage = entityPage.map(item -> modelMapper.map(item, StarDto.class));
-
-        given(service.getList(any(), any())).willReturn(entityPage);
-        // when
-        MockHttpServletResponse response = performRequest(post("/star/get-list"));
-        // then
-        verifySuccessfulResponse(response, dtoPage);
-        then(specificationBuilder).should().build(null);
-        then(service).should().getList(null, pageable);
-    }
-
-    @Test
     void testGetList() throws Exception {
         // given
         List<Star> entityList = List.of(
@@ -75,9 +55,8 @@ class StarControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(post("/star/get-list")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filter))
+        MockHttpServletResponse response = performRequest(get("/star/get-list")
+            .param("name", filter.getName())
         );
         // then
         verifySuccessfulResponse(response, dtoPage);

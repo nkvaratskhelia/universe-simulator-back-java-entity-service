@@ -4,7 +4,6 @@ import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
-import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return empty list-----------------------------------
 
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/get-list"));
+        MockHttpServletResponse response = performRequest(get("/galaxy/get-list"));
         // then
         JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
@@ -59,7 +58,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return list with 2 elements-----------------------------------
 
         // when
-        response = performRequest(post("/galaxy/get-list"));
+        response = performRequest(get("/galaxy/get-list"));
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
@@ -93,13 +92,9 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         // -----------------------------------should return list with 1 element-----------------------------------
 
-        // given
-        GalaxyFilter filter = TestUtils.buildGalaxyFilter();
-        filter.setName("1uP");
         // when
-        response = performRequest(post("/galaxy/get-list")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filter))
+        response = performRequest(get("/galaxy/get-list")
+            .param("name", "1uP")
         );
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -122,7 +117,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // -----------------------------------should return empty list-----------------------------------
 
         // when
-        response = performRequest(post("/galaxy/get-list"));
+        response = performRequest(get("/galaxy/get-list"));
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();

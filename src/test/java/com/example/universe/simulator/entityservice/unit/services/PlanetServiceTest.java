@@ -4,6 +4,7 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
+import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
@@ -60,7 +61,7 @@ class PlanetServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Planet> page = new PageImpl<>(list, pageable, list.size());
-        Specification<Planet> specification = new PlanetSpecificationBuilder().build(null);
+        Specification<Planet> specification = new PlanetSpecificationBuilder().build(new PlanetFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Planet>>any(), any(Pageable.class)))
             .willReturn(page);

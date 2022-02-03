@@ -42,26 +42,6 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     private GalaxySpecificationBuilder specificationBuilder;
 
     @Test
-    void testGetList_nullFilter() throws Exception {
-        // given
-        List<Galaxy> entityList = List.of(
-            TestUtils.buildGalaxy()
-        );
-
-        Pageable pageable = TestUtils.getDefaultPageable();
-        Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
-
-        given(service.getList(any(), any())).willReturn(entityPage);
-        // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/get-list"));
-        // then
-        verifySuccessfulResponse(response, dtoPage);
-        then(specificationBuilder).should().build(null);
-        then(service).should().getList(null, pageable);
-    }
-
-    @Test
     void testGetList() throws Exception {
         // given
         List<Galaxy> entityList = List.of(
@@ -75,9 +55,8 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/get-list")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filter))
+        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
+            .param("name", filter.getName())
         );
         // then
         verifySuccessfulResponse(response, dtoPage);
