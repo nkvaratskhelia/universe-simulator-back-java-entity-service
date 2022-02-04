@@ -19,11 +19,11 @@ public class EventPublisher {
     private final Clock clock;
 
     public void publish(EventType type, Object data) {
-        var event = EventDto.builder()
-            .type(type.toString())
-            .data(data.toString())
-            .time(OffsetDateTime.now(clock))
-            .build();
+        var event = new EventDto(
+            type.toString(),
+            data.toString(),
+            OffsetDateTime.now(clock)
+        );
         applicationEventPublisher.publishEvent(event);
 
         log.info("published {}", event);

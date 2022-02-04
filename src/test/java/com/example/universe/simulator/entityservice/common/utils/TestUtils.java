@@ -39,11 +39,11 @@ public final class TestUtils {
     }
 
     public static EventDto buildEventDto(Clock clock) {
-        return EventDto.builder()
-            .type(EventType.SPACE_ENTITY_STATISTICS.toString())
-            .data("data")
-            .time(OffsetDateTime.now(clock))
-            .build();
+        return new EventDto(
+            EventType.SPACE_ENTITY_STATISTICS.toString(),
+            "data",
+            OffsetDateTime.now(clock)
+        );
     }
 
     public static GalaxyDto buildGalaxyDtoForAdd() {

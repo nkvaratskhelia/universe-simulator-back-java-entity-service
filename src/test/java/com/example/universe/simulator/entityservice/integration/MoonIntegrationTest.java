@@ -178,7 +178,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
         // given
         Map<String, Long> eventsByType = applicationEvents.stream(EventDto.class)
-            .collect(Collectors.groupingBy(EventDto::getType, Collectors.counting()));
+            .collect(Collectors.groupingBy(EventDto::type, Collectors.counting()));
 
         // then
         assertThat(eventsByType).isEqualTo(Map.ofEntries(

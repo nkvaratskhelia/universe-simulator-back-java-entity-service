@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.common.abstractions;
 
-import com.example.universe.simulator.entityservice.exception.ErrorResponse;
+import com.example.universe.simulator.common.dtos.ErrorDto;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,8 +32,8 @@ public abstract class AbstractMockMvcTest {
         throws JsonProcessingException, UnsupportedEncodingException {
         assertThat(response.getStatus()).isEqualTo(errorCode.getHttpStatus().value());
 
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
-        assertThat(errorResponse.getError()).isEqualTo(errorCode);
+        ErrorDto errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorDto.class);
+        assertThat(errorResponse.errorCode()).isEqualTo(errorCode.toString());
     }
 
     // handles sync and async requests

@@ -39,7 +39,7 @@ class EventPublisherTest {
         given(clock.instant()).willReturn(fixedClock.instant());
         given(clock.getZone()).willReturn(fixedClock.getZone());
         // when
-        eventPublisher.publish(EventType.valueOf(event.getType()), event.getData());
+        eventPublisher.publish(EventType.valueOf(event.type()), event.data());
         // then
         then(applicationEventPublisher).should().publishEvent(event);
     }
