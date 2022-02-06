@@ -1,7 +1,7 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import com.example.universe.simulator.common.test.AbstractSpringBootTest;
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractMockMvcTest;
-import com.example.universe.simulator.entityservice.common.abstractions.AbstractSpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.DynamicPropertyRegistry;

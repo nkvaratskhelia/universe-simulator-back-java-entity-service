@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.smoke;
 
-import com.example.universe.simulator.entityservice.common.abstractions.AbstractSpringBootTest;
+import com.example.universe.simulator.common.test.AbstractSpringBootTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
 @AbstractSpringBootTest
