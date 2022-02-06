@@ -19,7 +19,7 @@ You can access `OpenAPI` definition at `/v3/api-docs` and `Swagger` ui at
 `Liquibase` is used to handle database migrations. Liquibase config is described
 in the `db/changelog/db.changelog-master.yaml` file. Add changelogs to the
 `db/changelog/scripts` directory. Changelog naming scheme is as follows:
-`xxx-change-description.extension`, where `xxx` is a growing numeric sequence.
+`{xxx}-change-description.extension`, where `xxx` is a growing numeric sequence.
 
 === ORM
 `JPA` + `Hibernate`

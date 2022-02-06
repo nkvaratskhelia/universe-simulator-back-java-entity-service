@@ -114,7 +114,6 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:3.0.0'
     implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-config'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-sleuth'
