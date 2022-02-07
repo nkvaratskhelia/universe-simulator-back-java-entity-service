@@ -23,9 +23,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-/**
- * Common controller cases are tested using GalaxyController.
- */
+// Common controller cases are tested using GalaxyController.
 @WebMvcTest(GalaxyController.class)
 class CommonControllerTest extends AbstractWebMvcTest {
 

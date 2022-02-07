@@ -36,8 +36,10 @@ public abstract class AbstractMockMvcTest {
         assertThat(errorResponse.errorCode()).isEqualTo(errorCode.toString());
     }
 
-    // handles sync and async requests
-    // for async requests, see https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#spring-mvc-test-async-requests
+    /*
+     * Handles sync and async requests. For async requests, see
+     * https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#spring-mvc-test-async-requests
+     */
     protected final MockHttpServletResponse performRequest(RequestBuilder requestBuilder) throws Exception {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
         return mvcResult.getRequest().isAsyncStarted()

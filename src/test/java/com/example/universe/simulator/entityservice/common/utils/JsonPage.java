@@ -7,9 +7,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
-/**
- * Mock implementation of org.springframework.data.domain.Page for jackson deserialization.
- */
+// Mock implementation of org.springframework.data.domain.Page for jackson deserialization.
 public class JsonPage<T> extends PageImpl<T> {
 
     public JsonPage(@JsonProperty("content") List<T> content,

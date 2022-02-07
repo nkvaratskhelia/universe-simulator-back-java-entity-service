@@ -12,9 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Common space entity specification building is tested using GalaxySpecificationBuilder.
- */
+// Common space entity specification building is tested using GalaxySpecificationBuilder.
 @ExtendWith(MockitoExtension.class)
 class SpaceEntitySpecificationBuilderTest {
 

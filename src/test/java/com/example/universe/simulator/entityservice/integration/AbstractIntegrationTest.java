@@ -30,7 +30,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
         POSTGRESQL_CONTAINER.start();
     }
 
-    /**
+    /*
      * For networking info in TestContainers, check the following url:
      * https://www.testcontainers.org/features/networking/
      */

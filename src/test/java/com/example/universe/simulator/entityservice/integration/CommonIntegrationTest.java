@@ -12,9 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-/**
- * Common cases are tested using galaxies.
- */
+// Common cases are tested using galaxies.
 class CommonIntegrationTest extends AbstractIntegrationTest {
 
     @Test

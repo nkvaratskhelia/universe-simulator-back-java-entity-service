@@ -18,9 +18,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-/**
- * Common space entity dto validation is tested using GalaxyDtoValidator.
- */
+// Common space entity dto validation is tested using GalaxyDtoValidator.
 @ExtendWith(MockitoExtension.class)
 class SpaceEntityDtoValidatorTest {
 
