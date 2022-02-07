@@ -30,10 +30,6 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
         POSTGRESQL_CONTAINER.start();
     }
 
-    /*
-     * For networking info in TestContainers, check the following url:
-     * https://www.testcontainers.org/features/networking/
-     */
     @DynamicPropertySource
     private static void addTestContainersProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
