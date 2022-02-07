@@ -1,7 +1,6 @@
-package com.example.universe.simulator.entityservice.unit;
+package com.example.universe.simulator.entityservice.common.abstractions;
 
 import com.example.universe.simulator.common.test.AbstractTest;
-import com.example.universe.simulator.entityservice.common.abstractions.AbstractMockMvcTest;
 import com.example.universe.simulator.entityservice.config.BeanConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.modelmapper.ModelMapper;

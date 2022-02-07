@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.unit.controllers;
 
+import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.MoonController;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
@@ -7,7 +8,6 @@ import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
-import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

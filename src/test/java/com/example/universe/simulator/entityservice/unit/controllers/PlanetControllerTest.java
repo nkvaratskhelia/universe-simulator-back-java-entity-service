@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.unit.controllers;
 
+import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.PlanetController;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
@@ -7,7 +8,6 @@ import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
-import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

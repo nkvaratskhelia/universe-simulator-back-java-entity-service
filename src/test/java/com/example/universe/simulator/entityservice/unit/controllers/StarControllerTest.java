@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.unit.controllers;
 
+import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.StarController;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
@@ -7,7 +8,6 @@ import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
-import com.example.universe.simulator.entityservice.unit.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
