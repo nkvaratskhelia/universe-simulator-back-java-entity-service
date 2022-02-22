@@ -23,8 +23,8 @@ public class SpaceEntityStatisticsJob {
     private final EventPublisher eventPublisher;
 
     @Scheduled(cron = "${app.scheduling.space-entity-statistics-job-cron}")
-    public void logStatistics() {
-        log.info("gathering space entity statistics...");
+    public void getStatistics() {
+        log.info("getting space entity statistics...");
         long numGalaxies = galaxyRepository.count();
         long numStars = starRepository.count();
         long numPlanets = planetRepository.count();

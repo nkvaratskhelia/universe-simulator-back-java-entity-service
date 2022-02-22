@@ -38,7 +38,7 @@ class SpaceEntityStatisticsJobTest {
     private SpaceEntityStatisticsJob spaceEntityStatisticsJob;
 
     @Test
-    void testLogStatistics() {
+    void testGetStatistics() {
         // given
         long numGalaxies = 1L, numStars = 1L, numPlanets = 1L, numMoons = 1L;
         String statistics = String.format("galaxies [%d], stars [%d], planets [%d], moons [%d]", numGalaxies, numStars, numPlanets, numMoons);
@@ -47,7 +47,7 @@ class SpaceEntityStatisticsJobTest {
         given(planetRepository.count()).willReturn(numPlanets);
         given(moonRepository.count()).willReturn(numMoons);
         // when
-        spaceEntityStatisticsJob.logStatistics();
+        spaceEntityStatisticsJob.getStatistics();
         // then
         then(galaxyRepository).should().count();
         then(starRepository).should().count();
