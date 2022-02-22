@@ -1,7 +1,6 @@
 package com.example.universe.simulator.entityservice.smoke;
 
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -21,9 +20,6 @@ class BeanConfigSmokeTest extends AbstractSmokeTest {
     private ThreadPoolTaskExecutor taskExecutor;
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
     private Clock clock;
 
     @Test
@@ -39,10 +35,6 @@ class BeanConfigSmokeTest extends AbstractSmokeTest {
         // -----------------------------------taskExecutor-----------------------------------
 
         assertThat(taskExecutor).isSameAs(applicationTaskExecutor);
-
-        // -----------------------------------modelMapper-----------------------------------
-
-        assertThat(modelMapper).isNotNull();
 
         // -----------------------------------clock-----------------------------------
 
