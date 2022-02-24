@@ -25,6 +25,7 @@ public class EventProcessor {
     @EventListener
     @Async
     public void process(EventDto event) {
+        log.info("received {}", event);
         rabbitTemplate.convertAndSend(eventQueue, event);
         log.info("processed {}", event);
     }
