@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: entity-service-postgres-service
+  labels:
+    service: entity-service-postgres
+spec:
+  type: NodePort
+  ports:
+    - port: 5432
+      nodePort: 30000
+  selector:
+    service: entity-service-postgres
