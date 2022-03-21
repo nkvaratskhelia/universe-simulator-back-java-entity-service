@@ -1,5 +1,8 @@
 = Project setup
 
+== PostgreSQL
+* Run `docker-compose -p universe-simulator up -d entity-service-postgres`
+
 == Configuration
 
 === Properties
