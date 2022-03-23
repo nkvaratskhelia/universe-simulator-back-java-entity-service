@@ -23,10 +23,10 @@ spec:
           ports:
             - containerPort: 5432
           volumeMounts:
-            - name: postgres
+            - name: entity-service-postgres
               mountPath: /var/lib/postgresql/data
       volumes:
-        - name: postgres
+        - name: entity-service-postgres
   selector:
     matchLabels:
       service: entity-service-postgres
