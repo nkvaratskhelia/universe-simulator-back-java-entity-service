@@ -120,7 +120,7 @@ dependencies {
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-sleuth'
     runtimeOnly 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
     runtimeOnly 'org.liquibase:liquibase-core'
-    runtimeOnly 'net.logstash.logback:logstash-logback-encoder:7.0.1'
+    runtimeOnly 'net.logstash.logback:logstash-logback-encoder:7.1'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
