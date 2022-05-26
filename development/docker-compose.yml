@@ -1,6 +1,6 @@
 services:
   entity-service-postgres:
-    image: postgres:14.2
+    image: postgres:14.3
     container_name: universe-simulator-entity-service-postgres
     restart: always
     environment:
