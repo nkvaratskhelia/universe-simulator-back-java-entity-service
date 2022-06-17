@@ -1,6 +1,5 @@
 package com.example.universe.simulator.entityservice;
 
-import com.example.universe.simulator.common.config.CommonBeanConfig;
 import com.example.universe.simulator.common.config.CommonProperties;
 import com.example.universe.simulator.common.config.RabbitMQConfig;
 import com.example.universe.simulator.entityservice.config.AppProperties;
@@ -12,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableConfigurationProperties({CommonProperties.class, AppProperties.class})
-@Import({CommonBeanConfig.class, RabbitMQConfig.class})
+@Import(RabbitMQConfig.class)
 @EnableAsync
 public class EntityServiceApplication {
 
