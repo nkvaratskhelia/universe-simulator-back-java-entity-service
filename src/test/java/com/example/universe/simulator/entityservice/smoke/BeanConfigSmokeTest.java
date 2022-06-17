@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.smoke;
 
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -22,6 +23,9 @@ class BeanConfigSmokeTest extends AbstractSmokeTest {
     @Autowired
     private Clock clock;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Test
     void test() {
         // -----------------------------------applicationTaskExecutor-----------------------------------
@@ -39,5 +43,9 @@ class BeanConfigSmokeTest extends AbstractSmokeTest {
         // -----------------------------------clock-----------------------------------
 
         assertThat(clock).isEqualTo(Clock.systemDefaultZone());
+
+        // -----------------------------------modelMapper-----------------------------------
+
+        assertThat(modelMapper).isNotNull();
     }
 }
