@@ -4,6 +4,7 @@ import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
+import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
@@ -63,13 +64,20 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
 
-        // -----------------------------------should return entity-----------------------------------
+        // -----------------------------------should return entity and store it in cache-----------------------------------
 
         // when
         response = performRequest(get("/galaxy/get/{id}", addedDto1.getId()));
         // then
         GalaxyDto resultDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
         assertThat(resultDto).isEqualTo(addedDto1);
+
+        //check if resultDto got into cache
+        assertThat(redisTemplate.hasKey("Galaxy::" + addedDto1.getId())).isTrue();
+        GalaxyDto fromCache = modelMapper.map(
+                objectMapper.convertValue(redisTemplate.opsForValue().get("Galaxy::" + addedDto1.getId()), Galaxy.class),
+                GalaxyDto.class);
+        assertThat(fromCache).isEqualTo(addedDto1);
 
         // -----------------------------------should update entity-----------------------------------
 
@@ -83,6 +91,15 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
+
+        //check if resultDto got updated in cache
+        GalaxyDto fromCacheUpdated = modelMapper.map(
+                objectMapper.convertValue(redisTemplate.opsForValue().getAndDelete("Galaxy::" + addedDto1.getId()), Galaxy.class),
+                GalaxyDto.class);
+        assertThat(fromCacheUpdated.getName()).isEqualTo(dto.getName());
+        assertThat(fromCacheUpdated.getVersion()).isEqualTo(dto.getVersion() + 1);
+
+        //check if resultDto got updated in db
         response = performRequest(get("/galaxy/get/{id}", addedDto1.getId()));
 
         // then
@@ -100,12 +117,13 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
 
-        // -----------------------------------should delete entity-----------------------------------
+        // -----------------------------------should delete entity from database and from cache-----------------------------------
 
         // when
         response = performRequest(delete("/galaxy/delete/{id}", addedDto1.getId()));
         // then
         verifyOkStatus(response.getStatus());
+        assertThat(redisTemplate.hasKey("Galaxy::" + addedDto1.getId())).isFalse();
 
         // -----------------------------------should delete entity-----------------------------------
 

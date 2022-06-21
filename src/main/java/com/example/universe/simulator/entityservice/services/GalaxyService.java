@@ -8,6 +8,9 @@ import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +32,7 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
         return repository.findAll(specification, pageable);
     }
 
+    @Cacheable(value= "Galaxy", key="#id")
     public Galaxy get(UUID id) throws AppException {
         return repository.findById(id)
             .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
@@ -45,6 +49,7 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
     }
 
     @Transactional
+    @CachePut(value = "Galaxy", key = "#p0.id")
     public Galaxy update(Galaxy entity) throws AppException {
         validate(entity, true, repository);
         Galaxy result = repository.save(entity);
@@ -55,6 +60,7 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
     }
 
     @Transactional
+    @CacheEvict(value = "Galaxy", key = "#id")
     public void delete(UUID id) throws AppException {
         if (starRepository.existsByGalaxyId(id)) {
             throw new AppException(ErrorCodeType.IN_USE);

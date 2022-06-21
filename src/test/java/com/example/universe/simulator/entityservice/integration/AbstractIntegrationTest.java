@@ -2,12 +2,18 @@ package com.example.universe.simulator.entityservice.integration;
 
 import com.example.universe.simulator.common.test.AbstractSpringBootTest;
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractMockMvcTest;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 
@@ -18,16 +24,35 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
 
     private static final RabbitMQContainer RABBITMQ_CONTAINER;
     private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER;
+    private static final GenericContainer<?> REDIS_CONTAINER;
 
     @Autowired
     protected ApplicationEvents applicationEvents;
 
+    @Autowired
+    protected ModelMapper modelMapper;
+
+    protected RedisTemplate redisTemplate;
+
+    @Autowired
+    public void setRedisTemplate(RedisTemplate redisTemplate) {
+        RedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer();
+        RedisSerializer stringSerializer = new StringRedisSerializer();
+        redisTemplate.setKeySerializer(stringSerializer);
+        redisTemplate.setValueSerializer(jsonSerializer);
+        redisTemplate.setHashKeySerializer(stringSerializer);
+        redisTemplate.setHashValueSerializer(jsonSerializer);
+        this.redisTemplate = redisTemplate;
+    }
+
     static {
         RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.10.5-management");
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.3");
+        REDIS_CONTAINER = new GenericContainer<>("redis:7.0.2").withExposedPorts(6379);
 
         RABBITMQ_CONTAINER.start();
         POSTGRESQL_CONTAINER.start();
+        REDIS_CONTAINER.start();
     }
 
     @DynamicPropertySource
@@ -40,5 +65,8 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
         registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
+
+        registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
+        registry.add("spring.redis.port", REDIS_CONTAINER::getFirstMappedPort);
     }
 }
