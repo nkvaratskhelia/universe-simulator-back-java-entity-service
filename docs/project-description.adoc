@@ -15,15 +15,6 @@ You can access `OpenAPI` definition at `/v3/api-docs` and `Swagger` ui at
 === Database
 `Postgres`
 
-=== Caching
-`Redis`
-
-==== Redis Cli
-
-* Run: docker exec -it universe-simulator-entity-service-redis redis-cli
-
-* Authenticate: auth {$spring.redis.password}
-
 === Migration
 `Liquibase` is used to handle database migrations. Liquibase config is described
 in the `db/changelog/db.changelog-master.yaml` file. Add changelogs to the

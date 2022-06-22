@@ -3,9 +3,6 @@
 == Postgres
 * Run `docker-compose -p universe-simulator up -d entity-service-postgres`
 
-== Redis
-* Run `docker-compose -p universe-simulator up -d entity-service-redis`
-
 == Configuration
 
 === Properties
