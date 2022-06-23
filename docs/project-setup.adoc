@@ -13,4 +13,7 @@ Add the following properties in your `application-local.properties` file:
 spring.datasource.url=jdbc:postgresql://localhost:5432/entity-service
 spring.datasource.username=user
 spring.datasource.password=password
+#rabbitmq
+spring.rabbitmq.username=user
+spring.rabbitmq.password=password
 ----
