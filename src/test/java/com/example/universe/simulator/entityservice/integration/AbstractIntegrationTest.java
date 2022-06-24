@@ -5,6 +5,7 @@ import com.example.universe.simulator.entityservice.common.abstractions.Abstract
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -32,18 +33,8 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
     @Autowired
     protected ModelMapper modelMapper;
 
-    protected RedisTemplate redisTemplate;
-
     @Autowired
-    public void setRedisTemplate(RedisTemplate redisTemplate) {
-        RedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer();
-        RedisSerializer stringSerializer = new StringRedisSerializer();
-        redisTemplate.setKeySerializer(stringSerializer);
-        redisTemplate.setValueSerializer(jsonSerializer);
-        redisTemplate.setHashKeySerializer(stringSerializer);
-        redisTemplate.setHashValueSerializer(jsonSerializer);
-        this.redisTemplate = redisTemplate;
-    }
+    protected CacheManager cacheManager;
 
     static {
         RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.10.5-management");

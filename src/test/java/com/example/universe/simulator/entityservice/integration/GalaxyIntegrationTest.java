@@ -72,11 +72,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         GalaxyDto resultDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
         assertThat(resultDto).isEqualTo(addedDto1);
 
-        //check if resultDto got into cache
-        assertThat(redisTemplate.hasKey("Galaxy::" + addedDto1.getId())).isTrue();
-        GalaxyDto fromCache = modelMapper.map(
-                objectMapper.convertValue(redisTemplate.opsForValue().get("Galaxy::" + addedDto1.getId()), Galaxy.class),
-                GalaxyDto.class);
+        GalaxyDto fromCache = modelMapper.map(cacheManager.getCache("Galaxy").get(addedDto1.getId()).get(), GalaxyDto.class);
         assertThat(fromCache).isEqualTo(addedDto1);
 
         // -----------------------------------should update entity-----------------------------------
@@ -91,13 +87,6 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dto))
         );
-
-        //check if resultDto got updated in cache
-        GalaxyDto fromCacheUpdated = modelMapper.map(
-                objectMapper.convertValue(redisTemplate.opsForValue().getAndDelete("Galaxy::" + addedDto1.getId()), Galaxy.class),
-                GalaxyDto.class);
-        assertThat(fromCacheUpdated.getName()).isEqualTo(dto.getName());
-        assertThat(fromCacheUpdated.getVersion()).isEqualTo(dto.getVersion() + 1);
 
         //check if resultDto got updated in db
         response = performRequest(get("/galaxy/get/{id}", addedDto1.getId()));
@@ -123,7 +112,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(delete("/galaxy/delete/{id}", addedDto1.getId()));
         // then
         verifyOkStatus(response.getStatus());
-        assertThat(redisTemplate.hasKey("Galaxy::" + addedDto1.getId())).isFalse();
+        assertThat(cacheManager.getCache("Galaxy").get(addedDto1.getId())).isNull();
 
         // -----------------------------------should delete entity-----------------------------------
 
