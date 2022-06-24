@@ -149,14 +149,6 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------delete star-----------------------------------
-
-        performRequest(delete("/star/delete/{id}", addedStar.getId()));
-
-        // -----------------------------------delete galaxy-----------------------------------
-
-        performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
-
         // -----------------------------------should have fired application events-----------------------------------
 
         // given
@@ -169,9 +161,11 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
             Map.entry(EventType.STAR_ADD.toString(), 1L),
             Map.entry(EventType.PLANET_ADD.toString(), 2L),
             Map.entry(EventType.PLANET_UPDATE.toString(), 1L),
-            Map.entry(EventType.PLANET_DELETE.toString(), 2L),
-            Map.entry(EventType.STAR_DELETE.toString(), 1L),
-            Map.entry(EventType.GALAXY_DELETE.toString(), 1L)
+            Map.entry(EventType.PLANET_DELETE.toString(), 2L)
         ));
+
+        // cleanup
+        performRequest(delete("/star/delete/{id}", addedStar.getId()));
+        performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
     }
 }

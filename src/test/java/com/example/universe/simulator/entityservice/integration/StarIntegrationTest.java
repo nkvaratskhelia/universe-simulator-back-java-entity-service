@@ -136,10 +136,6 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------delete galaxy-----------------------------------
-
-        performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
-
         // -----------------------------------should have fired application events-----------------------------------
 
         // given
@@ -151,8 +147,10 @@ class StarIntegrationTest extends AbstractIntegrationTest {
             Map.entry(EventType.GALAXY_ADD.toString(), 1L),
             Map.entry(EventType.STAR_ADD.toString(), 2L),
             Map.entry(EventType.STAR_UPDATE.toString(), 1L),
-            Map.entry(EventType.STAR_DELETE.toString(), 2L),
-            Map.entry(EventType.GALAXY_DELETE.toString(), 1L)
+            Map.entry(EventType.STAR_DELETE.toString(), 2L)
         ));
+
+        // cleanup
+        performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
     }
 }
