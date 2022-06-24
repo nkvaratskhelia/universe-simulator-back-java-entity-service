@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.common.test.AbstractSpringBootTest;
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractMockMvcTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,11 @@ import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @AbstractSpringBootTest
 @AutoConfigureMockMvc
@@ -40,5 +46,11 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
         registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
+    }
+
+    protected final void verifyEventsByType(Map<String, Long> expected) {
+        Map<String, Long> eventsByType = applicationEvents.stream(EventDto.class)
+            .collect(Collectors.groupingBy(EventDto::type, Collectors.counting()));
+        assertThat(eventsByType).isEqualTo(expected);
     }
 }

@@ -1,6 +1,5 @@
 package com.example.universe.simulator.entityservice.integration;
 
-import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
@@ -11,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -124,12 +122,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         // -----------------------------------should have fired application events-----------------------------------
 
-        // given
-        Map<String, Long> eventsByType = applicationEvents.stream(EventDto.class)
-            .collect(Collectors.groupingBy(EventDto::type, Collectors.counting()));
-
-        // then
-        assertThat(eventsByType).isEqualTo(Map.ofEntries(
+        verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_ADD.toString(), 2L),
             Map.entry(EventType.GALAXY_UPDATE.toString(), 1L),
             Map.entry(EventType.GALAXY_DELETE.toString(), 2L)
