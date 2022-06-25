@@ -22,7 +22,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        // -----------------------------------add galaxy-----------------------------------
+        // ----------------------------------------add galaxy----------------------------------------
 
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
@@ -31,7 +31,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         );
         GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
-        // -----------------------------------should return empty list-----------------------------------
+        // ----------------------------------------should return empty list----------------------------------------
 
         // when
         response = performRequest(get("/star/get-list"));
@@ -39,7 +39,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         JsonPage<StarDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------add entity-----------------------------------
+        // ----------------------------------------add entity----------------------------------------
 
         StarDto dto = TestUtils.buildStarDtoForAdd();
         dto.setName("name1");
@@ -52,7 +52,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
 
         StarDto addedDto1 = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
-        // -----------------------------------add another entity-----------------------------------
+        // ----------------------------------------add another entity----------------------------------------
 
         dto = TestUtils.buildStarDtoForAdd();
         dto.setName("name2");
@@ -65,7 +65,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
 
         StarDto addedDto2 = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
-        // -----------------------------------should return list with 2 elements-----------------------------------
+        // ----------------------------------------should return list with 2 elements----------------------------------------
 
         // when
         response = performRequest(get("/star/get-list"));
@@ -73,7 +73,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
 
-        // -----------------------------------should return entity-----------------------------------
+        // ----------------------------------------should return entity----------------------------------------
 
         // when
         response = performRequest(get("/star/get/{id}", addedDto1.getId()));
@@ -82,7 +82,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         assertThat(resultDto).isEqualTo(addedDto1);
         assertThat(resultDto.getGalaxy().getId()).isEqualTo(addedGalaxy.getId());
 
-        // -----------------------------------should update entity-----------------------------------
+        // ----------------------------------------should update entity----------------------------------------
 
         // given
         dto = TestUtils.buildStarDtoForUpdate();
@@ -102,7 +102,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         assertThat(resultDto.getName()).isEqualTo(dto.getName());
         assertThat(resultDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
-        // -----------------------------------should return list with 1 element-----------------------------------
+        // ----------------------------------------should return list with 1 element----------------------------------------
 
         // when
         response = performRequest(get("/star/get-list")
@@ -112,29 +112,20 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
 
-        // -----------------------------------should delete entity-----------------------------------
+        // ----------------------------------------should delete entity----------------------------------------
 
-        // when
-        response = performRequest(delete("/star/delete/{id}", addedDto1.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should delete entity-----------------------------------
-
-        // when
-        response = performRequest(delete("/star/delete/{id}", addedDto2.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should return empty list-----------------------------------
+        // given
+        performRequest(delete("/star/delete/{id}", addedDto1.getId()));
+        performRequest(delete("/star/delete/{id}", addedDto2.getId()));
 
         // when
         response = performRequest(get("/star/get-list"));
+
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------should have fired application events-----------------------------------
+        // ----------------------------------------should have fired application events----------------------------------------
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_ADD.toString(), 1L),
@@ -143,7 +134,8 @@ class StarIntegrationTest extends AbstractIntegrationTest {
             Map.entry(EventType.STAR_DELETE.toString(), 2L)
         ));
 
-        // cleanup
+        // ----------------------------------------cleanup----------------------------------------
+
         performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
     }
 }

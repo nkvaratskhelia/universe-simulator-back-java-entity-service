@@ -163,7 +163,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
             .param("sort", property)
         );
         // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
+        verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PROPERTY);
         then(service).should().getList(null, pageable);
     }
 

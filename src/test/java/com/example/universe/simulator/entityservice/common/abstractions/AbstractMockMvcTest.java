@@ -5,7 +5,6 @@ import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -24,18 +23,6 @@ public abstract class AbstractMockMvcTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected final void verifyOkStatus(int status) {
-        assertThat(status).isEqualTo(HttpStatus.OK.value());
-    }
-
-    protected final void verifyErrorResponse(MockHttpServletResponse response, ErrorCodeType errorCode)
-        throws JsonProcessingException, UnsupportedEncodingException {
-        assertThat(response.getStatus()).isEqualTo(errorCode.getHttpStatus().value());
-
-        ErrorDto errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorDto.class);
-        assertThat(errorResponse.errorCode()).isEqualTo(errorCode.toString());
-    }
-
     /*
      * Handles sync and async requests. For async requests, see
      * https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#spring-mvc-test-async-requests
@@ -45,5 +32,13 @@ public abstract class AbstractMockMvcTest {
         return mvcResult.getRequest().isAsyncStarted()
                ? mockMvc.perform(asyncDispatch(mvcResult)).andReturn().getResponse()
                : mvcResult.getResponse();
+    }
+
+    protected final void verifyErrorResponse(MockHttpServletResponse response, ErrorCodeType errorCode)
+        throws JsonProcessingException, UnsupportedEncodingException {
+        assertThat(response.getStatus()).isEqualTo(errorCode.getHttpStatus().value());
+
+        ErrorDto errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorDto.class);
+        assertThat(errorResponse.errorCode()).isEqualTo(errorCode.toString());
     }
 }

@@ -18,18 +18,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class CommonIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    void testInvalidSortParameter() throws Exception {
+    void testInvalidSortProperty() throws Exception {
+        // given
+        var sortProperty = "invalid";
+
         // when
         MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
-            .param("sort", "invalid")
+            .param("sort", sortProperty)
         );
+
         // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PARAMETER);
+        verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PROPERTY);
     }
 
     @Test
     void testOptimisticLocking() throws Exception {
-        // -----------------------------------given-----------------------------------
+        // ----------------------------------------given----------------------------------------
 
         // add entity
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
@@ -46,27 +50,33 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
             .content(objectMapper.writeValueAsString(addedDto))
         );
 
-        // -----------------------------------when-----------------------------------
+        addedDto.setName(addedDto.getName() + "Update2");
+
+        // ----------------------------------------when----------------------------------------
 
         // update entity second time without increasing version
-        addedDto.setName(addedDto.getName() + "Update2");
         response = performRequest(put("/galaxy/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(addedDto))
         );
 
-        // -----------------------------------then-----------------------------------
+        // ----------------------------------------then----------------------------------------
 
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 
-        // cleanup
+        // ----------------------------------------cleanup----------------------------------------
+
         performRequest(delete("/galaxy/delete/{id}", addedDto.getId()));
     }
 
     @Test
     void testDeleteNonexistentEntity() throws Exception {
+        // given
+        UUID id = UUID.randomUUID();
+
         // when
-        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", UUID.randomUUID()));
+        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
+
         // then
         verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
     }

@@ -23,7 +23,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        // -----------------------------------add galaxy-----------------------------------
+        // ----------------------------------------add galaxy----------------------------------------
 
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
@@ -32,7 +32,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         );
         GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
-        // -----------------------------------add star-----------------------------------
+        // ----------------------------------------add star----------------------------------------
 
         StarDto starDto = TestUtils.buildStarDtoForAdd();
         starDto.getGalaxy().setId(addedGalaxy.getId());
@@ -44,7 +44,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
 
         StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
-        // -----------------------------------should return empty list-----------------------------------
+        // ----------------------------------------should return empty list----------------------------------------
 
         // when
         response = performRequest(get("/planet/get-list"));
@@ -52,7 +52,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         JsonPage<PlanetDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------add entity-----------------------------------
+        // ----------------------------------------add entity----------------------------------------
 
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName("name1");
@@ -65,7 +65,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
 
         PlanetDto addedDto1 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
-        // -----------------------------------add another entity-----------------------------------
+        // ----------------------------------------add another entity----------------------------------------
 
         dto = TestUtils.buildPlanetDtoForAdd();
         dto.setName("name2");
@@ -78,7 +78,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
 
         PlanetDto addedDto2 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
-        // -----------------------------------should return list with 2 elements-----------------------------------
+        // ----------------------------------------should return list with 2 elements----------------------------------------
 
         // when
         response = performRequest(get("/planet/get-list"));
@@ -86,7 +86,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
 
-        // -----------------------------------should return entity-----------------------------------
+        // ----------------------------------------should return entity----------------------------------------
 
         // when
         response = performRequest(get("/planet/get/{id}", addedDto1.getId()));
@@ -95,7 +95,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         assertThat(resultDto).isEqualTo(addedDto1);
         assertThat(resultDto.getStar().getId()).isEqualTo(addedStar.getId());
 
-        // -----------------------------------should update entity-----------------------------------
+        // ----------------------------------------should update entity----------------------------------------
 
         // given
         dto = TestUtils.buildPlanetDtoForUpdate();
@@ -115,7 +115,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         assertThat(resultDto.getName()).isEqualTo(dto.getName());
         assertThat(resultDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
-        // -----------------------------------should return list with 1 element-----------------------------------
+        // ----------------------------------------should return list with 1 element----------------------------------------
 
         // when
         response = performRequest(get("/planet/get-list")
@@ -125,29 +125,20 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
 
-        // -----------------------------------should delete entity-----------------------------------
+        // ----------------------------------------should delete entity----------------------------------------
 
-        // when
-        response = performRequest(delete("/planet/delete/{id}", addedDto1.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should delete entity-----------------------------------
-
-        // when
-        response = performRequest(delete("/planet/delete/{id}", addedDto2.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should return empty list-----------------------------------
+        // given
+        performRequest(delete("/planet/delete/{id}", addedDto1.getId()));
+        performRequest(delete("/planet/delete/{id}", addedDto2.getId()));
 
         // when
         response = performRequest(get("/planet/get-list"));
+
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------should have fired application events-----------------------------------
+        // ----------------------------------------should have fired application events----------------------------------------
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_ADD.toString(), 1L),
@@ -157,7 +148,8 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
             Map.entry(EventType.PLANET_DELETE.toString(), 2L)
         ));
 
-        // cleanup
+        // ----------------------------------------cleanup----------------------------------------
+
         performRequest(delete("/star/delete/{id}", addedStar.getId()));
         performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
     }

@@ -24,7 +24,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        // -----------------------------------add galaxy-----------------------------------
+        // ----------------------------------------add galaxy----------------------------------------
 
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
         MockHttpServletResponse response = performRequest(post("/galaxy/add")
@@ -33,7 +33,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         );
         GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
-        // -----------------------------------add star-----------------------------------
+        // ----------------------------------------add star----------------------------------------
 
         StarDto starDto = TestUtils.buildStarDtoForAdd();
         starDto.getGalaxy().setId(addedGalaxy.getId());
@@ -45,7 +45,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
         StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
 
-        // -----------------------------------add planet-----------------------------------
+        // ----------------------------------------add planet----------------------------------------
 
         PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
         planetDto.getStar().setId(addedStar.getId());
@@ -57,7 +57,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
         PlanetDto addedPlanet = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
 
-        // -----------------------------------should return empty list-----------------------------------
+        // ----------------------------------------should return empty list----------------------------------------
 
         // when
         response = performRequest(get("/moon/get-list"));
@@ -65,7 +65,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         JsonPage<MoonDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------add entity-----------------------------------
+        // ----------------------------------------add entity----------------------------------------
 
         MoonDto dto = TestUtils.buildMoonDtoForAdd();
         dto.setName("name1");
@@ -78,7 +78,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
         MoonDto addedDto1 = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
 
-        // -----------------------------------add another entity-----------------------------------
+        // ----------------------------------------add another entity----------------------------------------
 
         dto = TestUtils.buildMoonDtoForAdd();
         dto.setName("name2");
@@ -91,7 +91,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
 
         MoonDto addedDto2 = objectMapper.readValue(response.getContentAsString(), MoonDto.class);
 
-        // -----------------------------------should return list with 2 elements-----------------------------------
+        // ----------------------------------------should return list with 2 elements----------------------------------------
 
         // when
         response = performRequest(get("/moon/get-list"));
@@ -99,7 +99,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(2);
 
-        // -----------------------------------should return entity-----------------------------------
+        // ----------------------------------------should return entity----------------------------------------
 
         // when
         response = performRequest(get("/moon/get/{id}", addedDto1.getId()));
@@ -108,7 +108,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         assertThat(resultDto).isEqualTo(addedDto1);
         assertThat(resultDto.getPlanet().getId()).isEqualTo(addedPlanet.getId());
 
-        // -----------------------------------should update entity-----------------------------------
+        // ----------------------------------------should update entity----------------------------------------
 
         // given
         dto = TestUtils.buildMoonDtoForUpdate();
@@ -128,7 +128,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         assertThat(resultDto.getName()).isEqualTo(dto.getName());
         assertThat(resultDto.getVersion()).isEqualTo(dto.getVersion() + 1);
 
-        // -----------------------------------should return list with 1 element-----------------------------------
+        // ----------------------------------------should return list with 1 element----------------------------------------
 
         // when
         response = performRequest(get("/moon/get-list")
@@ -138,29 +138,20 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).hasSize(1);
 
-        // -----------------------------------should delete entity-----------------------------------
+        // ----------------------------------------should delete entity----------------------------------------
 
-        // when
-        response = performRequest(delete("/moon/delete/{id}", addedDto1.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should delete entity-----------------------------------
-
-        // when
-        response = performRequest(delete("/moon/delete/{id}", addedDto2.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should return empty list-----------------------------------
+        // given
+        performRequest(delete("/moon/delete/{id}", addedDto1.getId()));
+        performRequest(delete("/moon/delete/{id}", addedDto2.getId()));
 
         // when
         response = performRequest(get("/moon/get-list"));
+
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------should have fired application events-----------------------------------
+        // ----------------------------------------should have fired application events----------------------------------------
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_ADD.toString(), 1L),
@@ -171,7 +162,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
             Map.entry(EventType.MOON_DELETE.toString(), 2L)
         ));
 
-        // cleanup
+        // ----------------------------------------cleanup----------------------------------------
+
         performRequest(delete("/planet/delete/{id}", addedPlanet.getId()));
         performRequest(delete("/star/delete/{id}", addedStar.getId()));
         performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
