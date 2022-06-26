@@ -3,7 +3,6 @@ package com.example.universe.simulator.entityservice.common.abstractions;
 import com.example.universe.simulator.common.test.AbstractTest;
 import com.example.universe.simulator.entityservice.config.BeanConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -20,9 +19,6 @@ public abstract class AbstractWebMvcTest extends AbstractMockMvcTest {
 
     @Autowired
     protected ModelMapper modelMapper;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
 
     protected final void verifyOkStatus(int status) {
         assertThat(status).isEqualTo(HttpStatus.OK.value());

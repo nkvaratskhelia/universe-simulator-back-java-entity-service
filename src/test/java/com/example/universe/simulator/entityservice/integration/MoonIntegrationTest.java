@@ -7,6 +7,7 @@ import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.types.EventType;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -67,7 +68,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/moon/get-list"));
 
         // then
-        JsonPage<MoonDto> resultList = readGenericPageResponse(response);
+        JsonPage<MoonDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent())
             .isEqualTo(List.of(addedDto1, addedDto2))
             .allMatch(item -> item.getPlanet().getId().equals(addedPlanet.getId()));
@@ -111,7 +112,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         );
 
         // then
-        resultList = readGenericPageResponse(response);
+        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEqualTo(List.of(updatedDto1));
 
         // ----------------------------------------test delete----------------------------------------
@@ -124,7 +125,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/moon/get-list"));
 
         // then
-        resultList = readGenericPageResponse(response);
+        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
         // ----------------------------------------test application events----------------------------------------
