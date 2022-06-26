@@ -4,7 +4,6 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.UUID;
@@ -37,28 +36,19 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
 
         // add entity
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        MockHttpServletResponse response = performRequest(post("/galaxy/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), dto);
         GalaxyDto addedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
         // update entity once
         addedDto.setName(addedDto.getName() + "Update1");
-        performRequest(put("/galaxy/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(addedDto))
-        );
+        performRequestWithBody(put("/galaxy/update"), addedDto);
 
         addedDto.setName(addedDto.getName() + "Update2");
 
         // ----------------------------------------when----------------------------------------
 
         // update entity second time without increasing version
-        response = performRequest(put("/galaxy/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(addedDto))
-        );
+        response = performRequestWithBody(put("/galaxy/update"), addedDto);
 
         // ----------------------------------------then----------------------------------------
 

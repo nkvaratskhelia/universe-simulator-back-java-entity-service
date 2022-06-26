@@ -6,7 +6,6 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
@@ -31,20 +30,14 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         GalaxyDto dto1 = TestUtils.buildGalaxyDtoForAdd();
         dto1.setName("name1");
 
-        MockHttpServletResponse response = performRequest(post("/galaxy/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto1))
-        );
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), dto1);
         GalaxyDto addedDto1 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
         // add another entity
         GalaxyDto dto2 = TestUtils.buildGalaxyDtoForAdd();
         dto2.setName("name2");
 
-        response = performRequest(post("/galaxy/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto2))
-        );
+        response = performRequestWithBody(post("/galaxy/add"), dto2);
         GalaxyDto addedDto2 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
         // when
@@ -70,10 +63,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         // given
         addedDto1.setName(addedDto1.getName() + "Update");
-        response = performRequest(put("/galaxy/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(addedDto1))
-        );
+        response = performRequestWithBody(put("/galaxy/update"), addedDto1);
         GalaxyDto updatedDto1 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
 
         id = addedDto1.getId();

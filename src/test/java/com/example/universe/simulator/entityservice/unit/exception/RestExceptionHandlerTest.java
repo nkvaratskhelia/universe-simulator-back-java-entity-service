@@ -138,10 +138,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
         given(service.update(any())).willThrow(ObjectOptimisticLockingFailureException.class);
         // when
-        MockHttpServletResponse response = performRequest(put("/galaxy/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxy/update"), dto);
         // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
         then(service).should().update(entity);

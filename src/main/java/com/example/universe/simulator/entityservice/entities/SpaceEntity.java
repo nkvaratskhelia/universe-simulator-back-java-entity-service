@@ -13,7 +13,7 @@ import javax.persistence.MappedSuperclass;
 @Getter @Setter
 @NoArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public abstract class SpaceEntity extends AbstractEntity {
 
     @Column(nullable = false, unique = true)
