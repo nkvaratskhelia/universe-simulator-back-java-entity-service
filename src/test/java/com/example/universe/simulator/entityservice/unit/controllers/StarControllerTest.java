@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
@@ -86,10 +85,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(post("/star/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(inputDto))
-        );
+        MockHttpServletResponse response = performRequestWithBody(post("/star/add"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
@@ -104,10 +100,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(put("/star/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(inputDto))
-        );
+        MockHttpServletResponse response = performRequestWithBody(put("/star/update"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);

@@ -1,6 +1,5 @@
 package com.example.universe.simulator.entityservice.integration;
 
-import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
@@ -9,11 +8,11 @@ import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -25,153 +24,115 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        // -----------------------------------add galaxy-----------------------------------
+        // ----------------------------------------setup----------------------------------------
 
+        // add galaxy
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
-        MockHttpServletResponse response = performRequest(post("/galaxy/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(galaxyDto))
-        );
-        GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), galaxyDto);
+        GalaxyDto addedGalaxy = readResponse(response, GalaxyDto.class);
 
-        // -----------------------------------add star-----------------------------------
-
+        // add star
         StarDto starDto = TestUtils.buildStarDtoForAdd();
         starDto.getGalaxy().setId(addedGalaxy.getId());
 
-        response = performRequest(post("/star/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(starDto))
-        );
+        response = performRequestWithBody(post("/star/add"), starDto);
+        StarDto addedStar = readResponse(response, StarDto.class);
 
-        StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
+        // ----------------------------------------test add----------------------------------------
 
-        // -----------------------------------should return empty list-----------------------------------
+        // add entity
+        PlanetDto dto1 = TestUtils.buildPlanetDtoForAdd();
+        dto1.setName("name1");
+        dto1.getStar().setId(addedStar.getId());
+
+        response = performRequestWithBody(post("/planet/add"), dto1);
+        PlanetDto addedDto1 = readResponse(response, PlanetDto.class);
+
+        // add another entity
+        PlanetDto dto2 = TestUtils.buildPlanetDtoForAdd();
+        dto2.setName("name2");
+        dto2.getStar().setId(addedStar.getId());
+
+        response = performRequestWithBody(post("/planet/add"), dto2);
+        PlanetDto addedDto2 = readResponse(response, PlanetDto.class);
 
         // when
         response = performRequest(get("/planet/get-list"));
+
         // then
         JsonPage<PlanetDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).isEmpty();
+        assertThat(resultList.getContent())
+            .isEqualTo(List.of(addedDto1, addedDto2))
+            .allMatch(item -> item.getStar().getId().equals(addedStar.getId()));
 
-        // -----------------------------------add entity-----------------------------------
-
-        PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
-        dto.setName("name1");
-        dto.getStar().setId(addedStar.getId());
-
-        response = performRequest(post("/planet/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
-
-        PlanetDto addedDto1 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
-
-        // -----------------------------------add another entity-----------------------------------
-
-        dto = TestUtils.buildPlanetDtoForAdd();
-        dto.setName("name2");
-        dto.getStar().setId(addedStar.getId());
-
-        response = performRequest(post("/planet/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
-
-        PlanetDto addedDto2 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
-
-        // -----------------------------------should return list with 2 elements-----------------------------------
-
-        // when
-        response = performRequest(get("/planet/get-list"));
-        // then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).hasSize(2);
-
-        // -----------------------------------should return entity-----------------------------------
-
-        // when
-        response = performRequest(get("/planet/get/{id}", addedDto1.getId()));
-        // then
-        PlanetDto resultDto = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
-        assertThat(resultDto).isEqualTo(addedDto1);
-        assertThat(resultDto.getStar().getId()).isEqualTo(addedStar.getId());
-
-        // -----------------------------------should update entity-----------------------------------
+        // ----------------------------------------test get----------------------------------------
 
         // given
-        dto = TestUtils.buildPlanetDtoForUpdate();
-        dto.setId(addedDto1.getId());
-        dto.setName("name1Update");
-        dto.getStar().setId(addedStar.getId());
+        UUID id = addedDto1.getId();
 
         // when
-        performRequest(put("/planet/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
-        response = performRequest(get("/planet/get/{id}", addedDto1.getId()));
+        response = performRequest(get("/planet/get/{id}", id));
 
         // then
-        resultDto = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
-        assertThat(resultDto.getName()).isEqualTo(dto.getName());
-        assertThat(resultDto.getVersion()).isEqualTo(dto.getVersion() + 1);
+        PlanetDto result = readResponse(response, PlanetDto.class);
+        assertThat(result).isEqualTo(addedDto1);
 
-        // -----------------------------------should return list with 1 element-----------------------------------
+        // ----------------------------------------test update----------------------------------------
+
+        // given
+        addedDto1.setName(addedDto1.getName() + "Update");
+        response = performRequestWithBody(put("/planet/update"), addedDto1);
+        PlanetDto updatedDto1 = readResponse(response, PlanetDto.class);
+
+        id = addedDto1.getId();
+
+        // when
+        response = performRequest(get("/planet/get/{id}", id));
+
+        // then
+        result = readResponse(response, PlanetDto.class);
+        assertThat(result).isEqualTo(updatedDto1);
+
+        // ----------------------------------------test getList----------------------------------------
+
+        // given
+        var nameFilter = "1uP";
 
         // when
         response = performRequest(get("/planet/get-list")
-            .param("name", "1uP")
+            .param("name", nameFilter)
         );
+
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).hasSize(1);
+        assertThat(resultList.getContent()).isEqualTo(List.of(updatedDto1));
 
-        // -----------------------------------should delete entity-----------------------------------
+        // ----------------------------------------test delete----------------------------------------
 
-        // when
-        response = performRequest(delete("/planet/delete/{id}", addedDto1.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should delete entity-----------------------------------
-
-        // when
-        response = performRequest(delete("/planet/delete/{id}", addedDto2.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should return empty list-----------------------------------
+        // given
+        performRequest(delete("/planet/delete/{id}", addedDto1.getId()));
+        performRequest(delete("/planet/delete/{id}", addedDto2.getId()));
 
         // when
         response = performRequest(get("/planet/get-list"));
+
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------delete star-----------------------------------
+        // ----------------------------------------test application events----------------------------------------
 
-        performRequest(delete("/star/delete/{id}", addedStar.getId()));
-
-        // -----------------------------------delete galaxy-----------------------------------
-
-        performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
-
-        // -----------------------------------should have fired application events-----------------------------------
-
-        // given
-        Map<String, Long> eventsByType = applicationEvents.stream(EventDto.class)
-            .collect(Collectors.groupingBy(EventDto::type, Collectors.counting()));
-
-        // then
-        assertThat(eventsByType).isEqualTo(Map.ofEntries(
+        verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_ADD.toString(), 1L),
             Map.entry(EventType.STAR_ADD.toString(), 1L),
             Map.entry(EventType.PLANET_ADD.toString(), 2L),
             Map.entry(EventType.PLANET_UPDATE.toString(), 1L),
-            Map.entry(EventType.PLANET_DELETE.toString(), 2L),
-            Map.entry(EventType.STAR_DELETE.toString(), 1L),
-            Map.entry(EventType.GALAXY_DELETE.toString(), 1L)
+            Map.entry(EventType.PLANET_DELETE.toString(), 2L)
         ));
+
+        // ----------------------------------------cleanup----------------------------------------
+
+        performRequest(delete("/star/delete/{id}", addedStar.getId()));
+        performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
     }
 }

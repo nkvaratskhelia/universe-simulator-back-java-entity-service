@@ -1,18 +1,16 @@
 package com.example.universe.simulator.entityservice.integration;
 
-import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
-import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -24,119 +22,89 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void test() throws Exception {
-        // -----------------------------------should return empty list-----------------------------------
+        // ----------------------------------------test add----------------------------------------
 
-        // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get-list"));
-        // then
-        JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).isEmpty();
+        // given
 
-        // -----------------------------------add entity-----------------------------------
+        // add entity
+        GalaxyDto dto1 = TestUtils.buildGalaxyDtoForAdd();
+        dto1.setName("name1");
 
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        dto.setName("name1");
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), dto1);
+        GalaxyDto addedDto1 = readResponse(response, GalaxyDto.class);
 
-        response = performRequest(post("/galaxy/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
+        // add another entity
+        GalaxyDto dto2 = TestUtils.buildGalaxyDtoForAdd();
+        dto2.setName("name2");
 
-        GalaxyDto addedDto1 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
-
-        // -----------------------------------add another entity-----------------------------------
-
-        dto = TestUtils.buildGalaxyDtoForAdd();
-        dto.setName("name2");
-
-        response = performRequest(post("/galaxy/add")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
-
-        GalaxyDto addedDto2 = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
-
-        // -----------------------------------should return list with 2 elements-----------------------------------
+        response = performRequestWithBody(post("/galaxy/add"), dto2);
+        GalaxyDto addedDto2 = readResponse(response, GalaxyDto.class);
 
         // when
         response = performRequest(get("/galaxy/get-list"));
+
         // then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).hasSize(2);
+        JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(resultList.getContent()).isEqualTo(List.of(addedDto1, addedDto2));
 
-        // -----------------------------------should return entity and store it in cache-----------------------------------
-
-        // when
-        response = performRequest(get("/galaxy/get/{id}", addedDto1.getId()));
-        // then
-        GalaxyDto resultDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
-        assertThat(resultDto).isEqualTo(addedDto1);
-
-        GalaxyDto fromCache = modelMapper.map(cacheManager.getCache("Galaxy").get(addedDto1.getId()).get(), GalaxyDto.class);
-        assertThat(fromCache).isEqualTo(addedDto1);
-
-        // -----------------------------------should update entity-----------------------------------
+        // ----------------------------------------test get----------------------------------------
 
         // given
-        dto = TestUtils.buildGalaxyDtoForUpdate();
-        dto.setId(addedDto1.getId());
-        dto.setName("name1Update");
+        UUID id = addedDto1.getId();
 
         // when
-        performRequest(put("/galaxy/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(dto))
-        );
-
-        //check if resultDto got updated in db
-        response = performRequest(get("/galaxy/get/{id}", addedDto1.getId()));
+        response = performRequest(get("/galaxy/get/{id}", id));
 
         // then
-        resultDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
-        assertThat(resultDto.getName()).isEqualTo(dto.getName());
-        assertThat(resultDto.getVersion()).isEqualTo(dto.getVersion() + 1);
+        GalaxyDto result = readResponse(response, GalaxyDto.class);
+        assertThat(result).isEqualTo(addedDto1);
 
-        // -----------------------------------should return list with 1 element-----------------------------------
+        // ----------------------------------------test update----------------------------------------
+
+        // given
+        addedDto1.setName(addedDto1.getName() + "Update");
+        response = performRequestWithBody(put("/galaxy/update"), addedDto1);
+        GalaxyDto updatedDto1 = readResponse(response, GalaxyDto.class);
+
+        id = addedDto1.getId();
+
+        // when
+        response = performRequest(get("/galaxy/get/{id}", id));
+
+        // then
+        result = readResponse(response, GalaxyDto.class);
+        assertThat(result).isEqualTo(updatedDto1);
+
+        // ----------------------------------------test getList----------------------------------------
+
+        // given
+        var nameFilter = "1uP";
 
         // when
         response = performRequest(get("/galaxy/get-list")
-            .param("name", "1uP")
+            .param("name", nameFilter)
         );
+
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).hasSize(1);
+        assertThat(resultList.getContent()).isEqualTo(List.of(updatedDto1));
 
-        // -----------------------------------should delete entity from database and from cache-----------------------------------
+        // ----------------------------------------test delete----------------------------------------
 
-        // when
-        response = performRequest(delete("/galaxy/delete/{id}", addedDto1.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-        assertThat(cacheManager.getCache("Galaxy").get(addedDto1.getId())).isNull();
-
-        // -----------------------------------should delete entity-----------------------------------
-
-        // when
-        response = performRequest(delete("/galaxy/delete/{id}", addedDto2.getId()));
-        // then
-        verifyOkStatus(response.getStatus());
-
-        // -----------------------------------should return empty list-----------------------------------
+        // given
+        performRequest(delete("/galaxy/delete/{id}", addedDto1.getId()));
+        performRequest(delete("/galaxy/delete/{id}", addedDto2.getId()));
 
         // when
         response = performRequest(get("/galaxy/get-list"));
+
         // then
         resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(resultList.getContent()).isEmpty();
 
-        // -----------------------------------should have fired application events-----------------------------------
+        // ----------------------------------------test application events----------------------------------------
 
-        // given
-        Map<String, Long> eventsByType = applicationEvents.stream(EventDto.class)
-            .collect(Collectors.groupingBy(EventDto::type, Collectors.counting()));
-
-        // then
-        assertThat(eventsByType).isEqualTo(Map.ofEntries(
+        verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_ADD.toString(), 2L),
             Map.entry(EventType.GALAXY_UPDATE.toString(), 1L),
             Map.entry(EventType.GALAXY_DELETE.toString(), 2L)

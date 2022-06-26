@@ -69,10 +69,10 @@ class RestExceptionHandler {
         return buildResponse(ErrorCodeType.ENTITY_MODIFIED, exception);
     }
 
-    // thrown when passing invalid sort parameter to paged requests
+    // thrown when passing invalid sort property to paged requests
     @ExceptionHandler(PropertyReferenceException.class)
     private ResponseEntity<ErrorDto> handlePropertyReferenceException(PropertyReferenceException exception) {
-        return buildResponse(ErrorCodeType.INVALID_SORT_PARAMETER, exception);
+        return buildResponse(ErrorCodeType.INVALID_SORT_PROPERTY, exception);
     }
 
     @ExceptionHandler(Exception.class)

@@ -5,11 +5,11 @@ import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.UnsupportedEncodingException;
 
@@ -24,8 +24,28 @@ public abstract class AbstractMockMvcTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected final void verifyOkStatus(int status) {
-        assertThat(status).isEqualTo(HttpStatus.OK.value());
+    /*
+     * Handles sync and async requests. For async requests, see
+     * https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#spring-mvc-test-async-requests
+     */
+    protected final MockHttpServletResponse performRequest(MockHttpServletRequestBuilder requestBuilder) throws Exception {
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+        return mvcResult.getRequest().isAsyncStarted()
+               ? mockMvc.perform(asyncDispatch(mvcResult)).andReturn().getResponse()
+               : mvcResult.getResponse();
+    }
+
+    protected final MockHttpServletResponse performRequestWithBody(MockHttpServletRequestBuilder requestBuilder, Object body) throws Exception {
+        return performRequest(
+            requestBuilder
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(body))
+        );
+    }
+
+    protected final <T> T readResponse(MockHttpServletResponse response, Class<T> responseClass)
+        throws JsonProcessingException, UnsupportedEncodingException {
+        return objectMapper.readValue(response.getContentAsString(), responseClass);
     }
 
     protected final void verifyErrorResponse(MockHttpServletResponse response, ErrorCodeType errorCode)
@@ -34,16 +54,5 @@ public abstract class AbstractMockMvcTest {
 
         ErrorDto errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorDto.class);
         assertThat(errorResponse.errorCode()).isEqualTo(errorCode.toString());
-    }
-
-    /*
-     * Handles sync and async requests. For async requests, see
-     * https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#spring-mvc-test-async-requests
-     */
-    protected final MockHttpServletResponse performRequest(RequestBuilder requestBuilder) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
-        return mvcResult.getRequest().isAsyncStarted()
-               ? mockMvc.perform(asyncDispatch(mvcResult)).andReturn().getResponse()
-               : mvcResult.getResponse();
     }
 }

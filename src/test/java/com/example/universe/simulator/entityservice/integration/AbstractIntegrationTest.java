@@ -1,5 +1,6 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.common.test.AbstractSpringBootTest;
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractMockMvcTest;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,11 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @AbstractSpringBootTest
 @AutoConfigureMockMvc
 @RecordApplicationEvents
@@ -28,7 +34,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
     private static final GenericContainer<?> REDIS_CONTAINER;
 
     @Autowired
-    protected ApplicationEvents applicationEvents;
+    private ApplicationEvents applicationEvents;
 
     @Autowired
     protected ModelMapper modelMapper;
@@ -59,5 +65,11 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
 
         registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
         registry.add("spring.redis.port", REDIS_CONTAINER::getFirstMappedPort);
+    }
+
+    protected final void verifyEventsByType(Map<String, Long> expected) {
+        Map<String, Long> eventsByType = applicationEvents.stream(EventDto.class)
+            .collect(Collectors.groupingBy(EventDto::type, Collectors.counting()));
+        assertThat(eventsByType).isEqualTo(expected);
     }
 }
