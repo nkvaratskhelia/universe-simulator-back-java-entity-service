@@ -1,8 +1,10 @@
 package com.example.universe.simulator.entityservice.common.abstractions;
 
 import com.example.universe.simulator.common.dtos.ErrorDto;
+import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,7 +24,7 @@ public abstract class AbstractMockMvcTest {
     private MockMvc mockMvc;
 
     @Autowired
-    protected ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     /*
      * Handles sync and async requests. For async requests, see
@@ -41,6 +43,16 @@ public abstract class AbstractMockMvcTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body))
         );
+    }
+
+    protected final <T> T readResponse(MockHttpServletResponse response, Class<T> responseClass)
+        throws JsonProcessingException, UnsupportedEncodingException {
+        return objectMapper.readValue(response.getContentAsString(), responseClass);
+    }
+
+    protected final <T> JsonPage<T> readGenericPageResponse(MockHttpServletResponse response)
+        throws JsonProcessingException, UnsupportedEncodingException {
+        return objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
     }
 
     protected final void verifyErrorResponse(MockHttpServletResponse response, ErrorCodeType errorCode)

@@ -6,7 +6,6 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.types.EventType;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -29,14 +28,14 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         // add galaxy
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
         MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), galaxyDto);
-        GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        GalaxyDto addedGalaxy = readResponse(response, GalaxyDto.class);
 
         // add star
         StarDto starDto = TestUtils.buildStarDtoForAdd();
         starDto.getGalaxy().setId(addedGalaxy.getId());
 
         response = performRequestWithBody(post("/star/add"), starDto);
-        StarDto addedStar = objectMapper.readValue(response.getContentAsString(), StarDto.class);
+        StarDto addedStar = readResponse(response, StarDto.class);
 
         // ----------------------------------------test add----------------------------------------
 
@@ -46,7 +45,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         dto1.getStar().setId(addedStar.getId());
 
         response = performRequestWithBody(post("/planet/add"), dto1);
-        PlanetDto addedDto1 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
+        PlanetDto addedDto1 = readResponse(response, PlanetDto.class);
 
         // add another entity
         PlanetDto dto2 = TestUtils.buildPlanetDtoForAdd();
@@ -54,13 +53,13 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         dto2.getStar().setId(addedStar.getId());
 
         response = performRequestWithBody(post("/planet/add"), dto2);
-        PlanetDto addedDto2 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
+        PlanetDto addedDto2 = readResponse(response, PlanetDto.class);
 
         // when
         response = performRequest(get("/planet/get-list"));
 
         // then
-        JsonPage<PlanetDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<PlanetDto> resultList = readGenericPageResponse(response);
         assertThat(resultList.getContent())
             .isEqualTo(List.of(addedDto1, addedDto2))
             .allMatch(item -> item.getStar().getId().equals(addedStar.getId()));
@@ -74,7 +73,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/planet/get/{id}", id));
 
         // then
-        PlanetDto result = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
+        PlanetDto result = readResponse(response, PlanetDto.class);
         assertThat(result).isEqualTo(addedDto1);
 
         // ----------------------------------------test update----------------------------------------
@@ -82,7 +81,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         // given
         addedDto1.setName(addedDto1.getName() + "Update");
         response = performRequestWithBody(put("/planet/update"), addedDto1);
-        PlanetDto updatedDto1 = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
+        PlanetDto updatedDto1 = readResponse(response, PlanetDto.class);
 
         id = addedDto1.getId();
 
@@ -90,7 +89,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/planet/get/{id}", id));
 
         // then
-        result = objectMapper.readValue(response.getContentAsString(), PlanetDto.class);
+        result = readResponse(response, PlanetDto.class);
         assertThat(result).isEqualTo(updatedDto1);
 
         // ----------------------------------------test getList----------------------------------------
@@ -104,7 +103,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         );
 
         // then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        resultList = readGenericPageResponse(response);
         assertThat(resultList.getContent()).isEqualTo(List.of(updatedDto1));
 
         // ----------------------------------------test delete----------------------------------------
@@ -117,7 +116,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/planet/get-list"));
 
         // then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        resultList = readGenericPageResponse(response);
         assertThat(resultList.getContent()).isEmpty();
 
         // ----------------------------------------test application events----------------------------------------

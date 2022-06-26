@@ -26,7 +26,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
     private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER;
 
     @Autowired
-    protected ApplicationEvents applicationEvents;
+    private ApplicationEvents applicationEvents;
 
     static {
         RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.10.5-management");

@@ -5,7 +5,6 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.types.EventType;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -28,7 +27,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // add galaxy
         GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
         MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), galaxyDto);
-        GalaxyDto addedGalaxy = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        GalaxyDto addedGalaxy = readResponse(response, GalaxyDto.class);
 
         // ----------------------------------------test add----------------------------------------
 
@@ -40,7 +39,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         dto1.getGalaxy().setId(addedGalaxy.getId());
 
         response = performRequestWithBody(post("/star/add"), dto1);
-        StarDto addedDto1 = objectMapper.readValue(response.getContentAsString(), StarDto.class);
+        StarDto addedDto1 = readResponse(response, StarDto.class);
 
         // add another entity
         StarDto dto2 = TestUtils.buildStarDtoForAdd();
@@ -48,13 +47,13 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         dto2.getGalaxy().setId(addedGalaxy.getId());
 
         response = performRequestWithBody(post("/star/add"), dto2);
-        StarDto addedDto2 = objectMapper.readValue(response.getContentAsString(), StarDto.class);
+        StarDto addedDto2 = readResponse(response, StarDto.class);
 
         // when
         response = performRequest(get("/star/get-list"));
 
         // then
-        JsonPage<StarDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<StarDto> resultList = readGenericPageResponse(response);
         assertThat(resultList.getContent())
             .isEqualTo(List.of(addedDto1, addedDto2))
             .allMatch(item -> item.getGalaxy().getId().equals(addedGalaxy.getId()));
@@ -68,7 +67,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/star/get/{id}", id));
 
         // then
-        StarDto result = objectMapper.readValue(response.getContentAsString(), StarDto.class);
+        StarDto result = readResponse(response, StarDto.class);
         assertThat(result).isEqualTo(addedDto1);
 
         // ----------------------------------------test update----------------------------------------
@@ -76,7 +75,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // given
         addedDto1.setName(addedDto1.getName() + "Update");
         response = performRequestWithBody(put("/star/update"), addedDto1);
-        StarDto updatedDto1 = objectMapper.readValue(response.getContentAsString(), StarDto.class);
+        StarDto updatedDto1 = readResponse(response, StarDto.class);
 
         id = addedDto1.getId();
 
@@ -84,7 +83,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/star/get/{id}", id));
 
         // then
-        result = objectMapper.readValue(response.getContentAsString(), StarDto.class);
+        result = readResponse(response, StarDto.class);
         assertThat(result).isEqualTo(updatedDto1);
 
         // ----------------------------------------test getList----------------------------------------
@@ -98,7 +97,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         );
 
         // then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        resultList = readGenericPageResponse(response);
         assertThat(resultList.getContent()).isEqualTo(List.of(updatedDto1));
 
         // ----------------------------------------test delete----------------------------------------
@@ -111,7 +110,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/star/get-list"));
 
         // then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        resultList = readGenericPageResponse(response);
         assertThat(resultList.getContent()).isEmpty();
 
         // ----------------------------------------test application events----------------------------------------

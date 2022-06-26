@@ -37,7 +37,7 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
         // add entity
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), dto);
-        GalaxyDto addedDto = objectMapper.readValue(response.getContentAsString(), GalaxyDto.class);
+        GalaxyDto addedDto = readResponse(response, GalaxyDto.class);
 
         // update entity once
         addedDto.setName(addedDto.getName() + "Update1");
