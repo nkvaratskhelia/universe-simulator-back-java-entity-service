@@ -4,6 +4,7 @@ import com.example.universe.simulator.common.dtos.ErrorDto;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -23,6 +24,9 @@ public abstract class AbstractMockMvcTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected ModelMapper modelMapper;
 
     /*
      * Handles sync and async requests. For async requests, see
