@@ -60,7 +60,9 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         // then
         JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(result.getContent()).isEqualTo(List.of(galaxy1));
+        assertThat(result.getContent())
+            .hasSize(1)
+            .hasSameElementsAs(List.of(galaxy1));
     }
 
     @Test
@@ -79,8 +81,6 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testAdd() throws Exception {
         // given
-
-        // add galaxy
         MockHttpServletResponse response = performRequestWithBody(
             post("/galaxy/add"),
             GalaxyDto.builder().name("name3").build()
@@ -92,7 +92,9 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         // then
         JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(result.getContent()).isEqualTo(List.of(galaxy1, galaxy2, galaxy3));
+        assertThat(result.getContent())
+            .hasSize(3)
+            .hasSameElementsAs(List.of(galaxy1, galaxy2, galaxy3));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_ADD.toString(), 1L)
@@ -104,16 +106,16 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // given
         galaxy1.setName(galaxy1.getName() + "Update");
         MockHttpServletResponse response = performRequestWithBody(put("/galaxy/update"), galaxy1);
-        GalaxyDto updatedGalaxy1 = readResponse(response, GalaxyDto.class);
-
-        UUID id = galaxy1.getId();
+        galaxy1 = readResponse(response, GalaxyDto.class);
 
         // when
-        response = performRequest(get("/galaxy/get/{id}", id));
+        response = performRequest(get("/galaxy/get-list"));
 
         // then
-        GalaxyDto result = readResponse(response, GalaxyDto.class);
-        assertThat(result).isEqualTo(updatedGalaxy1);
+        JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(result.getContent())
+            .hasSize(2)
+            .hasSameElementsAs(List.of(galaxy1, galaxy2));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_UPDATE.toString(), 1L)
@@ -129,8 +131,10 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         MockHttpServletResponse response = performRequest(get("/galaxy/get-list"));
 
         // then
-        JsonPage<GalaxyDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).isEqualTo(List.of(galaxy2));
+        JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(result.getContent())
+            .hasSize(1)
+            .hasSameElementsAs(List.of(galaxy2));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_DELETE.toString(), 1L)

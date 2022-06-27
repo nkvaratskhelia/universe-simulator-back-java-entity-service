@@ -73,6 +73,12 @@ public final class TestUtils {
             .build();
     }
 
+    public static Galaxy buildGalaxyForAdd() {
+        return Galaxy.builder()
+            .name("name")
+            .build();
+    }
+
     public static StarDto buildStarDtoForAdd() {
         return StarDto.builder()
             .name("name")
@@ -102,6 +108,13 @@ public final class TestUtils {
             .build();
     }
 
+    public static Star buildStarForAdd() {
+        return Star.builder()
+            .name("name")
+            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+            .build();
+    }
+
     public static PlanetDto buildPlanetDtoForAdd() {
         return PlanetDto.builder()
             .name("name")
@@ -126,6 +139,13 @@ public final class TestUtils {
     public static Planet buildPlanet() {
         return Planet.builder()
             .id(UUID.randomUUID())
+            .name("name")
+            .star(Star.builder().id(UUID.randomUUID()).build())
+            .build();
+    }
+
+    public static Planet buildPlanetForAdd() {
+        return Planet.builder()
             .name("name")
             .star(Star.builder().id(UUID.randomUUID()).build())
             .build();

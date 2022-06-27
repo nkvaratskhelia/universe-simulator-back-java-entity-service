@@ -2,13 +2,22 @@ package com.example.universe.simulator.entityservice.integration;
 
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
-import com.example.universe.simulator.entityservice.dtos.StarDto;
+import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
+import com.example.universe.simulator.entityservice.repositories.MoonRepository;
+import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
+import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
@@ -23,126 +32,149 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 class MoonIntegrationTest extends AbstractIntegrationTest {
 
+    @Autowired
+    private GalaxyRepository galaxyRepository;
+
+    @Autowired
+    private StarRepository starRepository;
+
+    @Autowired
+    private PlanetRepository planetRepository;
+
+    @Autowired
+    private MoonRepository moonRepository;
+
+    private Planet planet;
+    private MoonDto moon1;
+    private MoonDto moon2;
+
+    @BeforeEach
+    void setup() {
+        Galaxy galaxy = galaxyRepository.save(TestUtils.buildGalaxyForAdd());
+
+        Star star = TestUtils.buildStarForAdd();
+        star.setGalaxy(galaxy);
+        star = starRepository.save(star);
+
+        planet = TestUtils.buildPlanetForAdd();
+        planet.setStar(star);
+        planet = planetRepository.save(planet);
+
+        moon1 = modelMapper.map(
+            moonRepository.save(Moon.builder().name("name1").planet(planet).build()),
+            MoonDto.class
+        );
+
+        moon2 = modelMapper.map(
+            moonRepository.save(Moon.builder().name("name2").planet(planet).build()),
+            MoonDto.class
+        );
+    }
+
+    @AfterEach
+    void cleanup() {
+        moonRepository.deleteAllInBatch();
+        planetRepository.deleteAllInBatch();
+        starRepository.deleteAllInBatch();
+        galaxyRepository.deleteAllInBatch();
+    }
+
     @Test
-    void test() throws Exception {
-        // ----------------------------------------setup----------------------------------------
-
-        // add galaxy
-        GalaxyDto galaxyDto = TestUtils.buildGalaxyDtoForAdd();
-        MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), galaxyDto);
-        GalaxyDto addedGalaxy = readResponse(response, GalaxyDto.class);
-
-        // add star
-        StarDto starDto = TestUtils.buildStarDtoForAdd();
-        starDto.getGalaxy().setId(addedGalaxy.getId());
-
-        response = performRequestWithBody(post("/star/add"), starDto);
-        StarDto addedStar = readResponse(response, StarDto.class);
-
-        // add planet
-        PlanetDto planetDto = TestUtils.buildPlanetDtoForAdd();
-        planetDto.getStar().setId(addedStar.getId());
-
-        response = performRequestWithBody(post("/planet/add"), planetDto);
-        PlanetDto addedPlanet = readResponse(response, PlanetDto.class);
-
-        // ----------------------------------------test add----------------------------------------
-
-        // add entity
-        MoonDto dto1 = TestUtils.buildMoonDtoForAdd();
-        dto1.setName("name1");
-        dto1.getPlanet().setId(addedPlanet.getId());
-
-        response = performRequestWithBody(post("/moon/add"), dto1);
-        MoonDto addedDto1 = readResponse(response, MoonDto.class);
-
-        // add another entity
-        MoonDto dto2 = TestUtils.buildMoonDtoForAdd();
-        dto2.setName("name2");
-        dto2.getPlanet().setId(addedPlanet.getId());
-
-        response = performRequestWithBody(post("/moon/add"), dto2);
-        MoonDto addedDto2 = readResponse(response, MoonDto.class);
-
-        // when
-        response = performRequest(get("/moon/get-list"));
-
-        // then
-        JsonPage<MoonDto> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent())
-            .isEqualTo(List.of(addedDto1, addedDto2))
-            .allMatch(item -> item.getPlanet().getId().equals(addedPlanet.getId()));
-
-        // ----------------------------------------test get----------------------------------------
-
+    void testGetList() throws Exception {
         // given
-        UUID id = addedDto1.getId();
+        var nameFilter = "E1";
 
         // when
-        response = performRequest(get("/moon/get/{id}", id));
-
-        // then
-        MoonDto result = readResponse(response, MoonDto.class);
-        assertThat(result).isEqualTo(addedDto1);
-
-        // ----------------------------------------test update----------------------------------------
-
-        // given
-        addedDto1.setName(addedDto1.getName() + "Update");
-        response = performRequestWithBody(put("/moon/update"), addedDto1);
-        MoonDto updatedDto1 = readResponse(response, MoonDto.class);
-
-        id = addedDto1.getId();
-
-        // when
-        response = performRequest(get("/moon/get/{id}", id));
-
-        // then
-        result = readResponse(response, MoonDto.class);
-        assertThat(result).isEqualTo(updatedDto1);
-
-        // ----------------------------------------test getList----------------------------------------
-
-        // given
-        var nameFilter = "1uP";
-
-        // when
-        response = performRequest(get("/moon/get-list")
+        MockHttpServletResponse response = performRequest(get("/moon/get-list")
             .param("name", nameFilter)
         );
 
         // then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).isEqualTo(List.of(updatedDto1));
+        JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(result.getContent())
+            .hasSize(1)
+            .hasSameElementsAs(List.of(moon1));
+    }
 
-        // ----------------------------------------test delete----------------------------------------
-
+    @Test
+    void testGet() throws Exception {
         // given
-        performRequest(delete("/moon/delete/{id}", addedDto1.getId()));
-        performRequest(delete("/moon/delete/{id}", addedDto2.getId()));
+        UUID id = moon1.getId();
+
+        // when
+        MockHttpServletResponse response = performRequest(get("/moon/get/{id}", id));
+
+        // then
+        MoonDto result = readResponse(response, MoonDto.class);
+        assertThat(result).isEqualTo(moon1);
+    }
+
+    @Test
+    void testAdd() throws Exception {
+        // given
+        MoonDto moonDto3 = MoonDto.builder()
+            .name("name3")
+            .planet(PlanetDto.builder().id(planet.getId()).build())
+            .build();
+
+        MockHttpServletResponse response = performRequestWithBody(
+            post("/moon/add"),
+            moonDto3
+        );
+        MoonDto moon3 = readResponse(response, MoonDto.class);
 
         // when
         response = performRequest(get("/moon/get-list"));
 
         // then
-        resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
-        assertThat(resultList.getContent()).isEmpty();
-
-        // ----------------------------------------test application events----------------------------------------
+        JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(result.getContent())
+            .hasSize(3)
+            .hasSameElementsAs(List.of(moon1, moon2, moon3))
+            .allMatch(item -> item.getPlanet().getId().equals(planet.getId()));
 
         verifyEventsByType(Map.ofEntries(
-            Map.entry(EventType.GALAXY_ADD.toString(), 1L),
-            Map.entry(EventType.STAR_ADD.toString(), 1L),
-            Map.entry(EventType.PLANET_ADD.toString(), 1L),
-            Map.entry(EventType.MOON_ADD.toString(), 2L),
-            Map.entry(EventType.MOON_UPDATE.toString(), 1L),
-            Map.entry(EventType.MOON_DELETE.toString(), 2L)
+            Map.entry(EventType.MOON_ADD.toString(), 1L)
         ));
+    }
 
-        // ----------------------------------------cleanup----------------------------------------
+    @Test
+    void testUpdate() throws Exception {
+        // given
+        moon1.setName(moon1.getName() + "Update");
+        MockHttpServletResponse response = performRequestWithBody(put("/moon/update"), moon1);
+        moon1 = readResponse(response, MoonDto.class);
 
-        performRequest(delete("/planet/delete/{id}", addedPlanet.getId()));
-        performRequest(delete("/star/delete/{id}", addedStar.getId()));
-        performRequest(delete("/galaxy/delete/{id}", addedGalaxy.getId()));
+        // when
+        response = performRequest(get("/moon/get-list"));
+
+        // then
+        JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(result.getContent())
+            .hasSize(2)
+            .hasSameElementsAs(List.of(moon1, moon2));
+
+        verifyEventsByType(Map.ofEntries(
+            Map.entry(EventType.MOON_UPDATE.toString(), 1L)
+        ));
+    }
+
+    @Test
+    void testDelete() throws Exception {
+        // given
+        performRequest(delete("/moon/delete/{id}", moon1.getId()));
+
+        // when
+        MockHttpServletResponse response = performRequest(get("/moon/get-list"));
+
+        // then
+        JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        assertThat(result.getContent())
+            .hasSize(1)
+            .hasSameElementsAs(List.of(moon2));
+
+        verifyEventsByType(Map.ofEntries(
+            Map.entry(EventType.MOON_DELETE.toString(), 1L)
+        ));
     }
 }
