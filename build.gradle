@@ -130,7 +130,7 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
 //    adds ability to mock/verify final methods
     testRuntimeOnly 'org.mockito:mockito-inline'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 }
