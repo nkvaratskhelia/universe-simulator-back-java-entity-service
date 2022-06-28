@@ -22,8 +22,8 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @CacheConfig(cacheNames = "galaxy")
+@RequiredArgsConstructor
 public class GalaxyService extends SpaceEntityService<Galaxy> {
 
     private final GalaxyRepository repository;

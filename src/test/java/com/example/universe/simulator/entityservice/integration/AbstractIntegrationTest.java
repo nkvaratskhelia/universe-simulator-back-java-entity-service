@@ -26,8 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
 
     private static final RabbitMQContainer RABBITMQ_CONTAINER;
-    private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER;
     private static final GenericContainer<?> REDIS_CONTAINER;
+    private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER;
 
     @Autowired
     private ApplicationEvents applicationEvents;
@@ -40,12 +40,12 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
 
     static {
         RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.10.5-management");
-        POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.4");
         REDIS_CONTAINER = new GenericContainer<>("redis:7.0.2").withExposedPorts(6379);
+        POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.4");
 
         RABBITMQ_CONTAINER.start();
-        POSTGRESQL_CONTAINER.start();
         REDIS_CONTAINER.start();
+        POSTGRESQL_CONTAINER.start();
     }
 
     @DynamicPropertySource
@@ -55,12 +55,12 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
         registry.add("spring.rabbitmq.username", RABBITMQ_CONTAINER::getAdminUsername);
         registry.add("spring.rabbitmq.password", RABBITMQ_CONTAINER::getAdminPassword);
 
+        registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
+        registry.add("spring.redis.port", REDIS_CONTAINER::getFirstMappedPort);
+
         registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
-
-        registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
-        registry.add("spring.redis.port", REDIS_CONTAINER::getFirstMappedPort);
     }
 
     protected final void verifyEventsByType(Map<String, Long> expected) {
