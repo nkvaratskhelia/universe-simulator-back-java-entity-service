@@ -27,6 +27,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private GalaxyRepository galaxyRepository;
 
+    private static final String GALAXY_CACHE_NAME = "galaxy";
     private GalaxyDto galaxy1;
     private GalaxyDto galaxy2;
 
@@ -76,6 +77,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // then
         GalaxyDto result = readResponse(response, GalaxyDto.class);
         assertThat(result).isEqualTo(galaxy1);
+        GalaxyDto fromCache = modelMapper.map(cacheManager.getCache(GALAXY_CACHE_NAME).get(result.getId()).get(), GalaxyDto.class);
+        assertThat(fromCache).isEqualTo(result);
     }
 
     @Test
@@ -116,6 +119,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         assertThat(result.getContent())
             .hasSize(2)
             .hasSameElementsAs(List.of(galaxy1, galaxy2));
+        GalaxyDto fromCache = modelMapper.map(cacheManager.getCache(GALAXY_CACHE_NAME).get(galaxy1.getId()).get(), GalaxyDto.class);
+        assertThat(fromCache).isEqualTo(galaxy1);
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_UPDATE.toString(), 1L)
@@ -135,6 +140,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(galaxy2));
+        assertThat(cacheManager.getCache(GALAXY_CACHE_NAME).get(galaxy1.getId())).isNull();
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_DELETE.toString(), 1L)
