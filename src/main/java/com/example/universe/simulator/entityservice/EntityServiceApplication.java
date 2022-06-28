@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@Import({RabbitMQConfig.class, CachingConfig.class})
+@Import({CachingConfig.class, RabbitMQConfig.class})
 @EnableAsync
 public class EntityServiceApplication {
 
