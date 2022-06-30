@@ -38,6 +38,10 @@ public class GalaxyController {
     private final GalaxySpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
+    // TODO
+    // endpoint name doesn't conform to rest resource naming
+    // for reference see https://restfulapi.net/resource-naming/
+    // name could be  "/galaxies" instead of "/galaxy/get-list"
     @GetMapping("get-list")
     public Callable<Page<GalaxyDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = GalaxyFilter.builder()
@@ -55,6 +59,10 @@ public class GalaxyController {
         };
     }
 
+    // TODO
+    // endpoint name doesn't conform to rest resource naming
+    // for reference see https://restfulapi.net/resource-naming/
+    // name could be  "/galaxies/{id}" instead of "/galaxy/get/{id}"
     @GetMapping("get/{id}")
     public GalaxyDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
@@ -64,6 +72,10 @@ public class GalaxyController {
         return result;
     }
 
+    // TODO
+    // endpoint name doesn't conform to rest resource naming
+    // for reference see https://restfulapi.net/resource-naming/
+    // name could be  "/galaxies" instead of "/galaxy/add"
     @PostMapping("add")
     public GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
         log.info("calling add with {}", dto);
@@ -76,6 +88,10 @@ public class GalaxyController {
         return result;
     }
 
+    // TODO
+    // endpoint name doesn't conform to rest resource naming
+    // for reference see https://restfulapi.net/resource-naming/
+    // name could be  "/galaxies" instead of "/galaxy/update"
     @PutMapping("update")
     public GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
         log.info("calling update with {}", dto);
@@ -88,6 +104,10 @@ public class GalaxyController {
         return result;
     }
 
+    // TODO
+    // endpoint name doesn't conform to rest resource naming
+    // for reference see https://restfulapi.net/resource-naming/
+    // name could be  "/galaxies/{id}" instead of "/galaxy/delete/{id}"
     @DeleteMapping("delete/{id}")
     public void delete(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);

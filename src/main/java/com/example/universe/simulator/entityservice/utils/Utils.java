@@ -8,6 +8,8 @@ import java.util.Objects;
 public class Utils {
 
     public boolean isNullOrBlank(String str) {
+        // TODO
+        // !org.springframework.util.StringUtils.hasText(str) is shorter
         return Objects.isNull(str) || str.isBlank();
     }
 }

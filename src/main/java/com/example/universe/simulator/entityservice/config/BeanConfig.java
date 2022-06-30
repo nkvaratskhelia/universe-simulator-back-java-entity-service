@@ -8,6 +8,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.time.Clock;
 
+// TODO (OPTIONAL)
+// may be better idea to create different classes for each bean?
 @Configuration
 public class BeanConfig {
 

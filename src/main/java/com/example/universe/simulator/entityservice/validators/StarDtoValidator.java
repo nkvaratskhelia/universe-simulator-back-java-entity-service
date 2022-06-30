@@ -22,6 +22,7 @@ public class StarDtoValidator extends SpaceEntityDtoValidator<StarDto> {
 
     @Override
     void fixDtoDirtyFields(StarDto dto) {
+        // TODO it is clear without comment, that there is no implementation yet
         // there are no dto-specific fields to fix yet
     }
 }

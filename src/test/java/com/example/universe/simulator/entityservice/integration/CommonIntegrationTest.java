@@ -30,6 +30,8 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PROPERTY);
     }
 
+    // TODO
+    // below commented version of testOptimisticLocking looks nicer, can replace this one
     @Test
     void testOptimisticLocking() throws Exception {
         // ----------------------------------------given----------------------------------------
@@ -58,6 +60,31 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
 
         performRequest(delete("/galaxy/delete/{id}", addedDto.getId()));
     }
+
+    //@Test
+    //void testOptimisticLocking() throws Exception {
+    //    // given
+    //    GalaxyDto addedDto = addEntity();
+    //    updateEntity(addedDto, "Update1");
+    //
+    //    // when
+    //    MockHttpServletResponse response = updateEntity(addedDto, "Update2 without increasing version");
+    //
+    //    // then
+    //    verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
+    //    performRequest(delete("/galaxy/delete/{id}", addedDto.getId()));
+    //}
+    //
+    //private GalaxyDto addEntity() throws Exception  {
+    //    GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
+    //    MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), dto);
+    //    return readResponse(response, GalaxyDto.class);
+    //}
+    //
+    //private MockHttpServletResponse updateEntity(GalaxyDto addedDto, String nameSuffix) throws Exception {
+    //    addedDto.setName(addedDto.getName() + " " + nameSuffix);
+    //    return performRequestWithBody(put("/galaxy/update"), addedDto);
+    //}
 
     @Test
     void testDeleteNonexistentEntity() throws Exception {

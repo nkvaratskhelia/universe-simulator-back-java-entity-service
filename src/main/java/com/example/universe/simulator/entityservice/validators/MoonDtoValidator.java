@@ -22,6 +22,7 @@ public class MoonDtoValidator extends SpaceEntityDtoValidator<MoonDto> {
 
     @Override
     void fixDtoDirtyFields(MoonDto dto) {
+        // TODO it is clear without comment, that there is no implementation yet
         // there are no dto-specific fields to fix yet
     }
 }

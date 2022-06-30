@@ -36,6 +36,8 @@ class CommonControllerTest extends AbstractWebMvcTest {
     @MockBean
     private GalaxySpecificationBuilder specificationBuilder;
 
+    // TODO
+    // we can remove redundant word "test" in all test methods, i think "methodName_camelCaseTestCondition" will be enough
     @Test
     void testGetList_defaultPageable() throws Exception {
         // given

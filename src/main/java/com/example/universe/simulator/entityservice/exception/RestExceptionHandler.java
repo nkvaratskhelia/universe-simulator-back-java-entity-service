@@ -33,11 +33,17 @@ class RestExceptionHandler {
             .body(new ErrorDto(errorCode.toString(), Instant.now()));
     }
 
+    // TODO
+    // remove below comment, exception's java doc contains similar description, purpose clear from exception name
+
     // thrown when trying to delete non-existent entity
     @ExceptionHandler(EmptyResultDataAccessException.class)
     private ResponseEntity<ErrorDto> handleEmptyResultDataAccessException(EmptyResultDataAccessException exception) {
         return buildResponse(ErrorCodeType.NOT_FOUND_ENTITY, exception);
     }
+
+    // TODO
+    // remove below comment, exception's java doc contains similar description, purpose clear from exception name
 
     // thrown when content type is not specified or is something other than json
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
@@ -45,11 +51,17 @@ class RestExceptionHandler {
         return buildResponse(ErrorCodeType.INVALID_CONTENT_TYPE, exception);
     }
 
+    // TODO
+    // remove below comment, exception's java doc contains similar description, purpose clear from exception name
+
     // thrown when request body is missing or cannot be deserialized
     @ExceptionHandler(HttpMessageNotReadableException.class)
     private ResponseEntity<ErrorDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return buildResponse(ErrorCodeType.INVALID_REQUEST_BODY, exception);
     }
+
+    // TODO
+    // remove below comment, exception's java doc contains similar description, purpose clear from exception name
 
     // thrown when wrong http method is used
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -57,17 +69,26 @@ class RestExceptionHandler {
         return buildResponse(ErrorCodeType.INVALID_HTTP_METHOD, exception);
     }
 
+    // TODO
+    // remove below comment, exception's java doc contains similar description, purpose clear from exception name
+
     // thrown when request parameter cannot be processed
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     private ResponseEntity<ErrorDto> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
         return buildResponse(ErrorCodeType.INVALID_REQUEST_PARAMETER, exception);
     }
 
+    // TODO (OPTIONAL)
+    // maybe rename method to something like "handleEntityVersionMismatchException" and remove comment?
+
     // thrown when request entity version does not match db version
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     private ResponseEntity<ErrorDto> handleObjectOptimisticLockingFailureException(ObjectOptimisticLockingFailureException exception) {
         return buildResponse(ErrorCodeType.ENTITY_MODIFIED, exception);
     }
+
+    // TODO (OPTIONAL)
+    // maybe rename handler to something like meaningful and remove comment?
 
     // thrown when passing invalid sort property to paged requests
     @ExceptionHandler(PropertyReferenceException.class)
