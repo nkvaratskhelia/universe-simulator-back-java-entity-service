@@ -15,7 +15,7 @@ public class CachingConfigSmokeTest extends AbstractSmokeTest{
     private RedisCacheConfiguration cacheConfiguration;
 
     @Value("${spring.cache.redis.time-to-live}")
-    private Long cacheTtlSeconds;
+    private Duration timeToLive;
 
     @Test
     void test() {
@@ -24,7 +24,7 @@ public class CachingConfigSmokeTest extends AbstractSmokeTest{
 
         assertThat(cacheConfiguration.getTtl())
                 .isNotNull()
-                .isEqualTo(Duration.ofSeconds(cacheTtlSeconds));
+                .isEqualTo(timeToLive);
 
 
         // ----------------------------------------Null Values Caching----------------------------------------
