@@ -31,13 +31,12 @@ class RabbitMQConfigSmokeTest extends AbstractSmokeTest {
 
     @Test
     void test() {
-        // ----------------------------------------messageConverter----------------------------------------
-
+        // messageConverter
         assertThat(messageConverter)
             .isNotNull()
             .isInstanceOf(Jackson2JsonMessageConverter.class);
 
-        // ----------------------------------------declarables----------------------------------------
+        // declarables
 
         assertThat(declarables).isNotNull();
 
