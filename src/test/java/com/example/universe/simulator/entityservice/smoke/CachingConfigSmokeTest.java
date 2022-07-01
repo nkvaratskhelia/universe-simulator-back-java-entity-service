@@ -9,7 +9,7 @@ import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CachingConfigSmokeTest extends AbstractSmokeTest{
+public class CachingConfigSmokeTest extends AbstractSmokeTest {
 
     @Autowired
     private RedisCacheConfiguration cacheConfiguration;
@@ -19,16 +19,12 @@ public class CachingConfigSmokeTest extends AbstractSmokeTest{
 
     @Test
     void test() {
-
-        // ----------------------------------------Time-To-Live----------------------------------------
-
+        // time to live
         assertThat(cacheConfiguration.getTtl())
-                .isNotNull()
-                .isEqualTo(timeToLive);
+            .isNotNull()
+            .isEqualTo(timeToLive);
 
-
-        // ----------------------------------------Null Values Caching----------------------------------------
-
+        // allow null value caching
         assertThat(cacheConfiguration.getAllowCacheNullValues()).isFalse();
     }
 }
