@@ -9,7 +9,7 @@ import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CachingConfigSmokeTest extends AbstractSmokeTest {
+class CachingConfigSmokeTest extends AbstractSmokeTest {
 
     @Autowired
     private RedisCacheConfiguration cacheConfiguration;
