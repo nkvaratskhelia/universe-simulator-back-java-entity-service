@@ -22,8 +22,8 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @CacheConfig(cacheNames = GalaxyService.GALAXY_CACHE_NAME)
+@RequiredArgsConstructor
 public class GalaxyService extends SpaceEntityService<Galaxy> {
 
     public static final String GALAXY_CACHE_NAME = "galaxy";
@@ -53,7 +53,7 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
     }
 
     @Transactional
-    @CachePut(key = "#entity.id", condition = "#root.caches[0].get(#entity.id) != null")
+    @CachePut(key = "#entity.id", condition = "caches[0].get(#entity.id) != null")
     public Galaxy update(Galaxy entity) throws AppException {
         validate(entity, true, repository);
         Galaxy result = repository.save(entity);
