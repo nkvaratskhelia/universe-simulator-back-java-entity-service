@@ -4,16 +4,19 @@ import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
+import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,6 +49,9 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @AfterEach
     void cleanup() {
         galaxyRepository.deleteAllInBatch();
+
+        Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .ifPresent(Cache::clear);
     }
 
     @Test
@@ -139,5 +145,69 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_DELETE.toString(), 1L)
         ));
+    }
+
+    @Test
+    void testCaching_add() throws Exception {
+        // given
+        UUID id = galaxy1.getId();
+
+        // when
+        performRequest(get("/galaxy/get/{id}", id));
+
+        // then
+        Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .map(item -> item.get(id, Galaxy.class))
+            .map(item -> modelMapper.map(item, GalaxyDto.class));
+        assertThat(cache)
+            .hasValue(galaxy1);
+    }
+
+    @Test
+    void testCaching_update_keyNotInCache() throws Exception {
+        // when
+        performRequestWithBody(put("/galaxy/update"), galaxy1);
+
+        // then
+        Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .map(item -> item.get(galaxy1.getId(), Galaxy.class));
+        assertThat(cache).isEmpty();
+    }
+
+    @Test
+    void testCaching_update_keyInCache() throws Exception {
+        // given
+
+        // cache entity
+        performRequest(get("/galaxy/get/{id}", galaxy1.getId()));
+
+        // when
+        galaxy1.setName(galaxy1.getName() + "Update");
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxy/update"), galaxy1);
+        galaxy1 = readResponse(response, GalaxyDto.class);
+
+        // then
+        Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .map(item -> item.get(galaxy1.getId(), Galaxy.class))
+            .map(item -> modelMapper.map(item, GalaxyDto.class));
+        assertThat(cache)
+            .hasValue(galaxy1);
+    }
+
+    @Test
+    void testCaching_delete() throws Exception {
+        // given
+
+        UUID id = galaxy1.getId();
+        // cache entity
+        performRequest(get("/galaxy/get/{id}", id));
+
+        // when
+        performRequest(delete("/galaxy/delete/{id}", id));
+
+        // then
+        Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .map(item -> item.get(id, Galaxy.class));
+        assertThat(cache).isEmpty();
     }
 }

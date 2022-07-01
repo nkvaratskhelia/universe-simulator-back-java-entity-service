@@ -16,4 +16,6 @@ spring.datasource.password=password
 #rabbitmq
 spring.rabbitmq.username=user
 spring.rabbitmq.password=password
+#redis
+spring.redis.password=password
 ----
