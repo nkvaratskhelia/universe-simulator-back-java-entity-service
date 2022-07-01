@@ -19,12 +19,9 @@ public class CachingConfigSmokeTest extends AbstractSmokeTest {
 
     @Test
     void test() {
-        // time to live
         assertThat(cacheConfiguration.getTtl())
             .isNotNull()
             .isEqualTo(timeToLive);
-
-        // allow null value caching
         assertThat(cacheConfiguration.getAllowCacheNullValues()).isFalse();
     }
 }

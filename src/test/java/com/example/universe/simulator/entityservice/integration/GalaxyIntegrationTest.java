@@ -49,8 +49,9 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @AfterEach
     void cleanup() {
         galaxyRepository.deleteAllInBatch();
+
         Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
-                .ifPresent(Cache::clear);
+            .ifPresent(Cache::clear);
     }
 
     @Test
@@ -147,70 +148,66 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testCaching() throws Exception {
-        MockHttpServletResponse response;
-        Optional<GalaxyDto> fromCache;
-
-        // should not update entity in cache, unless it exists there
-
+    void testCaching_add() throws Exception {
         // given
-        galaxy1.setName(galaxy1.getName() + "Update");
-        response = performRequestWithBody(put("/galaxy/update"), galaxy1);
-        galaxy1 = readResponse(response, GalaxyDto.class);
+        UUID id = galaxy1.getId();
 
         // when
-        fromCache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
-            .map(item -> item.get(galaxy1.getId(), Galaxy.class))
-            .map(item -> modelMapper.map(item, GalaxyDto.class));
+        performRequest(get("/galaxy/get/{id}", id));
 
         // then
-        assertThat(fromCache).isEmpty();
-
-        // should put entity in cache
-
-        // given
-        response = performRequest(get("/galaxy/get/{id}", galaxy1.getId()));
-
-        // when
-        GalaxyDto result = readResponse(response, GalaxyDto.class);
-        fromCache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
-            .map(item -> item.get(result.getId(), Galaxy.class))
+        Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .map(item -> item.get(id, Galaxy.class))
             .map(item -> modelMapper.map(item, GalaxyDto.class));
-
-        //then
-        assertThat(fromCache)
-            .isNotEmpty()
-            .hasValue(result);
-
-        // should update entity in cache
-
-        // given
-        galaxy1 = result;
-        galaxy1.setName(galaxy1.getName() + "Update2");
-        response = performRequestWithBody(put("/galaxy/update"), galaxy1);
-        galaxy1 = readResponse(response, GalaxyDto.class);
-
-        // when
-        fromCache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
-            .map(item -> item.get(galaxy1.getId(), Galaxy.class))
-            .map(item -> modelMapper.map(item, GalaxyDto.class));
-
-        // then
-        assertThat(fromCache)
-            .isNotEmpty()
+        assertThat(cache)
             .hasValue(galaxy1);
+    }
 
-        // should delete entity in cache
-
-        // given
-        performRequest(delete("/galaxy/delete/{id}", galaxy1.getId()));
-
+    @Test
+    void testCaching_update_keyNotInCache() throws Exception {
         // when
-        fromCache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
-           .map(item -> item.get(galaxy1.getId(), Galaxy.class))
-           .map(item -> modelMapper.map(item, GalaxyDto.class));
+        performRequestWithBody(put("/galaxy/update"), galaxy1);
 
         // then
-        assertThat(fromCache).isEmpty();
+        Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .map(item -> item.get(galaxy1.getId(), Galaxy.class));
+        assertThat(cache).isEmpty();
+    }
+
+    @Test
+    void testCaching_update_keyInCache() throws Exception {
+        // given
+
+        // cache entity
+        performRequest(get("/galaxy/get/{id}", galaxy1.getId()));
+
+        // when
+        galaxy1.setName(galaxy1.getName() + "Update");
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxy/update"), galaxy1);
+        galaxy1 = readResponse(response, GalaxyDto.class);
+
+        // then
+        Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .map(item -> item.get(galaxy1.getId(), Galaxy.class))
+            .map(item -> modelMapper.map(item, GalaxyDto.class));
+        assertThat(cache)
+            .hasValue(galaxy1);
+    }
+
+    @Test
+    void testCaching_delete() throws Exception {
+        // given
+
+        UUID id = galaxy1.getId();
+        // cache entity
+        performRequest(get("/galaxy/get/{id}", id));
+
+        // when
+        performRequest(delete("/galaxy/delete/{id}", id));
+
+        // then
+        Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+            .map(item -> item.get(id, Galaxy.class));
+        assertThat(cache).isEmpty();
     }
 }
