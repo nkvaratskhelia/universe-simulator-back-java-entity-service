@@ -15,5 +15,6 @@ import lombok.experimental.SuperBuilder;
 public class StarDto extends SpaceEntityDto {
 
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private GalaxyDto galaxy;
 }

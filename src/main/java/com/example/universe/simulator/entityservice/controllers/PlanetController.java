@@ -66,7 +66,7 @@ public class PlanetController {
 
     @PostMapping
     public PlanetDto add(@RequestBody PlanetDto dto) throws AppException {
-        log.info("calling add with {}", dto);
+        log.info("calling add with {}, star id [{}]", dto, dto.getStar().getId());
         validator.validate(dto, false);
 
         Planet entity = modelMapper.map(dto, Planet.class);
@@ -78,7 +78,7 @@ public class PlanetController {
 
     @PutMapping
     public PlanetDto update(@RequestBody PlanetDto dto) throws AppException {
-        log.info("calling update with {}", dto);
+        log.info("calling update with {}, star id [{}]", dto, dto.getStar().getId());
         validator.validate(dto, true);
 
         Planet entity = modelMapper.map(dto, Planet.class);

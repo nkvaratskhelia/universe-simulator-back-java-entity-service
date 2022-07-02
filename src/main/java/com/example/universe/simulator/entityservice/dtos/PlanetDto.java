@@ -15,5 +15,6 @@ import lombok.experimental.SuperBuilder;
 public class PlanetDto extends SpaceEntityDto {
 
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private StarDto star;
 }

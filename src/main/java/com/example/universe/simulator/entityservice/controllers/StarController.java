@@ -66,7 +66,7 @@ public class StarController {
 
     @PostMapping
     public StarDto add(@RequestBody StarDto dto) throws AppException {
-        log.info("calling add with {}", dto);
+        log.info("calling add with {}, galaxy id [{}]", dto, dto.getGalaxy().getId());
         validator.validate(dto, false);
 
         Star entity = modelMapper.map(dto, Star.class);
@@ -78,7 +78,7 @@ public class StarController {
 
     @PutMapping
     public StarDto update(@RequestBody StarDto dto) throws AppException {
-        log.info("calling update with {}", dto);
+        log.info("calling update with {}, galaxy id [{}]", dto, dto.getGalaxy().getId());
         validator.validate(dto, true);
 
         Star entity = modelMapper.map(dto, Star.class);

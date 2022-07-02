@@ -15,5 +15,6 @@ import lombok.experimental.SuperBuilder;
 public class MoonDto extends SpaceEntityDto {
 
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private PlanetDto planet;
 }
