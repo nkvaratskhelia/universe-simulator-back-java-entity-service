@@ -43,11 +43,10 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
         addedDto.setName(addedDto.getName() + "Update1");
         performRequestWithBody(put("/galaxies"), addedDto);
 
-        addedDto.setName(addedDto.getName() + "Update2");
-
         // when
 
         // update entity second time without increasing version
+        addedDto.setName(addedDto.getName() + "Update2");
         response = performRequestWithBody(put("/galaxies"), addedDto);
 
         // then

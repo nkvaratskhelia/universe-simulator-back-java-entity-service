@@ -3,9 +3,7 @@ package com.example.universe.simulator.entityservice.validators;
 import com.example.universe.simulator.entityservice.dtos.SpaceEntityDto;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
-import com.example.universe.simulator.entityservice.utils.Utils;
-
-import java.util.Objects;
+import org.springframework.util.StringUtils;
 
 abstract class SpaceEntityDtoValidator<T extends SpaceEntityDto> {
 
@@ -18,13 +16,13 @@ abstract class SpaceEntityDtoValidator<T extends SpaceEntityDto> {
     }
 
     private void validateCommonFields(T dto, boolean isUpdate) throws AppException {
-        if (isUpdate && Objects.isNull(dto.getId())) {
+        if (isUpdate && dto.getId() == null) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_ID);
         }
-        if (Utils.isNullOrBlank(dto.getName())) {
+        if (!StringUtils.hasText(dto.getName())) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_NAME);
         }
-        if (isUpdate && Objects.isNull(dto.getVersion())) {
+        if (isUpdate && dto.getVersion() == null) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_VERSION);
         }
     }

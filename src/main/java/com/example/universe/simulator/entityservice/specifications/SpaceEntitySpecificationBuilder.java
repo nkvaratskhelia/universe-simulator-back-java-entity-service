@@ -3,8 +3,8 @@ package com.example.universe.simulator.entityservice.specifications;
 import com.example.universe.simulator.entityservice.entities.SpaceEntity;
 import com.example.universe.simulator.entityservice.entities.SpaceEntity_;
 import com.example.universe.simulator.entityservice.filters.SpaceEntityFilter;
-import com.example.universe.simulator.entityservice.utils.Utils;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 abstract class SpaceEntitySpecificationBuilder<E extends SpaceEntity, F extends SpaceEntityFilter> {
 
@@ -18,7 +18,7 @@ abstract class SpaceEntitySpecificationBuilder<E extends SpaceEntity, F extends 
     }
 
     private Specification<E> nameLike(String name) {
-        return !Utils.isNullOrBlank(name)
+        return StringUtils.hasText(name)
                ? AbstractSpecifications.like(SpaceEntity_.NAME, name)
                : null;
     }
