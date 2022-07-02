@@ -60,7 +60,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         var nameFilter = "E1";
 
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(get("/galaxies")
             .param("name", nameFilter)
         );
 
@@ -77,7 +77,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         UUID id = galaxy1.getId();
 
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/galaxies/{id}", id));
 
         // then
         GalaxyDto result = readResponse(response, GalaxyDto.class);
@@ -88,13 +88,13 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     void testAdd() throws Exception {
         // given
         MockHttpServletResponse response = performRequestWithBody(
-            post("/galaxy/add"),
+            post("/galaxies"),
             GalaxyDto.builder().name("name3").build()
         );
         GalaxyDto galaxy3 = readResponse(response, GalaxyDto.class);
 
         // when
-        response = performRequest(get("/galaxy/get-list"));
+        response = performRequest(get("/galaxies"));
 
         // then
         JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -111,11 +111,11 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     void testUpdate() throws Exception {
         // given
         galaxy1.setName(galaxy1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxy/update"), galaxy1);
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), galaxy1);
         galaxy1 = readResponse(response, GalaxyDto.class);
 
         // when
-        response = performRequest(get("/galaxy/get-list"));
+        response = performRequest(get("/galaxies"));
 
         // then
         JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -131,10 +131,10 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testDelete() throws Exception {
         // given
-        performRequest(delete("/galaxy/delete/{id}", galaxy1.getId()));
+        performRequest(delete("/galaxies/{id}", galaxy1.getId()));
 
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get-list"));
+        MockHttpServletResponse response = performRequest(get("/galaxies"));
 
         // then
         JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -153,7 +153,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         UUID id = galaxy1.getId();
 
         // when
-        performRequest(get("/galaxy/get/{id}", id));
+        performRequest(get("/galaxies/{id}", id));
 
         // then
         Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
@@ -166,7 +166,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testCaching_update_keyNotInCache() throws Exception {
         // when
-        performRequestWithBody(put("/galaxy/update"), galaxy1);
+        performRequestWithBody(put("/galaxies"), galaxy1);
 
         // then
         Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
@@ -179,11 +179,11 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // given
 
         // cache entity
-        performRequest(get("/galaxy/get/{id}", galaxy1.getId()));
+        performRequest(get("/galaxies/{id}", galaxy1.getId()));
 
         // when
         galaxy1.setName(galaxy1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxy/update"), galaxy1);
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), galaxy1);
         galaxy1 = readResponse(response, GalaxyDto.class);
 
         // then
@@ -200,10 +200,10 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
         UUID id = galaxy1.getId();
         // cache entity
-        performRequest(get("/galaxy/get/{id}", id));
+        performRequest(get("/galaxies/{id}", id));
 
         // when
-        performRequest(delete("/galaxy/delete/{id}", id));
+        performRequest(delete("/galaxies/{id}", id));
 
         // then
         Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))

@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @RestController
-@RequestMapping("star")
+@RequestMapping("stars")
 @RequiredArgsConstructor
 @Slf4j
 public class StarController {
@@ -38,7 +38,7 @@ public class StarController {
     private final StarSpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
-    @GetMapping("get-list")
+    @GetMapping
     public Callable<Page<StarDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = StarFilter.builder()
             .name(name)
@@ -55,7 +55,7 @@ public class StarController {
         };
     }
 
-    @GetMapping("get/{id}")
+    @GetMapping("{id}")
     public StarDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
         StarDto result = modelMapper.map(service.get(id), StarDto.class);
@@ -64,7 +64,7 @@ public class StarController {
         return result;
     }
 
-    @PostMapping("add")
+    @PostMapping
     public StarDto add(@RequestBody StarDto dto) throws AppException {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
@@ -76,7 +76,7 @@ public class StarController {
         return result;
     }
 
-    @PutMapping("update")
+    @PutMapping
     public StarDto update(@RequestBody StarDto dto) throws AppException {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
@@ -88,7 +88,7 @@ public class StarController {
         return result;
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}")
     public void delete(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);

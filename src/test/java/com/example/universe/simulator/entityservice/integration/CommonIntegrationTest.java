@@ -22,7 +22,7 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
         var sortProperty = "invalid";
 
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(get("/galaxies")
             .param("sort", sortProperty)
         );
 
@@ -36,25 +36,25 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
 
         // add entity
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), dto);
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxies"), dto);
         GalaxyDto addedDto = readResponse(response, GalaxyDto.class);
 
         // update entity once
         addedDto.setName(addedDto.getName() + "Update1");
-        performRequestWithBody(put("/galaxy/update"), addedDto);
+        performRequestWithBody(put("/galaxies"), addedDto);
 
         addedDto.setName(addedDto.getName() + "Update2");
 
         // when
 
         // update entity second time without increasing version
-        response = performRequestWithBody(put("/galaxy/update"), addedDto);
+        response = performRequestWithBody(put("/galaxies"), addedDto);
 
         // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 
         // cleanup
-        performRequest(delete("/galaxy/delete/{id}", addedDto.getId()));
+        performRequest(delete("/galaxies/{id}", addedDto.getId()));
     }
 
     @Test
@@ -63,7 +63,7 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
         UUID id = UUID.randomUUID();
 
         // when
-        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
 
         // then
         verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);

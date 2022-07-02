@@ -54,7 +54,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(get("/galaxies")
             .param("name", filter.getName())
         );
         // then
@@ -71,7 +71,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto dto = modelMapper.map(entity, GalaxyDto.class);
         given(service.get(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/galaxies/{id}", id));
         // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -85,7 +85,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto resultDto = modelMapper.map(entity, GalaxyDto.class);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/galaxy/add"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxies"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
@@ -100,7 +100,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         GalaxyDto resultDto = modelMapper.map(entity, GalaxyDto.class);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxy/update"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
@@ -112,7 +112,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         // when
-        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
         // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);

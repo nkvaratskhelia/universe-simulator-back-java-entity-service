@@ -85,7 +85,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         var nameFilter = "E1";
 
         // when
-        MockHttpServletResponse response = performRequest(get("/moon/get-list")
+        MockHttpServletResponse response = performRequest(get("/moons")
             .param("name", nameFilter)
         );
 
@@ -102,7 +102,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         UUID id = moon1.getId();
 
         // when
-        MockHttpServletResponse response = performRequest(get("/moon/get/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/moons/{id}", id));
 
         // then
         MoonDto result = readResponse(response, MoonDto.class);
@@ -118,13 +118,13 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
             .build();
 
         MockHttpServletResponse response = performRequestWithBody(
-            post("/moon/add"),
+            post("/moons"),
             moonDto3
         );
         MoonDto moon3 = readResponse(response, MoonDto.class);
 
         // when
-        response = performRequest(get("/moon/get-list"));
+        response = performRequest(get("/moons"));
 
         // then
         JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -142,11 +142,11 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     void testUpdate() throws Exception {
         // given
         moon1.setName(moon1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/moon/update"), moon1);
+        MockHttpServletResponse response = performRequestWithBody(put("/moons"), moon1);
         moon1 = readResponse(response, MoonDto.class);
 
         // when
-        response = performRequest(get("/moon/get-list"));
+        response = performRequest(get("/moons"));
 
         // then
         JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -162,10 +162,10 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testDelete() throws Exception {
         // given
-        performRequest(delete("/moon/delete/{id}", moon1.getId()));
+        performRequest(delete("/moons/{id}", moon1.getId()));
 
         // when
-        MockHttpServletResponse response = performRequest(get("/moon/get-list"));
+        MockHttpServletResponse response = performRequest(get("/moons"));
 
         // then
         JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});

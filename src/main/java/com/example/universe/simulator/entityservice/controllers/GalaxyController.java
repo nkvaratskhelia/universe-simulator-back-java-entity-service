@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @RestController
-@RequestMapping("galaxy")
+@RequestMapping("galaxies")
 @RequiredArgsConstructor
 @Slf4j
 public class GalaxyController {
@@ -38,7 +38,7 @@ public class GalaxyController {
     private final GalaxySpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
-    @GetMapping("get-list")
+    @GetMapping
     public Callable<Page<GalaxyDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = GalaxyFilter.builder()
             .name(name)
@@ -55,7 +55,7 @@ public class GalaxyController {
         };
     }
 
-    @GetMapping("get/{id}")
+    @GetMapping("{id}")
     public GalaxyDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
         GalaxyDto result = modelMapper.map(service.get(id), GalaxyDto.class);
@@ -64,7 +64,7 @@ public class GalaxyController {
         return result;
     }
 
-    @PostMapping("add")
+    @PostMapping
     public GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
@@ -76,7 +76,7 @@ public class GalaxyController {
         return result;
     }
 
-    @PutMapping("update")
+    @PutMapping
     public GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
@@ -88,7 +88,7 @@ public class GalaxyController {
         return result;
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}")
     public void delete(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);

@@ -49,7 +49,7 @@ class CommonControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get-list"));
+        MockHttpServletResponse response = performRequest(get("/galaxies"));
         // then
         verifySuccessfulResponse(response, dtoPage);
         then(service).should().getList(null, pageable);
@@ -68,7 +68,7 @@ class CommonControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(get("/galaxies")
             .param("page", String.valueOf(pageable.getPageNumber()))
             .param("size", String.valueOf(pageable.getPageSize()))
             .param("sort", "version,desc")

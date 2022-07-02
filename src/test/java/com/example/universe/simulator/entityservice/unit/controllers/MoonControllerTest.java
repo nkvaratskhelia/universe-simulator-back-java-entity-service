@@ -54,7 +54,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/moon/get-list")
+        MockHttpServletResponse response = performRequest(get("/moons")
             .param("name", filter.getName())
         );
         // then
@@ -71,7 +71,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
         MoonDto dto = modelMapper.map(entity, MoonDto.class);
         given(service.get(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(get("/moon/get/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/moons/{id}", id));
         // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -85,7 +85,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
         MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/moon/add"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/moons"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
@@ -100,7 +100,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
         MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/moon/update"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/moons"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
@@ -112,7 +112,7 @@ class MoonControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         // when
-        MockHttpServletResponse response = performRequest(delete("/moon/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/moons/{id}", id));
         // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);

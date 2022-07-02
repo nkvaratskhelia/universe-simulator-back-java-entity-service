@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @RestController
-@RequestMapping("moon")
+@RequestMapping("moons")
 @RequiredArgsConstructor
 @Slf4j
 public class MoonController {
@@ -38,7 +38,7 @@ public class MoonController {
     private final MoonSpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
-    @GetMapping("get-list")
+    @GetMapping
     public Callable<Page<MoonDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = MoonFilter.builder()
             .name(name)
@@ -55,7 +55,7 @@ public class MoonController {
         };
     }
 
-    @GetMapping("get/{id}")
+    @GetMapping("{id}")
     public MoonDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
         MoonDto result = modelMapper.map(service.get(id), MoonDto.class);
@@ -64,7 +64,7 @@ public class MoonController {
         return result;
     }
 
-    @PostMapping("add")
+    @PostMapping
     public MoonDto add(@RequestBody MoonDto dto) throws AppException {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
@@ -76,7 +76,7 @@ public class MoonController {
         return result;
     }
 
-    @PutMapping("update")
+    @PutMapping
     public MoonDto update(@RequestBody MoonDto dto) throws AppException {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
@@ -88,7 +88,7 @@ public class MoonController {
         return result;
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}")
     public void delete(@PathVariable UUID id) {
         log.info("calling delete with id [{}]", id);
         service.delete(id);

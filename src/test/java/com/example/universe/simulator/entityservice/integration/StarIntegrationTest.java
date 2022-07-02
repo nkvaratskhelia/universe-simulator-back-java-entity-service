@@ -65,7 +65,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         var nameFilter = "E1";
 
         // when
-        MockHttpServletResponse response = performRequest(get("/star/get-list")
+        MockHttpServletResponse response = performRequest(get("/stars")
             .param("name", nameFilter)
         );
 
@@ -82,7 +82,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         UUID id = star1.getId();
 
         // when
-        MockHttpServletResponse response = performRequest(get("/star/get/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/stars/{id}", id));
 
         // then
         StarDto result = readResponse(response, StarDto.class);
@@ -98,13 +98,13 @@ class StarIntegrationTest extends AbstractIntegrationTest {
             .build();
 
         MockHttpServletResponse response = performRequestWithBody(
-            post("/star/add"),
+            post("/stars"),
             starDto3
         );
         StarDto star3 = readResponse(response, StarDto.class);
 
         // when
-        response = performRequest(get("/star/get-list"));
+        response = performRequest(get("/stars"));
 
         // then
         JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -122,11 +122,11 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     void testUpdate() throws Exception {
         // given
         star1.setName(star1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/star/update"), star1);
+        MockHttpServletResponse response = performRequestWithBody(put("/stars"), star1);
         star1 = readResponse(response, StarDto.class);
 
         // when
-        response = performRequest(get("/star/get-list"));
+        response = performRequest(get("/stars"));
 
         // then
         JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -142,10 +142,10 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testDelete() throws Exception {
         // given
-        performRequest(delete("/star/delete/{id}", star1.getId()));
+        performRequest(delete("/stars/{id}", star1.getId()));
 
         // when
-        MockHttpServletResponse response = performRequest(get("/star/get-list"));
+        MockHttpServletResponse response = performRequest(get("/stars"));
 
         // then
         JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});

@@ -54,7 +54,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/planet/get-list")
+        MockHttpServletResponse response = performRequest(get("/planets")
             .param("name", filter.getName())
         );
         // then
@@ -71,7 +71,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto dto = modelMapper.map(entity, PlanetDto.class);
         given(service.get(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(get("/planet/get/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/planets/{id}", id));
         // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -85,7 +85,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto resultDto = modelMapper.map(entity, PlanetDto.class);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/planet/add"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/planets"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
@@ -100,7 +100,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         PlanetDto resultDto = modelMapper.map(entity, PlanetDto.class);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/planet/update"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/planets"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
@@ -112,7 +112,7 @@ class PlanetControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         // when
-        MockHttpServletResponse response = performRequest(delete("/planet/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/planets/{id}", id));
         // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);

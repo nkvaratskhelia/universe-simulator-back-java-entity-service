@@ -75,7 +75,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         var nameFilter = "E1";
 
         // when
-        MockHttpServletResponse response = performRequest(get("/planet/get-list")
+        MockHttpServletResponse response = performRequest(get("/planets")
             .param("name", nameFilter)
         );
 
@@ -92,7 +92,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         UUID id = planet1.getId();
 
         // when
-        MockHttpServletResponse response = performRequest(get("/planet/get/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/planets/{id}", id));
 
         // then
         PlanetDto result = readResponse(response, PlanetDto.class);
@@ -108,13 +108,13 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
             .build();
 
         MockHttpServletResponse response = performRequestWithBody(
-            post("/planet/add"),
+            post("/planets"),
             planetDto3
         );
         PlanetDto planet3 = readResponse(response, PlanetDto.class);
 
         // when
-        response = performRequest(get("/planet/get-list"));
+        response = performRequest(get("/planets"));
 
         // then
         JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -132,11 +132,11 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     void testUpdate() throws Exception {
         // given
         planet1.setName(planet1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/planet/update"), planet1);
+        MockHttpServletResponse response = performRequestWithBody(put("/planets"), planet1);
         planet1 = readResponse(response, PlanetDto.class);
 
         // when
-        response = performRequest(get("/planet/get-list"));
+        response = performRequest(get("/planets"));
 
         // then
         JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
@@ -152,10 +152,10 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testDelete() throws Exception {
         // given
-        performRequest(delete("/planet/delete/{id}", planet1.getId()));
+        performRequest(delete("/planets/{id}", planet1.getId()));
 
         // when
-        MockHttpServletResponse response = performRequest(get("/planet/get-list"));
+        MockHttpServletResponse response = performRequest(get("/planets"));
 
         // then
         JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});

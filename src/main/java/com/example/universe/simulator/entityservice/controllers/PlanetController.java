@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @RestController
-@RequestMapping("planet")
+@RequestMapping("planets")
 @RequiredArgsConstructor
 @Slf4j
 public class PlanetController {
@@ -38,7 +38,7 @@ public class PlanetController {
     private final PlanetSpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
-    @GetMapping("get-list")
+    @GetMapping
     public Callable<Page<PlanetDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = PlanetFilter.builder()
             .name(name)
@@ -55,7 +55,7 @@ public class PlanetController {
         };
     }
 
-    @GetMapping("get/{id}")
+    @GetMapping("{id}")
     public PlanetDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
         PlanetDto result = modelMapper.map(service.get(id), PlanetDto.class);
@@ -64,7 +64,7 @@ public class PlanetController {
         return result;
     }
 
-    @PostMapping("add")
+    @PostMapping
     public PlanetDto add(@RequestBody PlanetDto dto) throws AppException {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
@@ -76,7 +76,7 @@ public class PlanetController {
         return result;
     }
 
-    @PutMapping("update")
+    @PutMapping
     public PlanetDto update(@RequestBody PlanetDto dto) throws AppException {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
@@ -88,7 +88,7 @@ public class PlanetController {
         return result;
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}")
     public void delete(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);

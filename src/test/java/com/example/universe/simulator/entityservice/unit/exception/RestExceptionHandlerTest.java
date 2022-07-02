@@ -55,7 +55,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         AppException exception = new AppException(ErrorCodeType.IN_USE);
         willThrow(exception).given(service).delete(any());
         // when
-        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
         // then
         verifyErrorResponse(response, exception.getErrorCode());
         then(service).should().delete(id);
@@ -67,7 +67,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         UUID id = UUID.randomUUID();
         willThrow(EmptyResultDataAccessException.class).given(service).delete(any());
         // when
-        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
         // then
         verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
         then(service).should().delete(id);
@@ -78,7 +78,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         // given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/add")
+        MockHttpServletResponse response = performRequest(post("/galaxies")
             .content(objectMapper.writeValueAsString(dto))
         );
         // then
@@ -91,7 +91,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         // given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/add")
+        MockHttpServletResponse response = performRequest(post("/galaxies")
             .contentType(MediaType.APPLICATION_XML)
             .content(objectMapper.writeValueAsString(dto))
         );
@@ -103,7 +103,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     @Test
     void testHttpMessageNotReadableException() throws Exception {
         // when
-        MockHttpServletResponse response = performRequest(post("/galaxy/add"));
+        MockHttpServletResponse response = performRequest(post("/galaxies"));
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_BODY);
         then(service).shouldHaveNoInteractions();
@@ -114,7 +114,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(post("/galaxies/{id}", id));
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_HTTP_METHOD);
         then(service).shouldHaveNoInteractions();
@@ -125,7 +125,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         // given
         String id = "id";
         // when
-        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_PARAMETER);
         then(service).shouldHaveNoInteractions();
@@ -138,7 +138,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         Galaxy entity = modelMapper.map(dto, Galaxy.class);
         given(service.update(any())).willThrow(ObjectOptimisticLockingFailureException.class);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxy/update"), dto);
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), dto);
         // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
         then(service).should().update(entity);
@@ -156,7 +156,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         PropertyReferenceException exception = new PropertyReferenceException(property, ClassTypeInformation.from(Galaxy.class), List.of());
         given(service.getList(any(), any())).willThrow(exception);
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxy/get-list")
+        MockHttpServletResponse response = performRequest(get("/galaxies")
             .param("sort", property)
         );
         // then
@@ -170,7 +170,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         UUID id = UUID.randomUUID();
         willThrow(RuntimeException.class).given(service).delete(any());
         // when
-        MockHttpServletResponse response = performRequest(delete("/galaxy/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
         // then
         verifyErrorResponse(response, ErrorCodeType.SERVER_ERROR);
         then(service).should().delete(id);

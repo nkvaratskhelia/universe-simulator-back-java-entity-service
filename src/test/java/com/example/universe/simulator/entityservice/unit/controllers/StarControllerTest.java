@@ -54,7 +54,7 @@ class StarControllerTest extends AbstractWebMvcTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/star/get-list")
+        MockHttpServletResponse response = performRequest(get("/stars")
             .param("name", filter.getName())
         );
         // then
@@ -71,7 +71,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto dto = modelMapper.map(entity, StarDto.class);
         given(service.get(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(get("/star/get/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/stars/{id}", id));
         // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -85,7 +85,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/star/add"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/stars"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
@@ -100,7 +100,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         StarDto resultDto = modelMapper.map(entity, StarDto.class);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/star/update"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/stars"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
@@ -112,7 +112,7 @@ class StarControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         // when
-        MockHttpServletResponse response = performRequest(delete("/star/delete/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/stars/{id}", id));
         // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);
