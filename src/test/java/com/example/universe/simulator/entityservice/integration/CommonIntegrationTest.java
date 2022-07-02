@@ -34,7 +34,7 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
     // below commented version of testOptimisticLocking looks nicer, can replace this one
     @Test
     void testOptimisticLocking() throws Exception {
-        // ----------------------------------------given----------------------------------------
+        // given
 
         // add entity
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
@@ -47,17 +47,15 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
 
         addedDto.setName(addedDto.getName() + "Update2");
 
-        // ----------------------------------------when----------------------------------------
+        // when
 
         // update entity second time without increasing version
         response = performRequestWithBody(put("/galaxy/update"), addedDto);
 
-        // ----------------------------------------then----------------------------------------
-
+        // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 
-        // ----------------------------------------cleanup----------------------------------------
-
+        // cleanup
         performRequest(delete("/galaxy/delete/{id}", addedDto.getId()));
     }
 

@@ -28,7 +28,7 @@ class BeanConfigSmokeTest extends AbstractSmokeTest {
 
     @Test
     void test() {
-        // ----------------------------------------applicationTaskExecutor----------------------------------------
+        // applicationTaskExecutor
 
         int numProcessors = Runtime.getRuntime().availableProcessors();
 
@@ -36,16 +36,13 @@ class BeanConfigSmokeTest extends AbstractSmokeTest {
         assertThat(applicationTaskExecutor.getCorePoolSize()).isEqualTo(numProcessors);
         assertThat(applicationTaskExecutor.getMaxPoolSize()).isEqualTo(numProcessors);
 
-        // ----------------------------------------taskExecutor----------------------------------------
-
+        // taskExecutor
         assertThat(taskExecutor).isSameAs(applicationTaskExecutor);
 
-        // ----------------------------------------clock----------------------------------------
-
+        // clock
         assertThat(clock).isEqualTo(Clock.systemDefaultZone());
 
-        // ----------------------------------------modelMapper----------------------------------------
-
+        // modelMapper
         assertThat(modelMapper).isNotNull();
     }
 }
