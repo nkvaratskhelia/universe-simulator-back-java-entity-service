@@ -96,6 +96,10 @@ repositories {
 }
 
 ext {
+    set('commonVersion', '1.4.0')
+    set('modelmapperVersion', '3.1.0')
+    set('logstashLogbackEncoderVersion', '7.2')
+    set('springBootAdminVersion', '2.7.2')
     set('springdocOpenapiVersion', '1.6.9')
 }
 
@@ -107,14 +111,13 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'com.example.universe.simulator:common:1.4.0'
+    implementation "com.example.universe.simulator:common:${commonVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.modelmapper:modelmapper:3.1.0'
+    implementation "org.modelmapper:modelmapper:${modelmapperVersion}"
     implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-data-redis'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-config'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
@@ -122,8 +125,9 @@ dependencies {
     // needed for spring cloud load balancer
     runtimeOnly 'com.github.ben-manes.caffeine:caffeine'
     runtimeOnly 'org.liquibase:liquibase-core'
-    runtimeOnly 'net.logstash.logback:logstash-logback-encoder:7.2'
+    runtimeOnly "net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}"
     runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly "de.codecentric:spring-boot-admin-starter-client:${springBootAdminVersion}"
     runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-data-redis'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
