@@ -9,6 +9,10 @@ import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,8 +23,11 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
+@CacheConfig(cacheNames = StarService.CACHE_NAME)
 @RequiredArgsConstructor
 public class StarService extends SpaceEntityService<Star> {
+
+    public static final String CACHE_NAME = "star";
 
     private final StarRepository repository;
     private final GalaxyRepository galaxyRepository;
@@ -31,6 +38,7 @@ public class StarService extends SpaceEntityService<Star> {
         return repository.findAll(specification, pageable);
     }
 
+    @Cacheable
     public Star get(UUID id) throws AppException {
         return repository.findById(id)
             .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
@@ -47,6 +55,7 @@ public class StarService extends SpaceEntityService<Star> {
     }
 
     @Transactional
+    @CachePut(key = "#entity.id", condition = "caches[0].get(#entity.id) != null")
     public Star update(Star entity) throws AppException {
         validate(entity, true, repository);
         Star result = repository.save(entity);
@@ -57,6 +66,7 @@ public class StarService extends SpaceEntityService<Star> {
     }
 
     @Transactional
+    @CacheEvict
     public void delete(UUID id) throws AppException {
         if (planetRepository.existsByStarId(id)) {
             throw new AppException(ErrorCodeType.IN_USE);

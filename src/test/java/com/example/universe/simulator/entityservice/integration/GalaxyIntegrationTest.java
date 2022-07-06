@@ -4,7 +4,6 @@ import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
-import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.universe.simulator.entityservice.services.GalaxyService.CACHE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,7 +50,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     void cleanup() {
         galaxyRepository.deleteAllInBatch();
 
-        Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+        Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .ifPresent(Cache::clear);
     }
 
@@ -156,7 +156,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         performRequest(get("/galaxies/{id}", id));
 
         // then
-        Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+        Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(id, Galaxy.class))
             .map(item -> modelMapper.map(item, GalaxyDto.class));
         assertThat(cache)
@@ -169,7 +169,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         performRequestWithBody(put("/galaxies"), galaxy1);
 
         // then
-        Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+        Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(galaxy1.getId(), Galaxy.class));
         assertThat(cache).isEmpty();
     }
@@ -187,7 +187,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         galaxy1 = readResponse(response, GalaxyDto.class);
 
         // then
-        Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+        Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(galaxy1.getId(), Galaxy.class))
             .map(item -> modelMapper.map(item, GalaxyDto.class));
         assertThat(cache)
@@ -206,7 +206,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         performRequest(delete("/galaxies/{id}", id));
 
         // then
-        Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(GalaxyService.GALAXY_CACHE_NAME))
+        Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(id, Galaxy.class));
         assertThat(cache).isEmpty();
     }

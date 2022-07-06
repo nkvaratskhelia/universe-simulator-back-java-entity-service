@@ -22,11 +22,11 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
-@CacheConfig(cacheNames = GalaxyService.GALAXY_CACHE_NAME)
+@CacheConfig(cacheNames = GalaxyService.CACHE_NAME)
 @RequiredArgsConstructor
 public class GalaxyService extends SpaceEntityService<Galaxy> {
 
-    public static final String GALAXY_CACHE_NAME = "galaxy";
+    public static final String CACHE_NAME = "galaxy";
 
     private final GalaxyRepository repository;
     private final StarRepository starRepository;

@@ -14,12 +14,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.universe.simulator.entityservice.services.StarService.CACHE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -57,6 +60,9 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     void cleanup() {
         starRepository.deleteAllInBatch();
         galaxyRepository.deleteAllInBatch();
+
+        Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .ifPresent(Cache::clear);
     }
 
     @Test
@@ -156,5 +162,69 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.STAR_DELETE.toString(), 1L)
         ));
+    }
+
+    @Test
+    void testCaching_add() throws Exception {
+        // given
+        UUID id = star1.getId();
+
+        // when
+        performRequest(get("/stars/{id}", id));
+
+        // then
+        Optional<StarDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .map(item -> item.get(id, Star.class))
+            .map(item -> modelMapper.map(item, StarDto.class));
+        assertThat(cache)
+            .hasValue(star1);
+    }
+
+    @Test
+    void testCaching_update_keyNotInCache() throws Exception {
+        // when
+        performRequestWithBody(put("/stars"), star1);
+
+        // then
+        Optional<Star> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .map(item -> item.get(star1.getId(), Star.class));
+        assertThat(cache).isEmpty();
+    }
+
+    @Test
+    void testCaching_update_keyInCache() throws Exception {
+        // given
+
+        // cache entity
+        performRequest(get("/stars/{id}", star1.getId()));
+
+        // when
+        star1.setName(star1.getName() + "Update");
+        MockHttpServletResponse response = performRequestWithBody(put("/stars"), star1);
+        star1 = readResponse(response, StarDto.class);
+
+        // then
+        Optional<StarDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .map(item -> item.get(star1.getId(), Star.class))
+            .map(item -> modelMapper.map(item, StarDto.class));
+        assertThat(cache)
+            .hasValue(star1);
+    }
+
+    @Test
+    void testCaching_delete() throws Exception {
+        // given
+
+        UUID id = star1.getId();
+        // cache entity
+        performRequest(get("/stars/{id}", id));
+
+        // when
+        performRequest(delete("/stars/{id}", id));
+
+        // then
+        Optional<Star> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .map(item -> item.get(id, Star.class));
+        assertThat(cache).isEmpty();
     }
 }

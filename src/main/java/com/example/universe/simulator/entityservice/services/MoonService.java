@@ -8,6 +8,10 @@ import com.example.universe.simulator.entityservice.repositories.PlanetRepositor
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,8 +22,11 @@ import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
+@CacheConfig(cacheNames = MoonService.CACHE_NAME)
 @RequiredArgsConstructor
 public class MoonService extends SpaceEntityService<Moon> {
+
+    public static final String CACHE_NAME = "moon";
 
     private final MoonRepository repository;
     private final PlanetRepository planetRepository;
@@ -29,6 +36,7 @@ public class MoonService extends SpaceEntityService<Moon> {
         return repository.findAll(specification, pageable);
     }
 
+    @Cacheable
     public Moon get(UUID id) throws AppException {
         return repository.findById(id)
             .orElseThrow(() -> new AppException(ErrorCodeType.NOT_FOUND_ENTITY));
@@ -45,6 +53,7 @@ public class MoonService extends SpaceEntityService<Moon> {
     }
 
     @Transactional
+    @CachePut(key = "#entity.id", condition = "caches[0].get(#entity.id) != null")
     public Moon update(Moon entity) throws AppException {
         validate(entity, true, repository);
         Moon result = repository.save(entity);
@@ -55,6 +64,7 @@ public class MoonService extends SpaceEntityService<Moon> {
     }
 
     @Transactional
+    @CacheEvict
     public void delete(UUID id) {
         repository.deleteById(id);
 

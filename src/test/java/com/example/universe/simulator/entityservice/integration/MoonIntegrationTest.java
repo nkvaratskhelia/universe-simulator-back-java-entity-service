@@ -12,18 +12,22 @@ import com.example.universe.simulator.entityservice.repositories.GalaxyRepositor
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
+import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.universe.simulator.entityservice.services.MoonService.CACHE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -77,6 +81,9 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         planetRepository.deleteAllInBatch();
         starRepository.deleteAllInBatch();
         galaxyRepository.deleteAllInBatch();
+
+        Optional.ofNullable(cacheManager.getCache(MoonService.CACHE_NAME))
+            .ifPresent(Cache::clear);
     }
 
     @Test
@@ -176,5 +183,69 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.MOON_DELETE.toString(), 1L)
         ));
+    }
+
+    @Test
+    void testCaching_add() throws Exception {
+        // given
+        UUID id = moon1.getId();
+
+        // when
+        performRequest(get("/moons/{id}", id));
+
+        // then
+        Optional<MoonDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .map(item -> item.get(id, Moon.class))
+            .map(item -> modelMapper.map(item, MoonDto.class));
+        assertThat(cache)
+            .hasValue(moon1);
+    }
+
+    @Test
+    void testCaching_update_keyNotInCache() throws Exception {
+        // when
+        performRequestWithBody(put("/moons"), moon1);
+
+        // then
+        Optional<Moon> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .map(item -> item.get(moon1.getId(), Moon.class));
+        assertThat(cache).isEmpty();
+    }
+
+    @Test
+    void testCaching_update_keyInCache() throws Exception {
+        // given
+
+        // cache entity
+        performRequest(get("/moons/{id}", moon1.getId()));
+
+        // when
+        moon1.setName(moon1.getName() + "Update");
+        MockHttpServletResponse response = performRequestWithBody(put("/moons"), moon1);
+        moon1 = readResponse(response, MoonDto.class);
+
+        // then
+        Optional<MoonDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .map(item -> item.get(moon1.getId(), Moon.class))
+            .map(item -> modelMapper.map(item, MoonDto.class));
+        assertThat(cache)
+            .hasValue(moon1);
+    }
+
+    @Test
+    void testCaching_delete() throws Exception {
+        // given
+
+        UUID id = moon1.getId();
+        // cache entity
+        performRequest(get("/moons/{id}", id));
+
+        // when
+        performRequest(delete("/moons/{id}", id));
+
+        // then
+        Optional<Moon> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
+            .map(item -> item.get(id, Moon.class));
+        assertThat(cache).isEmpty();
     }
 }
