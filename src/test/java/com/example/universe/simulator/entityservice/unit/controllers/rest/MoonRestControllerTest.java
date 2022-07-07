@@ -1,14 +1,14 @@
-package com.example.universe.simulator.entityservice.unit.controllers;
+package com.example.universe.simulator.entityservice.unit.controllers.rest;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.controllers.GalaxyController;
-import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
-import com.example.universe.simulator.entityservice.entities.Galaxy;
-import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
-import com.example.universe.simulator.entityservice.services.GalaxyService;
-import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
+import com.example.universe.simulator.entityservice.controllers.rest.MoonRestController;
+import com.example.universe.simulator.entityservice.dtos.MoonDto;
+import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.services.MoonService;
+import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
+import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,33 +28,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@WebMvcTest(GalaxyController.class)
-class GalaxyControllerTest extends AbstractWebMvcTest {
+@WebMvcTest(MoonRestController.class)
+class MoonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
-    private GalaxyService service;
+    private MoonService service;
 
     @MockBean
-    private GalaxyDtoValidator validator;
+    private MoonDtoValidator validator;
 
     @MockBean
-    private GalaxySpecificationBuilder specificationBuilder;
+    private MoonSpecificationBuilder specificationBuilder;
 
     @Test
     void testGetList() throws Exception {
         // given
-        List<Galaxy> entityList = List.of(
-            TestUtils.buildGalaxy()
+        List<Moon> entityList = List.of(
+            TestUtils.buildMoon()
         );
 
-        GalaxyFilter filter = TestUtils.buildGalaxyFilter();
+        MoonFilter filter = TestUtils.buildMoonFilter();
         Pageable pageable = TestUtils.getDefaultPageable();
-        Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
+        Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<MoonDto> dtoPage = entityPage.map(item -> modelMapper.map(item, MoonDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxies")
+        MockHttpServletResponse response = performRequest(get("/moons")
             .param("name", filter.getName())
         );
         // then
@@ -67,11 +67,11 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     void testGet() throws Exception {
         // given
         UUID id = UUID.randomUUID();
-        Galaxy entity = TestUtils.buildGalaxy();
-        GalaxyDto dto = modelMapper.map(entity, GalaxyDto.class);
+        Moon entity = TestUtils.buildMoon();
+        MoonDto dto = modelMapper.map(entity, MoonDto.class);
         given(service.get(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(get("/galaxies/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/moons/{id}", id));
         // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -80,12 +80,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     @Test
     void testAdd() throws Exception {
         // given
-        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForAdd();
-        Galaxy entity = modelMapper.map(inputDto, Galaxy.class);
-        GalaxyDto resultDto = modelMapper.map(entity, GalaxyDto.class);
+        MoonDto inputDto = TestUtils.buildMoonDtoForAdd();
+        Moon entity = modelMapper.map(inputDto, Moon.class);
+        MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/galaxies"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/moons"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
@@ -95,12 +95,12 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
     @Test
     void testUpdate() throws Exception {
         // given
-        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = modelMapper.map(inputDto, Galaxy.class);
-        GalaxyDto resultDto = modelMapper.map(entity, GalaxyDto.class);
+        MoonDto inputDto = TestUtils.buildMoonDtoForUpdate();
+        Moon entity = modelMapper.map(inputDto, Moon.class);
+        MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/moons"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
@@ -112,7 +112,7 @@ class GalaxyControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         // when
-        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/moons/{id}", id));
         // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);

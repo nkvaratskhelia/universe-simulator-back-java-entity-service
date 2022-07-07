@@ -1,12 +1,12 @@
-package com.example.universe.simulator.entityservice.controllers;
+package com.example.universe.simulator.entityservice.controllers.rest;
 
-import com.example.universe.simulator.entityservice.dtos.PlanetDto;
-import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
+import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.filters.PlanetFilter;
-import com.example.universe.simulator.entityservice.services.PlanetService;
-import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
+import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.services.GalaxyService;
+import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
+import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -28,27 +28,27 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @RestController
-@RequestMapping("planets")
+@RequestMapping("galaxies")
 @RequiredArgsConstructor
 @Slf4j
-public class PlanetController {
+public class GalaxyRestController {
 
-    private final PlanetService service;
-    private final PlanetDtoValidator validator;
-    private final PlanetSpecificationBuilder specificationBuilder;
+    private final GalaxyService service;
+    private final GalaxyDtoValidator validator;
+    private final GalaxySpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
     @GetMapping
-    public Callable<Page<PlanetDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
-        var filter = PlanetFilter.builder()
+    public Callable<Page<GalaxyDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
+        var filter = GalaxyFilter.builder()
             .name(name)
             .build();
         log.info("calling getList with filter [{}] and {}", filter, pageable);
-        Specification<Planet> specification = specificationBuilder.build(filter);
+        Specification<Galaxy> specification = specificationBuilder.build(filter);
 
         return () -> {
-            Page<PlanetDto> result = service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, PlanetDto.class));
+            Page<GalaxyDto> result = service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, GalaxyDto.class));
             log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
             return result;
@@ -56,33 +56,33 @@ public class PlanetController {
     }
 
     @GetMapping("{id}")
-    public PlanetDto get(@PathVariable UUID id) throws AppException {
+    public GalaxyDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
-        PlanetDto result = modelMapper.map(service.get(id), PlanetDto.class);
+        GalaxyDto result = modelMapper.map(service.get(id), GalaxyDto.class);
         log.info("fetched [{}]", result.getId());
 
         return result;
     }
 
     @PostMapping
-    public PlanetDto add(@RequestBody PlanetDto dto) throws AppException {
-        log.info("calling add with {}, star id [{}]", dto, dto.getStar().getId());
+    public GalaxyDto add(@RequestBody GalaxyDto dto) throws AppException {
+        log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        Planet entity = modelMapper.map(dto, Planet.class);
-        PlanetDto result = modelMapper.map(service.add(entity), PlanetDto.class);
+        Galaxy entity = modelMapper.map(dto, Galaxy.class);
+        GalaxyDto result = modelMapper.map(service.add(entity), GalaxyDto.class);
         log.info("added [{}]", result.getId());
 
         return result;
     }
 
     @PutMapping
-    public PlanetDto update(@RequestBody PlanetDto dto) throws AppException {
-        log.info("calling update with {}, star id [{}]", dto, dto.getStar().getId());
+    public GalaxyDto update(@RequestBody GalaxyDto dto) throws AppException {
+        log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        Planet entity = modelMapper.map(dto, Planet.class);
-        PlanetDto result = modelMapper.map(service.update(entity), PlanetDto.class);
+        Galaxy entity = modelMapper.map(dto, Galaxy.class);
+        GalaxyDto result = modelMapper.map(service.update(entity), GalaxyDto.class);
         log.info("updated [{}]", result.getId());
 
         return result;
