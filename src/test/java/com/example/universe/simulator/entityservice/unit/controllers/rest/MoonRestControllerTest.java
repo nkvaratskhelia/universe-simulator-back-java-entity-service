@@ -1,14 +1,14 @@
-package com.example.universe.simulator.entityservice.unit.controllers;
+package com.example.universe.simulator.entityservice.unit.controllers.rest;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.controllers.rest.PlanetRestController;
-import com.example.universe.simulator.entityservice.dtos.PlanetDto;
-import com.example.universe.simulator.entityservice.entities.Planet;
-import com.example.universe.simulator.entityservice.filters.PlanetFilter;
-import com.example.universe.simulator.entityservice.services.PlanetService;
-import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
+import com.example.universe.simulator.entityservice.controllers.rest.MoonRestController;
+import com.example.universe.simulator.entityservice.dtos.MoonDto;
+import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.services.MoonService;
+import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
+import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,33 +28,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@WebMvcTest(PlanetRestController.class)
-class PlanetRestControllerTest extends AbstractWebMvcTest {
+@WebMvcTest(MoonRestController.class)
+class MoonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
-    private PlanetService service;
+    private MoonService service;
 
     @MockBean
-    private PlanetDtoValidator validator;
+    private MoonDtoValidator validator;
 
     @MockBean
-    private PlanetSpecificationBuilder specificationBuilder;
+    private MoonSpecificationBuilder specificationBuilder;
 
     @Test
     void testGetList() throws Exception {
         // given
-        List<Planet> entityList = List.of(
-            TestUtils.buildPlanet()
+        List<Moon> entityList = List.of(
+            TestUtils.buildMoon()
         );
 
-        PlanetFilter filter = TestUtils.buildPlanetFilter();
+        MoonFilter filter = TestUtils.buildMoonFilter();
         Pageable pageable = TestUtils.getDefaultPageable();
-        Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<PlanetDto> dtoPage = entityPage.map(item -> modelMapper.map(item, PlanetDto.class));
+        Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<MoonDto> dtoPage = entityPage.map(item -> modelMapper.map(item, MoonDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/planets")
+        MockHttpServletResponse response = performRequest(get("/moons")
             .param("name", filter.getName())
         );
         // then
@@ -67,11 +67,11 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     void testGet() throws Exception {
         // given
         UUID id = UUID.randomUUID();
-        Planet entity = TestUtils.buildPlanet();
-        PlanetDto dto = modelMapper.map(entity, PlanetDto.class);
+        Moon entity = TestUtils.buildMoon();
+        MoonDto dto = modelMapper.map(entity, MoonDto.class);
         given(service.get(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(get("/planets/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/moons/{id}", id));
         // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -80,12 +80,12 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     @Test
     void testAdd() throws Exception {
         // given
-        PlanetDto inputDto = TestUtils.buildPlanetDtoForAdd();
-        Planet entity = modelMapper.map(inputDto, Planet.class);
-        PlanetDto resultDto = modelMapper.map(entity, PlanetDto.class);
+        MoonDto inputDto = TestUtils.buildMoonDtoForAdd();
+        Moon entity = modelMapper.map(inputDto, Moon.class);
+        MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/planets"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/moons"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
@@ -95,12 +95,12 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     @Test
     void testUpdate() throws Exception {
         // given
-        PlanetDto inputDto = TestUtils.buildPlanetDtoForUpdate();
-        Planet entity = modelMapper.map(inputDto, Planet.class);
-        PlanetDto resultDto = modelMapper.map(entity, PlanetDto.class);
+        MoonDto inputDto = TestUtils.buildMoonDtoForUpdate();
+        Moon entity = modelMapper.map(inputDto, Moon.class);
+        MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/planets"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/moons"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
@@ -112,7 +112,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         // when
-        MockHttpServletResponse response = performRequest(delete("/planets/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/moons/{id}", id));
         // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);

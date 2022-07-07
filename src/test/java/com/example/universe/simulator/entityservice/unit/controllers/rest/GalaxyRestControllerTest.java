@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.unit.controllers;
+package com.example.universe.simulator.entityservice.unit.controllers.rest;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;

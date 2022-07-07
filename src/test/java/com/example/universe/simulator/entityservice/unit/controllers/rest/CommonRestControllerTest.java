@@ -1,4 +1,4 @@
-package com.example.universe.simulator.entityservice.unit.controllers;
+package com.example.universe.simulator.entityservice.unit.controllers.rest;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 // Common controller cases are tested using GalaxyController.
 @WebMvcTest(GalaxyRestController.class)
-class CommonControllerTest extends AbstractWebMvcTest {
+class CommonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private GalaxyService service;

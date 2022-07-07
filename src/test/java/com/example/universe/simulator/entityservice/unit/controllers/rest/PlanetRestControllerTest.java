@@ -1,14 +1,14 @@
-package com.example.universe.simulator.entityservice.unit.controllers;
+package com.example.universe.simulator.entityservice.unit.controllers.rest;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.controllers.rest.StarRestController;
-import com.example.universe.simulator.entityservice.dtos.StarDto;
-import com.example.universe.simulator.entityservice.entities.Star;
-import com.example.universe.simulator.entityservice.filters.StarFilter;
-import com.example.universe.simulator.entityservice.services.StarService;
-import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
+import com.example.universe.simulator.entityservice.controllers.rest.PlanetRestController;
+import com.example.universe.simulator.entityservice.dtos.PlanetDto;
+import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.services.PlanetService;
+import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
+import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,33 +28,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@WebMvcTest(StarRestController.class)
-class StarRestControllerTest extends AbstractWebMvcTest {
+@WebMvcTest(PlanetRestController.class)
+class PlanetRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
-    private StarService service;
+    private PlanetService service;
 
     @MockBean
-    private StarDtoValidator validator;
+    private PlanetDtoValidator validator;
 
     @MockBean
-    private StarSpecificationBuilder specificationBuilder;
+    private PlanetSpecificationBuilder specificationBuilder;
 
     @Test
     void testGetList() throws Exception {
         // given
-        List<Star> entityList = List.of(
-            TestUtils.buildStar()
+        List<Planet> entityList = List.of(
+            TestUtils.buildPlanet()
         );
 
-        StarFilter filter = TestUtils.buildStarFilter();
+        PlanetFilter filter = TestUtils.buildPlanetFilter();
         Pageable pageable = TestUtils.getDefaultPageable();
-        Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<StarDto> dtoPage = entityPage.map(item -> modelMapper.map(item, StarDto.class));
+        Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<PlanetDto> dtoPage = entityPage.map(item -> modelMapper.map(item, PlanetDto.class));
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
-        MockHttpServletResponse response = performRequest(get("/stars")
+        MockHttpServletResponse response = performRequest(get("/planets")
             .param("name", filter.getName())
         );
         // then
@@ -67,11 +67,11 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     void testGet() throws Exception {
         // given
         UUID id = UUID.randomUUID();
-        Star entity = TestUtils.buildStar();
-        StarDto dto = modelMapper.map(entity, StarDto.class);
+        Planet entity = TestUtils.buildPlanet();
+        PlanetDto dto = modelMapper.map(entity, PlanetDto.class);
         given(service.get(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequest(get("/stars/{id}", id));
+        MockHttpServletResponse response = performRequest(get("/planets/{id}", id));
         // then
         verifySuccessfulResponse(response, dto);
         then(service).should().get(id);
@@ -80,12 +80,12 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     @Test
     void testAdd() throws Exception {
         // given
-        StarDto inputDto = TestUtils.buildStarDtoForAdd();
-        Star entity = modelMapper.map(inputDto, Star.class);
-        StarDto resultDto = modelMapper.map(entity, StarDto.class);
+        PlanetDto inputDto = TestUtils.buildPlanetDtoForAdd();
+        Planet entity = modelMapper.map(inputDto, Planet.class);
+        PlanetDto resultDto = modelMapper.map(entity, PlanetDto.class);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/stars"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/planets"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, false);
@@ -95,12 +95,12 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     @Test
     void testUpdate() throws Exception {
         // given
-        StarDto inputDto = TestUtils.buildStarDtoForUpdate();
-        Star entity = modelMapper.map(inputDto, Star.class);
-        StarDto resultDto = modelMapper.map(entity, StarDto.class);
+        PlanetDto inputDto = TestUtils.buildPlanetDtoForUpdate();
+        Planet entity = modelMapper.map(inputDto, Planet.class);
+        PlanetDto resultDto = modelMapper.map(entity, PlanetDto.class);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/stars"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/planets"), inputDto);
         // then
         verifySuccessfulResponse(response, resultDto);
         then(validator).should().validate(inputDto, true);
@@ -112,7 +112,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         // when
-        MockHttpServletResponse response = performRequest(delete("/stars/{id}", id));
+        MockHttpServletResponse response = performRequest(delete("/planets/{id}", id));
         // then
         verifyOkStatus(response.getStatus());
         then(service).should().delete(id);
