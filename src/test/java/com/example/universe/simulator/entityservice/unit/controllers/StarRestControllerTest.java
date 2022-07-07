@@ -2,7 +2,7 @@ package com.example.universe.simulator.entityservice.unit.controllers;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.controllers.StarController;
+import com.example.universe.simulator.entityservice.controllers.rest.StarRestController;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
@@ -28,8 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@WebMvcTest(StarController.class)
-class StarControllerTest extends AbstractWebMvcTest {
+@WebMvcTest(StarRestController.class)
+class StarRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private StarService service;

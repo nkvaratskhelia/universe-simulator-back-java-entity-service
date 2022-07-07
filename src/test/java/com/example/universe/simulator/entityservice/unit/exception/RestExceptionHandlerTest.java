@@ -2,7 +2,7 @@ package com.example.universe.simulator.entityservice.unit.exception;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.controllers.GalaxyController;
+import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestController;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 // Exception handling is tested using GalaxyController.
-@WebMvcTest(GalaxyController.class)
+@WebMvcTest(GalaxyRestController.class)
 class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @MockBean

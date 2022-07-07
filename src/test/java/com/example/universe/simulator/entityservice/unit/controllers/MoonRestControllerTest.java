@@ -2,7 +2,7 @@ package com.example.universe.simulator.entityservice.unit.controllers;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.controllers.MoonController;
+import com.example.universe.simulator.entityservice.controllers.rest.MoonRestController;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
@@ -28,8 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@WebMvcTest(MoonController.class)
-class MoonControllerTest extends AbstractWebMvcTest {
+@WebMvcTest(MoonRestController.class)
+class MoonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private MoonService service;

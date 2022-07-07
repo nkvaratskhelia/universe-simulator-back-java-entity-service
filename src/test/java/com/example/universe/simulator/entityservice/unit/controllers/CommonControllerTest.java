@@ -2,7 +2,7 @@ package com.example.universe.simulator.entityservice.unit.controllers;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.controllers.GalaxyController;
+import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestController;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
@@ -24,7 +24,7 @@ import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 // Common controller cases are tested using GalaxyController.
-@WebMvcTest(GalaxyController.class)
+@WebMvcTest(GalaxyRestController.class)
 class CommonControllerTest extends AbstractWebMvcTest {
 
     @MockBean

@@ -1,12 +1,12 @@
-package com.example.universe.simulator.entityservice.controllers;
+package com.example.universe.simulator.entityservice.controllers.rest;
 
-import com.example.universe.simulator.entityservice.dtos.MoonDto;
-import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.dtos.StarDto;
+import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.filters.MoonFilter;
-import com.example.universe.simulator.entityservice.services.MoonService;
-import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
+import com.example.universe.simulator.entityservice.filters.StarFilter;
+import com.example.universe.simulator.entityservice.services.StarService;
+import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
+import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -28,27 +28,27 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @RestController
-@RequestMapping("moons")
+@RequestMapping("stars")
 @RequiredArgsConstructor
 @Slf4j
-public class MoonController {
+public class StarRestController {
 
-    private final MoonService service;
-    private final MoonDtoValidator validator;
-    private final MoonSpecificationBuilder specificationBuilder;
+    private final StarService service;
+    private final StarDtoValidator validator;
+    private final StarSpecificationBuilder specificationBuilder;
     private final ModelMapper modelMapper;
 
     @GetMapping
-    public Callable<Page<MoonDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
-        var filter = MoonFilter.builder()
+    public Callable<Page<StarDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
+        var filter = StarFilter.builder()
             .name(name)
             .build();
         log.info("calling getList with filter [{}] and {}", filter, pageable);
-        Specification<Moon> specification = specificationBuilder.build(filter);
+        Specification<Star> specification = specificationBuilder.build(filter);
 
         return () -> {
-            Page<MoonDto> result = service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, MoonDto.class));
+            Page<StarDto> result = service.getList(specification, pageable)
+                .map(item -> modelMapper.map(item, StarDto.class));
             log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
             return result;
@@ -56,40 +56,40 @@ public class MoonController {
     }
 
     @GetMapping("{id}")
-    public MoonDto get(@PathVariable UUID id) throws AppException {
+    public StarDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
-        MoonDto result = modelMapper.map(service.get(id), MoonDto.class);
+        StarDto result = modelMapper.map(service.get(id), StarDto.class);
         log.info("fetched [{}]", result.getId());
 
         return result;
     }
 
     @PostMapping
-    public MoonDto add(@RequestBody MoonDto dto) throws AppException {
-        log.info("calling add with {}, planet id [{}]", dto, dto.getPlanet().getId());
+    public StarDto add(@RequestBody StarDto dto) throws AppException {
+        log.info("calling add with {}, galaxy id [{}]", dto, dto.getGalaxy().getId());
         validator.validate(dto, false);
 
-        Moon entity = modelMapper.map(dto, Moon.class);
-        MoonDto result = modelMapper.map(service.add(entity), MoonDto.class);
+        Star entity = modelMapper.map(dto, Star.class);
+        StarDto result = modelMapper.map(service.add(entity), StarDto.class);
         log.info("added [{}]", result.getId());
 
         return result;
     }
 
     @PutMapping
-    public MoonDto update(@RequestBody MoonDto dto) throws AppException {
-        log.info("calling update with {}, planet id [{}]", dto, dto.getPlanet().getId());
+    public StarDto update(@RequestBody StarDto dto) throws AppException {
+        log.info("calling update with {}, galaxy id [{}]", dto, dto.getGalaxy().getId());
         validator.validate(dto, true);
 
-        Moon entity = modelMapper.map(dto, Moon.class);
-        MoonDto result = modelMapper.map(service.update(entity), MoonDto.class);
+        Star entity = modelMapper.map(dto, Star.class);
+        StarDto result = modelMapper.map(service.update(entity), StarDto.class);
         log.info("updated [{}]", result.getId());
 
         return result;
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable UUID id) {
+    public void delete(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);
