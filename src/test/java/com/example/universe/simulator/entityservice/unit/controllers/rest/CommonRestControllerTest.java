@@ -5,12 +5,15 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestController;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 // Common controller cases are tested using GalaxyController.
 @WebMvcTest(GalaxyRestController.class)
+@Import(GalaxyMapperImpl.class)
 class CommonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
@@ -36,6 +40,9 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
     @MockBean
     private GalaxySpecificationBuilder specificationBuilder;
 
+    @SpyBean
+    private GalaxyMapperImpl mapper;
+
     @Test
     void testGetList_defaultPageable() throws Exception {
         // given
@@ -45,7 +52,7 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
 
         Pageable pageable = TestUtils.getDefaultPageable();
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
+        Page<GalaxyDto> dtoPage = entityPage.map(mapper::toDto);
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
@@ -64,7 +71,7 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
 
         Pageable pageable = TestUtils.getSpaceEntityPageable();
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
+        Page<GalaxyDto> dtoPage = entityPage.map(mapper::toDto);
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when

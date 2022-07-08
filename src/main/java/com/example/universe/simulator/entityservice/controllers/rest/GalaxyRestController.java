@@ -4,12 +4,12 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +36,7 @@ public class GalaxyRestController {
     private final GalaxyService service;
     private final GalaxyDtoValidator validator;
     private final GalaxySpecificationBuilder specificationBuilder;
-    private final ModelMapper modelMapper;
+    private final GalaxyMapper mapper;
 
     @GetMapping
     public Callable<Page<GalaxyDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
@@ -48,7 +48,7 @@ public class GalaxyRestController {
 
         return () -> {
             Page<GalaxyDto> result = service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, GalaxyDto.class));
+                .map(mapper::toDto);
             log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
             return result;
@@ -58,7 +58,7 @@ public class GalaxyRestController {
     @GetMapping("{id}")
     public GalaxyDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
-        GalaxyDto result = modelMapper.map(service.get(id), GalaxyDto.class);
+        GalaxyDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
         return result;
@@ -69,8 +69,8 @@ public class GalaxyRestController {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        Galaxy entity = modelMapper.map(dto, Galaxy.class);
-        GalaxyDto result = modelMapper.map(service.add(entity), GalaxyDto.class);
+        Galaxy entity = mapper.toEntity(dto);
+        GalaxyDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
         return result;
@@ -81,8 +81,8 @@ public class GalaxyRestController {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        Galaxy entity = modelMapper.map(dto, Galaxy.class);
-        GalaxyDto result = modelMapper.map(service.update(entity), GalaxyDto.class);
+        Galaxy entity = mapper.toEntity(dto);
+        GalaxyDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
         return result;

@@ -4,12 +4,12 @@ import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +36,7 @@ public class MoonRestController {
     private final MoonService service;
     private final MoonDtoValidator validator;
     private final MoonSpecificationBuilder specificationBuilder;
-    private final ModelMapper modelMapper;
+    private final MoonMapper mapper;
 
     @GetMapping
     public Callable<Page<MoonDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
@@ -48,7 +48,7 @@ public class MoonRestController {
 
         return () -> {
             Page<MoonDto> result = service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, MoonDto.class));
+                .map(mapper::toDto);
             log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
             return result;
@@ -58,7 +58,7 @@ public class MoonRestController {
     @GetMapping("{id}")
     public MoonDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
-        MoonDto result = modelMapper.map(service.get(id), MoonDto.class);
+        MoonDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
         return result;
@@ -69,8 +69,8 @@ public class MoonRestController {
         log.info("calling add with {}, planet id [{}]", dto, dto.getPlanet().getId());
         validator.validate(dto, false);
 
-        Moon entity = modelMapper.map(dto, Moon.class);
-        MoonDto result = modelMapper.map(service.add(entity), MoonDto.class);
+        Moon entity = mapper.toEntity(dto);
+        MoonDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
         return result;
@@ -81,8 +81,8 @@ public class MoonRestController {
         log.info("calling update with {}, planet id [{}]", dto, dto.getPlanet().getId());
         validator.validate(dto, true);
 
-        Moon entity = modelMapper.map(dto, Moon.class);
-        MoonDto result = modelMapper.map(service.update(entity), MoonDto.class);
+        Moon entity = mapper.toEntity(dto);
+        MoonDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
         return result;
