@@ -6,6 +6,9 @@ import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,11 +22,12 @@ class SpaceEntitySpecificationBuilderTest {
     @InjectMocks
     private GalaxySpecificationBuilder specificationBuilder;
 
-    @Test
-    void testBuild_nullName() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = " ")
+    void testBuild_blankName(String name) {
         // given
-        GalaxyFilter filter = TestUtils.buildGalaxyFilter();
-        filter.setName(null);
+        GalaxyFilter filter = GalaxyFilter.builder().name(name).build();
         // when
         Specification<Galaxy> result = specificationBuilder.build(filter);
         // then

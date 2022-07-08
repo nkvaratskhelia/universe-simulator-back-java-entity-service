@@ -4,11 +4,9 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.services.MoonService;
-import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import org.junit.jupiter.api.Test;
@@ -57,15 +55,14 @@ class MoonServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Moon> page = new PageImpl<>(list, pageable, list.size());
-        Specification<Moon> specification = new MoonSpecificationBuilder().build(new MoonFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Moon>>any(), any(Pageable.class)))
             .willReturn(page);
         // when
-        Page<Moon> result = service.getList(specification, pageable);
+        Page<Moon> result = service.getList(null, pageable);
         // then
         assertThat(result).isEqualTo(page);
-        then(repository).should().findAll(specification, pageable);
+        then(repository).should().findAll((Specification<Moon>) null, pageable);
     }
 
     @Test

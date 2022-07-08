@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
 @UtilityClass
-public class AbstractSpecifications {
+public class AbstractSpecification {
 
     public <T> Specification<T> like(String property, String value) {
         return (root, query, criteriaBuilder) ->
