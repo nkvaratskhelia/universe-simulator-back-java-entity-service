@@ -19,7 +19,7 @@ abstract class SpaceEntitySpecificationBuilder<E extends SpaceEntity, F extends 
 
     private Specification<E> nameLike(String name) {
         return StringUtils.hasText(name)
-               ? AbstractSpecification.like(SpaceEntity_.NAME, name)
+               ? SpecificationUtils.like(SpaceEntity_.NAME, name)
                : null;
     }
 
