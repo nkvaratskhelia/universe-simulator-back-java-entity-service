@@ -19,11 +19,11 @@ abstract class SpaceEntityDtoValidator<T extends SpaceEntityDto> {
         if (isUpdate && dto.getId() == null) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_ID);
         }
-        if (!StringUtils.hasText(dto.getName())) {
-            throw new AppException(ErrorCodeType.MISSING_PARAMETER_NAME);
-        }
         if (isUpdate && dto.getVersion() == null) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_VERSION);
+        }
+        if (!StringUtils.hasText(dto.getName())) {
+            throw new AppException(ErrorCodeType.MISSING_PARAMETER_NAME);
         }
     }
 

@@ -49,6 +49,17 @@ class SpaceEntityDtoValidatorTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_ID);
     }
 
+    @Test
+    void testValidateCommonFields_update_nullVersion() {
+        // given
+        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
+        dto.setVersion(null);
+        // when
+        AppException exception = catchThrowableOfType(() -> validator.validate(dto, true), AppException.class);
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_VERSION);
+    }
+
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = " ")
@@ -63,29 +74,18 @@ class SpaceEntityDtoValidatorTest {
     }
 
     @Test
-    void testValidateCommonFields_update_nullVersion() {
-        // given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
-        dto.setVersion(null);
-        // when
-        AppException exception = catchThrowableOfType(() -> validator.validate(dto, true), AppException.class);
-        // then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_VERSION);
-    }
-
-    @Test
     void testFixCommonDirtyFields_add() throws AppException {
         // given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
         dto.setId(UUID.randomUUID());
-        dto.setName(" name ");
         dto.setVersion(1L);
+        dto.setName(" name ");
         // when
         validator.validate(dto, false);
         // then
         assertThat(dto.getId()).isNull();
-        assertThat(dto.getName()).isEqualTo("name");
         assertThat(dto.getVersion()).isNull();
+        assertThat(dto.getName()).isEqualTo("name");
     }
 
     @Test
