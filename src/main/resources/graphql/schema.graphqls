@@ -1,0 +1,106 @@
+scalar Long
+
+type Query {
+    getGalaxy(id: ID!): GalaxyDto
+    getGalaxies(name: String, page: Int, size: Int): [GalaxyDto]
+
+    getStar(id: ID!): StarDto
+    getStars(name: String, page: Int, size: Int): [StarDto]
+
+    getPlanet(id: ID!): PlanetDto
+    getPlanets(name: String, page: Int, size: Int): [PlanetDto]
+
+    getMoon(id: ID!): MoonDto
+    getMoons(name: String, page: Int, size: Int): [MoonDto]
+}
+
+type Mutation {
+    addGalaxy(input: AddGalaxyInput!) : GalaxyDto
+    updateGalaxy(input: UpdateGalaxyInput!) : GalaxyDto
+    deleteGalaxy(id: ID!): ID
+
+    addStar(input: AddStarInput!) : StarDto
+    updateStar(input: UpdateStarInput!) : StarDto
+    deleteStar(id: ID!): ID
+
+    addPlanet(input: AddPlanetInput!) : PlanetDto
+    updatePlanet(input: UpdatePlanetInput!) : PlanetDto
+    deletePlanet(id: ID!): ID
+
+    addMoon(input: AddMoonInput!) : MoonDto
+    updateMoon(input: UpdateMoonInput!) : MoonDto
+    deleteMoon(id: ID!): ID
+}
+
+type GalaxyDto {
+    id: ID!
+    name: String
+    version: Long
+}
+
+type StarDto {
+    id: ID!
+    name: String
+    version: Long
+    galaxy: GalaxyDto
+}
+
+type PlanetDto {
+    id: ID!
+    name: String
+    version: Long
+    star: StarDto
+}
+
+type MoonDto {
+    id: ID!
+    name: String
+    version: Long
+    planet: PlanetDto
+}
+
+input AddGalaxyInput {
+    name: String!
+}
+
+input UpdateGalaxyInput {
+    id: ID!
+    name: String!
+    version: Long!
+}
+
+input AddStarInput {
+    name: String!
+    galaxyId: ID!
+}
+
+input UpdateStarInput {
+    id: ID!
+    name: String!
+    version: Long!
+    galaxyId: ID!
+}
+
+input AddPlanetInput {
+    name: String!
+    starId: ID!
+}
+
+input UpdatePlanetInput {
+    id: ID!
+    name: String!
+    version: Long!
+    starId: ID!
+}
+
+input AddMoonInput {
+    name: String!
+    planetId: ID!
+}
+
+input UpdateMoonInput {
+    id: ID!
+    name: String!
+    version: Long!
+    planetId: ID!
+}
