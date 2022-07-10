@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.util.UUID;
+
 @Getter @Setter
 @NoArgsConstructor
 @SuperBuilder
@@ -14,7 +16,5 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 public class PlanetDto extends SpaceEntityDto {
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private StarDto star;
+    private UUID starId;
 }

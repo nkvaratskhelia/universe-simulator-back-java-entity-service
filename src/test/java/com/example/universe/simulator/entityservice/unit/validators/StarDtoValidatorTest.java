@@ -20,21 +20,10 @@ class StarDtoValidatorTest {
     private StarDtoValidator validator;
 
     @Test
-    void testValidateDtoFields_nullGalaxy() {
-        // given
-        StarDto dto = TestUtils.buildStarDtoForAdd();
-        dto.setGalaxy(null);
-        // when
-        AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
-        // then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_GALAXY);
-    }
-
-    @Test
     void testValidateDtoFields_nullGalaxyId() {
         // given
         StarDto dto = TestUtils.buildStarDtoForAdd();
-        dto.getGalaxy().setId(null);
+        dto.setGalaxyId(null);
         // when
         AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
         // then

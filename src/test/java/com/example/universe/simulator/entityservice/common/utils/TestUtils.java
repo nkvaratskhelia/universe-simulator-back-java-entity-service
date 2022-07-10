@@ -82,7 +82,7 @@ public final class TestUtils {
     public static StarDto buildStarDtoForAdd() {
         return StarDto.builder()
             .name("name")
-            .galaxy(GalaxyDto.builder().id(UUID.randomUUID()).build())
+            .galaxyId(UUID.randomUUID())
             .build();
     }
 
@@ -104,21 +104,21 @@ public final class TestUtils {
         return Star.builder()
             .id(UUID.randomUUID())
             .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+            .galaxyId(UUID.randomUUID())
             .build();
     }
 
     public static Star buildStarForAdd() {
         return Star.builder()
             .name("name")
-            .galaxy(Galaxy.builder().id(UUID.randomUUID()).build())
+            .galaxyId(UUID.randomUUID())
             .build();
     }
 
     public static PlanetDto buildPlanetDtoForAdd() {
         return PlanetDto.builder()
             .name("name")
-            .star(StarDto.builder().id(UUID.randomUUID()).build())
+            .starId(UUID.randomUUID())
             .build();
     }
 
@@ -140,21 +140,21 @@ public final class TestUtils {
         return Planet.builder()
             .id(UUID.randomUUID())
             .name("name")
-            .star(Star.builder().id(UUID.randomUUID()).build())
+            .starId(UUID.randomUUID())
             .build();
     }
 
     public static Planet buildPlanetForAdd() {
         return Planet.builder()
             .name("name")
-            .star(Star.builder().id(UUID.randomUUID()).build())
+            .starId(UUID.randomUUID())
             .build();
     }
 
     public static MoonDto buildMoonDtoForAdd() {
         return MoonDto.builder()
             .name("name")
-            .planet(PlanetDto.builder().id(UUID.randomUUID()).build())
+            .planetId(UUID.randomUUID())
             .build();
     }
 
@@ -176,7 +176,7 @@ public final class TestUtils {
         return Moon.builder()
             .id(UUID.randomUUID())
             .name("name")
-            .planet(Planet.builder().id(UUID.randomUUID()).build())
+            .planetId(UUID.randomUUID())
             .build();
     }
 }

@@ -78,7 +78,7 @@ public class StarService extends SpaceEntityService<Star> {
 
     @Override
     void validateEntity(Star entity, boolean isUpdate) throws AppException {
-        if (!galaxyRepository.existsById(entity.getGalaxy().getId())) {
+        if (!galaxyRepository.existsById(entity.getGalaxyId())) {
             throw new AppException(ErrorCodeType.NOT_FOUND_GALAXY);
         }
     }

@@ -20,21 +20,10 @@ class MoonDtoValidatorTest {
     private MoonDtoValidator validator;
 
     @Test
-    void testValidateDtoFields_nullPlanet() {
-        // given
-        MoonDto dto = TestUtils.buildMoonDtoForAdd();
-        dto.setPlanet(null);
-        // when
-        AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
-        // then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_PLANET);
-    }
-
-    @Test
     void testValidateDtoFields_nullPlanetId() {
         // given
         MoonDto dto = TestUtils.buildMoonDtoForAdd();
-        dto.getPlanet().setId(null);
+        dto.setPlanetId(null);
         // when
         AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
         // then

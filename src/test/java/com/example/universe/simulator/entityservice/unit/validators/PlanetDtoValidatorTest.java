@@ -20,21 +20,10 @@ class PlanetDtoValidatorTest {
     private PlanetDtoValidator validator;
 
     @Test
-    void testValidateDtoFields_nullStar() {
-        // given
-        PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
-        dto.setStar(null);
-        // when
-        AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
-        // then
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.MISSING_PARAMETER_STAR);
-    }
-
-    @Test
     void testValidateDtoFields_nullStarId() {
         // given
         PlanetDto dto = TestUtils.buildPlanetDtoForAdd();
-        dto.getStar().setId(null);
+        dto.setStarId(null);
         // when
         AppException exception = catchThrowableOfType(() -> validator.validate(dto, false), AppException.class);
         // then

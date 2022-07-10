@@ -66,7 +66,7 @@ public class MoonRestController {
 
     @PostMapping
     public MoonDto add(@RequestBody MoonDto dto) throws AppException {
-        log.info("calling add with {}, planet id [{}]", dto, dto.getPlanet().getId());
+        log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
         Moon entity = mapper.toEntity(dto);
@@ -78,7 +78,7 @@ public class MoonRestController {
 
     @PutMapping
     public MoonDto update(@RequestBody MoonDto dto) throws AppException {
-        log.info("calling update with {}, planet id [{}]", dto, dto.getPlanet().getId());
+        log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
         Moon entity = mapper.toEntity(dto);

@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import java.util.UUID;
 
 @Entity
 @Getter @Setter
@@ -17,8 +17,6 @@ import javax.persistence.ManyToOne;
 @EqualsAndHashCode(callSuper = true)
 public class Star extends SpaceEntity {
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    @EqualsAndHashCode.Exclude
-    private Galaxy galaxy;
+    @Column(nullable = false)
+    private UUID galaxyId;
 }

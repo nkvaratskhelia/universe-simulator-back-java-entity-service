@@ -6,7 +6,6 @@ import com.example.universe.simulator.entityservice.controllers.rest.StarRestCon
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
-import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
 import com.example.universe.simulator.entityservice.services.StarService;
@@ -34,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(StarRestController.class)
-@Import({GalaxyMapperImpl.class, StarMapperImpl.class})
+@Import({StarMapperImpl.class})
 class StarRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean

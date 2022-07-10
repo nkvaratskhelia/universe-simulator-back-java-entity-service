@@ -115,7 +115,7 @@ class MoonServiceTest {
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_PLANET);
-        then(planetRepository).should().existsById(entity.getPlanet().getId());
+        then(planetRepository).should().existsById(entity.getPlanetId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }
@@ -176,7 +176,7 @@ class MoonServiceTest {
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_PLANET);
-        then(planetRepository).should().existsById(entity.getPlanet().getId());
+        then(planetRepository).should().existsById(entity.getPlanetId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }

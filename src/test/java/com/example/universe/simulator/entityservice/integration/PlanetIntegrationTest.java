@@ -3,7 +3,6 @@ package com.example.universe.simulator.entityservice.integration;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
-import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.entities.Star;
@@ -56,11 +55,11 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         Galaxy galaxy = galaxyRepository.save(TestUtils.buildGalaxyForAdd());
 
         star = TestUtils.buildStarForAdd();
-        star.setGalaxy(galaxy);
+        star.setGalaxyId(galaxy.getId());
         star = starRepository.save(star);
 
-        planet1 = mapper.toDto(planetRepository.save(Planet.builder().name("name1").star(star).build()));
-        planet2 = mapper.toDto(planetRepository.save(Planet.builder().name("name2").star(star).build()));
+        planet1 = mapper.toDto(planetRepository.save(Planet.builder().name("name1").starId(star.getId()).build()));
+        planet2 = mapper.toDto(planetRepository.save(Planet.builder().name("name2").starId(star.getId()).build()));
     }
 
     @AfterEach
@@ -108,7 +107,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         // given
         PlanetDto planetDto3 = PlanetDto.builder()
             .name("name3")
-            .star(StarDto.builder().id(star.getId()).build())
+            .starId(star.getId())
             .build();
 
         MockHttpServletResponse response = performRequestWithBody(
@@ -124,8 +123,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(3)
-            .hasSameElementsAs(List.of(planet1, planet2, planet3))
-            .allMatch(item -> item.getStar().getId().equals(star.getId()));
+            .hasSameElementsAs(List.of(planet1, planet2, planet3));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.PLANET_ADD.toString(), 1L)

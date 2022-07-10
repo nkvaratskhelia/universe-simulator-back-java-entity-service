@@ -119,7 +119,7 @@ class StarServiceTest {
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
-        then(galaxyRepository).should().existsById(entity.getGalaxy().getId());
+        then(galaxyRepository).should().existsById(entity.getGalaxyId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }
@@ -180,7 +180,7 @@ class StarServiceTest {
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
-        then(galaxyRepository).should().existsById(entity.getGalaxy().getId());
+        then(galaxyRepository).should().existsById(entity.getGalaxyId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }
