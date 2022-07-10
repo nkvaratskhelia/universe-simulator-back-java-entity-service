@@ -5,17 +5,12 @@ import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 @Component
 public class MoonDtoValidator extends SpaceEntityDtoValidator<MoonDto> {
 
     @Override
     void validateDtoFields(MoonDto dto) throws AppException {
-        if (Objects.isNull(dto.getPlanet())) {
-            throw new AppException(ErrorCodeType.MISSING_PARAMETER_PLANET);
-        }
-        if (Objects.isNull(dto.getPlanet().getId())) {
+        if (dto.getPlanetId() == null) {
             throw new AppException(ErrorCodeType.MISSING_PARAMETER_PLANET_ID);
         }
     }

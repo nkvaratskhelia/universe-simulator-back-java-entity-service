@@ -2,7 +2,6 @@ package com.example.universe.simulator.entityservice.integration;
 
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Star;
@@ -49,8 +48,8 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     void setup() {
         galaxy = galaxyRepository.save(TestUtils.buildGalaxyForAdd());
 
-        star1 = mapper.toDto(starRepository.save(Star.builder().name("name1").galaxy(galaxy).build()));
-        star2 = mapper.toDto(starRepository.save(Star.builder().name("name2").galaxy(galaxy).build()));
+        star1 = mapper.toDto(starRepository.save(Star.builder().name("name1").galaxyId(galaxy.getId()).build()));
+        star2 = mapper.toDto(starRepository.save(Star.builder().name("name2").galaxyId(galaxy.getId()).build()));
     }
 
     @AfterEach
@@ -97,7 +96,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // given
         StarDto starDto3 = StarDto.builder()
             .name("name3")
-            .galaxy(GalaxyDto.builder().id(galaxy.getId()).build())
+            .galaxyId(galaxy.getId())
             .build();
 
         MockHttpServletResponse response = performRequestWithBody(
@@ -113,8 +112,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(3)
-            .hasSameElementsAs(List.of(star1, star2, star3))
-            .allMatch(item -> item.getGalaxy().getId().equals(galaxy.getId()));
+            .hasSameElementsAs(List.of(star1, star2, star3));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.STAR_ADD.toString(), 1L)

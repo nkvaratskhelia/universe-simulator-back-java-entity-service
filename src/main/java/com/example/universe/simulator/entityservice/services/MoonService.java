@@ -73,7 +73,7 @@ public class MoonService extends SpaceEntityService<Moon> {
 
     @Override
     void validateEntity(Moon entity, boolean isUpdate) throws AppException {
-        if (!planetRepository.existsById(entity.getPlanet().getId())) {
+        if (!planetRepository.existsById(entity.getPlanetId())) {
             throw new AppException(ErrorCodeType.NOT_FOUND_PLANET);
         }
     }

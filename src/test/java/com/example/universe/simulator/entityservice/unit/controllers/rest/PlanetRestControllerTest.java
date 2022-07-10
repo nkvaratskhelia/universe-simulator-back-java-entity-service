@@ -6,10 +6,8 @@ import com.example.universe.simulator.entityservice.controllers.rest.PlanetRestC
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
-import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapperImpl;
-import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
@@ -35,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(PlanetRestController.class)
-@Import({GalaxyMapperImpl.class, StarMapperImpl.class, PlanetMapperImpl.class})
+@Import({PlanetMapperImpl.class})
 class PlanetRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean

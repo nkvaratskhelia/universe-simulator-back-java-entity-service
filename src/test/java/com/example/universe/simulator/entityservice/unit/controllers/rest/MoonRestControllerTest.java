@@ -6,11 +6,8 @@ import com.example.universe.simulator.entityservice.controllers.rest.MoonRestCon
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
-import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.mappers.MoonMapperImpl;
-import com.example.universe.simulator.entityservice.mappers.PlanetMapperImpl;
-import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
@@ -36,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(MoonRestController.class)
-@Import({GalaxyMapperImpl.class, StarMapperImpl.class, PlanetMapperImpl.class, MoonMapperImpl.class})
+@Import({MoonMapperImpl.class})
 class MoonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean

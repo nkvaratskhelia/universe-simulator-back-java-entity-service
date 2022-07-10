@@ -119,7 +119,7 @@ class PlanetServiceTest {
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_STAR);
-        then(starRepository).should().existsById(entity.getStar().getId());
+        then(starRepository).should().existsById(entity.getStarId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }
@@ -180,7 +180,7 @@ class PlanetServiceTest {
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_STAR);
-        then(starRepository).should().existsById(entity.getStar().getId());
+        then(starRepository).should().existsById(entity.getStarId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }
