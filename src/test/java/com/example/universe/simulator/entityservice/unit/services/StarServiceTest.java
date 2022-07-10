@@ -4,12 +4,10 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.StarService;
-import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import org.junit.jupiter.api.Test;
@@ -61,15 +59,14 @@ class StarServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Star> page = new PageImpl<>(list, pageable, list.size());
-        Specification<Star> specification = new StarSpecificationBuilder().build(new StarFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Star>>any(), any(Pageable.class)))
             .willReturn(page);
         // when
-        Page<Star> result = service.getList(specification, pageable);
+        Page<Star> result = service.getList(null, pageable);
         // then
         assertThat(result).isEqualTo(page);
-        then(repository).should().findAll(specification, pageable);
+        then(repository).should().findAll((Specification<Star>) null, pageable);
     }
 
     @Test
@@ -122,7 +119,7 @@ class StarServiceTest {
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
-        then(galaxyRepository).should().existsById(entity.getGalaxy().getId());
+        then(galaxyRepository).should().existsById(entity.getGalaxyId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }
@@ -183,7 +180,7 @@ class StarServiceTest {
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
-        then(galaxyRepository).should().existsById(entity.getGalaxy().getId());
+        then(galaxyRepository).should().existsById(entity.getGalaxyId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }

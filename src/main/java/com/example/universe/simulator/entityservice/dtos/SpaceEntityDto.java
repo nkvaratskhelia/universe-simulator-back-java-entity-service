@@ -17,6 +17,6 @@ import java.util.UUID;
 public abstract class SpaceEntityDto {
 
     private UUID id;
-    private String name;
     private Long version;
+    private String name;
 }

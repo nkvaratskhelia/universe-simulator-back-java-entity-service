@@ -4,12 +4,10 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.PlanetService;
-import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import org.junit.jupiter.api.Test;
@@ -61,15 +59,14 @@ class PlanetServiceTest {
         );
         Pageable pageable = Pageable.unpaged();
         Page<Planet> page = new PageImpl<>(list, pageable, list.size());
-        Specification<Planet> specification = new PlanetSpecificationBuilder().build(new PlanetFilter());
 
         given(repository.findAll(ArgumentMatchers.<Specification<Planet>>any(), any(Pageable.class)))
             .willReturn(page);
         // when
-        Page<Planet> result = service.getList(specification, pageable);
+        Page<Planet> result = service.getList(null, pageable);
         // then
         assertThat(result).isEqualTo(page);
-        then(repository).should().findAll(specification, pageable);
+        then(repository).should().findAll((Specification<Planet>) null, pageable);
     }
 
     @Test
@@ -122,7 +119,7 @@ class PlanetServiceTest {
         AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_STAR);
-        then(starRepository).should().existsById(entity.getStar().getId());
+        then(starRepository).should().existsById(entity.getStarId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }
@@ -183,7 +180,7 @@ class PlanetServiceTest {
         AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_STAR);
-        then(starRepository).should().existsById(entity.getStar().getId());
+        then(starRepository).should().existsById(entity.getStarId());
         then(repository).should(never()).save(any());
         then(eventPublisher).shouldHaveNoInteractions();
     }

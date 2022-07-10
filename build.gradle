@@ -26,7 +26,7 @@ def coverageExclusions = [
         '**/com/example/universe/simulator/entityservice/EntityServiceApplication.*',
         '**/com/example/universe/simulator/entityservice/config/SchedulingConfig.*',
         '**/com/example/universe/simulator/entityservice/entities/*_.*',
-        '**/com/example/universe/simulator/entityservice/config/AppProperties.*'
+        '**/com/example/universe/simulator/entityservice/mappers/*Impl.*'
 ]
 
 jacocoTestReport {
@@ -96,8 +96,8 @@ repositories {
 }
 
 ext {
-    set('commonVersion', '1.4.0')
-    set('modelmapperVersion', '3.1.0')
+    set('commonVersion', '1.4.3')
+    set('mapstructVersion', '1.5.2.Final')
     set('logstashLogbackEncoderVersion', '7.2')
     set('springBootAdminVersion', '2.7.2')
     set('springdocOpenapiVersion', '1.6.9')
@@ -118,7 +118,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
-    implementation "org.modelmapper:modelmapper:${modelmapperVersion}"
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
     compileOnly "com.graphql-java:graphql-java-extended-scalars:${graphqlJavaExtendedScalarsVersion}"
     compileOnly 'org.projectlombok:lombok'
@@ -142,7 +142,8 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
     // adds ability to mock/verify final methods
     testRuntimeOnly 'org.mockito:mockito-inline'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
     annotationProcessor 'org.projectlombok:lombok'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 }

@@ -6,12 +6,16 @@ import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestC
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(GalaxyRestController.class)
+@Import(GalaxyMapperImpl.class)
 class GalaxyRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
@@ -40,6 +45,9 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     @MockBean
     private GalaxySpecificationBuilder specificationBuilder;
 
+    @SpyBean
+    private GalaxyMapper mapper;
+
     @Test
     void testGetList() throws Exception {
         // given
@@ -50,7 +58,7 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
         GalaxyFilter filter = TestUtils.buildGalaxyFilter();
         Pageable pageable = TestUtils.getDefaultPageable();
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<GalaxyDto> dtoPage = entityPage.map(item -> modelMapper.map(item, GalaxyDto.class));
+        Page<GalaxyDto> dtoPage = entityPage.map(mapper::toDto);
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
@@ -68,7 +76,7 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         Galaxy entity = TestUtils.buildGalaxy();
-        GalaxyDto dto = modelMapper.map(entity, GalaxyDto.class);
+        GalaxyDto dto = mapper.toDto(entity);
         given(service.get(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequest(get("/galaxies/{id}", id));
@@ -81,8 +89,8 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     void testAdd() throws Exception {
         // given
         GalaxyDto inputDto = TestUtils.buildGalaxyDtoForAdd();
-        Galaxy entity = modelMapper.map(inputDto, Galaxy.class);
-        GalaxyDto resultDto = modelMapper.map(entity, GalaxyDto.class);
+        Galaxy entity = mapper.toEntity(inputDto);
+        GalaxyDto resultDto = mapper.toDto(entity);
         given(service.add(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequestWithBody(post("/galaxies"), inputDto);
@@ -96,8 +104,8 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     void testUpdate() throws Exception {
         // given
         GalaxyDto inputDto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = modelMapper.map(inputDto, Galaxy.class);
-        GalaxyDto resultDto = modelMapper.map(entity, GalaxyDto.class);
+        Galaxy entity = mapper.toEntity(inputDto);
+        GalaxyDto resultDto = mapper.toDto(entity);
         given(service.update(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), inputDto);

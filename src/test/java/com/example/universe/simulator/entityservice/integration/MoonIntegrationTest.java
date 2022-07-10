@@ -3,11 +3,11 @@ package com.example.universe.simulator.entityservice.integration;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
-import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
@@ -48,6 +48,9 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private MoonRepository moonRepository;
 
+    @Autowired
+    private MoonMapper mapper;
+
     private Planet planet;
     private MoonDto moon1;
     private MoonDto moon2;
@@ -57,22 +60,15 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         Galaxy galaxy = galaxyRepository.save(TestUtils.buildGalaxyForAdd());
 
         Star star = TestUtils.buildStarForAdd();
-        star.setGalaxy(galaxy);
+        star.setGalaxyId(galaxy.getId());
         star = starRepository.save(star);
 
         planet = TestUtils.buildPlanetForAdd();
-        planet.setStar(star);
+        planet.setStarId(star.getId());
         planet = planetRepository.save(planet);
 
-        moon1 = modelMapper.map(
-            moonRepository.save(Moon.builder().name("name1").planet(planet).build()),
-            MoonDto.class
-        );
-
-        moon2 = modelMapper.map(
-            moonRepository.save(Moon.builder().name("name2").planet(planet).build()),
-            MoonDto.class
-        );
+        moon1 = mapper.toDto(moonRepository.save(Moon.builder().name("name1").planetId(planet.getId()).build()));
+        moon2 = mapper.toDto(moonRepository.save(Moon.builder().name("name2").planetId(planet.getId()).build()));
     }
 
     @AfterEach
@@ -121,7 +117,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // given
         MoonDto moonDto3 = MoonDto.builder()
             .name("name3")
-            .planet(PlanetDto.builder().id(planet.getId()).build())
+            .planetId(planet.getId())
             .build();
 
         MockHttpServletResponse response = performRequestWithBody(
@@ -137,8 +133,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(3)
-            .hasSameElementsAs(List.of(moon1, moon2, moon3))
-            .allMatch(item -> item.getPlanet().getId().equals(planet.getId()));
+            .hasSameElementsAs(List.of(moon1, moon2, moon3));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.MOON_ADD.toString(), 1L)
@@ -196,7 +191,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<MoonDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(id, Moon.class))
-            .map(item -> modelMapper.map(item, MoonDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(moon1);
     }
@@ -227,7 +222,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<MoonDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(moon1.getId(), Moon.class))
-            .map(item -> modelMapper.map(item, MoonDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(moon1);
     }
