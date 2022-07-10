@@ -8,6 +8,7 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
@@ -48,6 +49,9 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private MoonRepository moonRepository;
 
+    @Autowired
+    private MoonMapper mapper;
+
     private Planet planet;
     private MoonDto moon1;
     private MoonDto moon2;
@@ -64,15 +68,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         planet.setStar(star);
         planet = planetRepository.save(planet);
 
-        moon1 = modelMapper.map(
-            moonRepository.save(Moon.builder().name("name1").planet(planet).build()),
-            MoonDto.class
-        );
-
-        moon2 = modelMapper.map(
-            moonRepository.save(Moon.builder().name("name2").planet(planet).build()),
-            MoonDto.class
-        );
+        moon1 = mapper.toDto(moonRepository.save(Moon.builder().name("name1").planet(planet).build()));
+        moon2 = mapper.toDto(moonRepository.save(Moon.builder().name("name2").planet(planet).build()));
     }
 
     @AfterEach
@@ -196,7 +193,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<MoonDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(id, Moon.class))
-            .map(item -> modelMapper.map(item, MoonDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(moon1);
     }
@@ -227,7 +224,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<MoonDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(moon1.getId(), Moon.class))
-            .map(item -> modelMapper.map(item, MoonDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(moon1);
     }

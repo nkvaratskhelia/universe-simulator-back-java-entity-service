@@ -6,12 +6,18 @@ import com.example.universe.simulator.entityservice.controllers.rest.PlanetRestC
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
+import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
+import com.example.universe.simulator.entityservice.mappers.PlanetMapperImpl;
+import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(PlanetRestController.class)
+@Import({GalaxyMapperImpl.class, StarMapperImpl.class, PlanetMapperImpl.class})
 class PlanetRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
@@ -40,6 +47,9 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     @MockBean
     private PlanetSpecificationBuilder specificationBuilder;
 
+    @SpyBean
+    private PlanetMapper mapper;
+
     @Test
     void testGetList() throws Exception {
         // given
@@ -50,7 +60,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
         PlanetFilter filter = TestUtils.buildPlanetFilter();
         Pageable pageable = TestUtils.getDefaultPageable();
         Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<PlanetDto> dtoPage = entityPage.map(item -> modelMapper.map(item, PlanetDto.class));
+        Page<PlanetDto> dtoPage = entityPage.map(mapper::toDto);
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
@@ -68,7 +78,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         Planet entity = TestUtils.buildPlanet();
-        PlanetDto dto = modelMapper.map(entity, PlanetDto.class);
+        PlanetDto dto = mapper.toDto(entity);
         given(service.get(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequest(get("/planets/{id}", id));
@@ -81,8 +91,8 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     void testAdd() throws Exception {
         // given
         PlanetDto inputDto = TestUtils.buildPlanetDtoForAdd();
-        Planet entity = modelMapper.map(inputDto, Planet.class);
-        PlanetDto resultDto = modelMapper.map(entity, PlanetDto.class);
+        Planet entity = mapper.toEntity(inputDto);
+        PlanetDto resultDto = mapper.toDto(entity);
         given(service.add(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequestWithBody(post("/planets"), inputDto);
@@ -96,8 +106,8 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     void testUpdate() throws Exception {
         // given
         PlanetDto inputDto = TestUtils.buildPlanetDtoForUpdate();
-        Planet entity = modelMapper.map(inputDto, Planet.class);
-        PlanetDto resultDto = modelMapper.map(entity, PlanetDto.class);
+        Planet entity = mapper.toEntity(inputDto);
+        PlanetDto resultDto = mapper.toDto(entity);
         given(service.update(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequestWithBody(put("/planets"), inputDto);

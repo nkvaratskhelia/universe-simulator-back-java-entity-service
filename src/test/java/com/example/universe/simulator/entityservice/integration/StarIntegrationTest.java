@@ -6,6 +6,7 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.types.EventType;
@@ -37,6 +38,9 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private StarRepository starRepository;
 
+    @Autowired
+    private StarMapper mapper;
+
     private Galaxy galaxy;
     private StarDto star1;
     private StarDto star2;
@@ -45,15 +49,8 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     void setup() {
         galaxy = galaxyRepository.save(TestUtils.buildGalaxyForAdd());
 
-        star1 = modelMapper.map(
-            starRepository.save(Star.builder().name("name1").galaxy(galaxy).build()),
-            StarDto.class
-        );
-
-        star2 = modelMapper.map(
-            starRepository.save(Star.builder().name("name2").galaxy(galaxy).build()),
-            StarDto.class
-        );
+        star1 = mapper.toDto(starRepository.save(Star.builder().name("name1").galaxy(galaxy).build()));
+        star2 = mapper.toDto(starRepository.save(Star.builder().name("name2").galaxy(galaxy).build()));
     }
 
     @AfterEach
@@ -175,7 +172,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<StarDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(id, Star.class))
-            .map(item -> modelMapper.map(item, StarDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(star1);
     }
@@ -206,7 +203,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<StarDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(star1.getId(), Star.class))
-            .map(item -> modelMapper.map(item, StarDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(star1);
     }

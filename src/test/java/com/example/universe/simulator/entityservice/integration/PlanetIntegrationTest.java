@@ -7,6 +7,7 @@ import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
@@ -43,6 +44,9 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private PlanetRepository planetRepository;
 
+    @Autowired
+    private PlanetMapper mapper;
+
     private Star star;
     private PlanetDto planet1;
     private PlanetDto planet2;
@@ -55,15 +59,8 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         star.setGalaxy(galaxy);
         star = starRepository.save(star);
 
-        planet1 = modelMapper.map(
-            planetRepository.save(Planet.builder().name("name1").star(star).build()),
-            PlanetDto.class
-        );
-
-        planet2 = modelMapper.map(
-            planetRepository.save(Planet.builder().name("name2").star(star).build()),
-            PlanetDto.class
-        );
+        planet1 = mapper.toDto(planetRepository.save(Planet.builder().name("name1").star(star).build()));
+        planet2 = mapper.toDto(planetRepository.save(Planet.builder().name("name2").star(star).build()));
     }
 
     @AfterEach
@@ -186,7 +183,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<PlanetDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(id, Planet.class))
-            .map(item -> modelMapper.map(item, PlanetDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(planet1);
     }
@@ -217,7 +214,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<PlanetDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(planet1.getId(), Planet.class))
-            .map(item -> modelMapper.map(item, PlanetDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(planet1);
     }

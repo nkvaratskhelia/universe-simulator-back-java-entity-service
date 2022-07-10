@@ -6,12 +6,17 @@ import com.example.universe.simulator.entityservice.controllers.rest.StarRestCon
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
+import com.example.universe.simulator.entityservice.mappers.StarMapper;
+import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(StarRestController.class)
+@Import({GalaxyMapperImpl.class, StarMapperImpl.class})
 class StarRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
@@ -40,6 +46,9 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     @MockBean
     private StarSpecificationBuilder specificationBuilder;
 
+    @SpyBean
+    private StarMapper mapper;
+
     @Test
     void testGetList() throws Exception {
         // given
@@ -50,7 +59,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
         StarFilter filter = TestUtils.buildStarFilter();
         Pageable pageable = TestUtils.getDefaultPageable();
         Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<StarDto> dtoPage = entityPage.map(item -> modelMapper.map(item, StarDto.class));
+        Page<StarDto> dtoPage = entityPage.map(mapper::toDto);
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
@@ -68,7 +77,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         Star entity = TestUtils.buildStar();
-        StarDto dto = modelMapper.map(entity, StarDto.class);
+        StarDto dto = mapper.toDto(entity);
         given(service.get(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequest(get("/stars/{id}", id));
@@ -81,8 +90,8 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     void testAdd() throws Exception {
         // given
         StarDto inputDto = TestUtils.buildStarDtoForAdd();
-        Star entity = modelMapper.map(inputDto, Star.class);
-        StarDto resultDto = modelMapper.map(entity, StarDto.class);
+        Star entity = mapper.toEntity(inputDto);
+        StarDto resultDto = mapper.toDto(entity);
         given(service.add(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequestWithBody(post("/stars"), inputDto);
@@ -96,8 +105,8 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     void testUpdate() throws Exception {
         // given
         StarDto inputDto = TestUtils.buildStarDtoForUpdate();
-        Star entity = modelMapper.map(inputDto, Star.class);
-        StarDto resultDto = modelMapper.map(entity, StarDto.class);
+        Star entity = mapper.toEntity(inputDto);
+        StarDto resultDto = mapper.toDto(entity);
         given(service.update(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequestWithBody(put("/stars"), inputDto);

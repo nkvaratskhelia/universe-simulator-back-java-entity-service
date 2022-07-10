@@ -3,6 +3,7 @@ package com.example.universe.simulator.entityservice.integration;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.types.EventType;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -30,20 +31,16 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private GalaxyRepository galaxyRepository;
 
+    @Autowired
+    private GalaxyMapper mapper;
+
     private GalaxyDto galaxy1;
     private GalaxyDto galaxy2;
 
     @BeforeEach
     void setup() {
-        galaxy1 = modelMapper.map(
-            galaxyRepository.save(Galaxy.builder().name("name1").build()),
-            GalaxyDto.class
-        );
-
-        galaxy2 = modelMapper.map(
-            galaxyRepository.save(Galaxy.builder().name("name2").build()),
-            GalaxyDto.class
-        );
+        galaxy1 = mapper.toDto(galaxyRepository.save(Galaxy.builder().name("name1").build()));
+        galaxy2 = mapper.toDto(galaxyRepository.save(Galaxy.builder().name("name2").build()));
     }
 
     @AfterEach
@@ -158,7 +155,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(id, Galaxy.class))
-            .map(item -> modelMapper.map(item, GalaxyDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(galaxy1);
     }
@@ -189,7 +186,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         // then
         Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(galaxy1.getId(), Galaxy.class))
-            .map(item -> modelMapper.map(item, GalaxyDto.class));
+            .map(mapper::toDto);
         assertThat(cache)
             .hasValue(galaxy1);
     }

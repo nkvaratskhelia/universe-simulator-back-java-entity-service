@@ -4,12 +4,12 @@ import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +36,7 @@ public class PlanetRestController {
     private final PlanetService service;
     private final PlanetDtoValidator validator;
     private final PlanetSpecificationBuilder specificationBuilder;
-    private final ModelMapper modelMapper;
+    private final PlanetMapper mapper;
 
     @GetMapping
     public Callable<Page<PlanetDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
@@ -48,7 +48,7 @@ public class PlanetRestController {
 
         return () -> {
             Page<PlanetDto> result = service.getList(specification, pageable)
-                .map(item -> modelMapper.map(item, PlanetDto.class));
+                .map(mapper::toDto);
             log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
             return result;
@@ -58,7 +58,7 @@ public class PlanetRestController {
     @GetMapping("{id}")
     public PlanetDto get(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
-        PlanetDto result = modelMapper.map(service.get(id), PlanetDto.class);
+        PlanetDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
         return result;
@@ -69,8 +69,8 @@ public class PlanetRestController {
         log.info("calling add with {}, star id [{}]", dto, dto.getStar().getId());
         validator.validate(dto, false);
 
-        Planet entity = modelMapper.map(dto, Planet.class);
-        PlanetDto result = modelMapper.map(service.add(entity), PlanetDto.class);
+        Planet entity = mapper.toEntity(dto);
+        PlanetDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
         return result;
@@ -81,8 +81,8 @@ public class PlanetRestController {
         log.info("calling update with {}, star id [{}]", dto, dto.getStar().getId());
         validator.validate(dto, true);
 
-        Planet entity = modelMapper.map(dto, Planet.class);
-        PlanetDto result = modelMapper.map(service.update(entity), PlanetDto.class);
+        Planet entity = mapper.toEntity(dto);
+        PlanetDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
         return result;

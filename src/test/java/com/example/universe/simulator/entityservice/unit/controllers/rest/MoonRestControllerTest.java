@@ -6,12 +6,19 @@ import com.example.universe.simulator.entityservice.controllers.rest.MoonRestCon
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
+import com.example.universe.simulator.entityservice.mappers.MoonMapper;
+import com.example.universe.simulator.entityservice.mappers.MoonMapperImpl;
+import com.example.universe.simulator.entityservice.mappers.PlanetMapperImpl;
+import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(MoonRestController.class)
+@Import({GalaxyMapperImpl.class, StarMapperImpl.class, PlanetMapperImpl.class, MoonMapperImpl.class})
 class MoonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
@@ -40,6 +48,9 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     @MockBean
     private MoonSpecificationBuilder specificationBuilder;
 
+    @SpyBean
+    private MoonMapper mapper;
+
     @Test
     void testGetList() throws Exception {
         // given
@@ -50,7 +61,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
         MoonFilter filter = TestUtils.buildMoonFilter();
         Pageable pageable = TestUtils.getDefaultPageable();
         Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<MoonDto> dtoPage = entityPage.map(item -> modelMapper.map(item, MoonDto.class));
+        Page<MoonDto> dtoPage = entityPage.map(mapper::toDto);
 
         given(service.getList(any(), any())).willReturn(entityPage);
         // when
@@ -68,7 +79,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
         // given
         UUID id = UUID.randomUUID();
         Moon entity = TestUtils.buildMoon();
-        MoonDto dto = modelMapper.map(entity, MoonDto.class);
+        MoonDto dto = mapper.toDto(entity);
         given(service.get(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequest(get("/moons/{id}", id));
@@ -81,8 +92,8 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     void testAdd() throws Exception {
         // given
         MoonDto inputDto = TestUtils.buildMoonDtoForAdd();
-        Moon entity = modelMapper.map(inputDto, Moon.class);
-        MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
+        Moon entity = mapper.toEntity(inputDto);
+        MoonDto resultDto = mapper.toDto(entity);
         given(service.add(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequestWithBody(post("/moons"), inputDto);
@@ -96,8 +107,8 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     void testUpdate() throws Exception {
         // given
         MoonDto inputDto = TestUtils.buildMoonDtoForUpdate();
-        Moon entity = modelMapper.map(inputDto, Moon.class);
-        MoonDto resultDto = modelMapper.map(entity, MoonDto.class);
+        Moon entity = mapper.toEntity(inputDto);
+        MoonDto resultDto = mapper.toDto(entity);
         given(service.update(any())).willReturn(entity);
         // when
         MockHttpServletResponse response = performRequestWithBody(put("/moons"), inputDto);

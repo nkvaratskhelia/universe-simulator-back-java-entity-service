@@ -6,6 +6,7 @@ import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestC
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
@@ -13,6 +14,8 @@ import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidato
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 // Exception handling is tested using GalaxyController.
 @WebMvcTest(GalaxyRestController.class)
+@Import(GalaxyMapperImpl.class)
 class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @MockBean
@@ -47,6 +51,9 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
     @MockBean
     private GalaxySpecificationBuilder specificationBuilder;
+
+    @SpyBean
+    private GalaxyMapperImpl mapper;
 
     @Test
     void testAppException() throws Exception {
@@ -135,7 +142,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     void testObjectOptimisticLockingFailureException() throws Exception {
         // given
         GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = modelMapper.map(dto, Galaxy.class);
+        Galaxy entity = mapper.toEntity(dto);
         given(service.update(any())).willThrow(ObjectOptimisticLockingFailureException.class);
         // when
         MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), dto);
