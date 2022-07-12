@@ -43,7 +43,7 @@ public class GalaxyRestController {
         var filter = GalaxyFilter.builder()
             .name(name)
             .build();
-        log.info("calling getList with filter [{}] and {}", filter, pageable);
+        log.info("calling getList with filter {} and {}", filter, pageable);
         Specification<Galaxy> specification = specificationBuilder.build(filter);
 
         return () -> {
@@ -69,8 +69,9 @@ public class GalaxyRestController {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        Galaxy entity = mapper.toEntity(dto);
-        GalaxyDto result = mapper.toDto(service.add(entity));
+        GalaxyDto result = mapper.toDto(
+            service.add(mapper.toEntity(dto))
+        );
         log.info("added [{}]", result.getId());
 
         return result;
@@ -81,8 +82,9 @@ public class GalaxyRestController {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        Galaxy entity = mapper.toEntity(dto);
-        GalaxyDto result = mapper.toDto(service.update(entity));
+        GalaxyDto result = mapper.toDto(
+            service.update(mapper.toEntity(dto))
+        );
         log.info("updated [{}]", result.getId());
 
         return result;
