@@ -43,7 +43,7 @@ public class MoonRestController {
         var filter = MoonFilter.builder()
             .name(name)
             .build();
-        log.info("calling getList with filter [{}] and {}", filter, pageable);
+        log.info("calling getList with filter {} and {}", filter, pageable);
         Specification<Moon> specification = specificationBuilder.build(filter);
 
         return () -> {
@@ -69,8 +69,9 @@ public class MoonRestController {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        Moon entity = mapper.toEntity(dto);
-        MoonDto result = mapper.toDto(service.add(entity));
+        MoonDto result = mapper.toDto(
+            service.add(mapper.toEntity(dto))
+        );
         log.info("added [{}]", result.getId());
 
         return result;
@@ -81,8 +82,9 @@ public class MoonRestController {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        Moon entity = mapper.toEntity(dto);
-        MoonDto result = mapper.toDto(service.update(entity));
+        MoonDto result = mapper.toDto(
+            service.update(mapper.toEntity(dto))
+        );
         log.info("updated [{}]", result.getId());
 
         return result;

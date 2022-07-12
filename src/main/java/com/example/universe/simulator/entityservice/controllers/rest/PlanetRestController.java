@@ -43,7 +43,7 @@ public class PlanetRestController {
         var filter = PlanetFilter.builder()
             .name(name)
             .build();
-        log.info("calling getList with filter [{}] and {}", filter, pageable);
+        log.info("calling getList with filter {} and {}", filter, pageable);
         Specification<Planet> specification = specificationBuilder.build(filter);
 
         return () -> {
@@ -69,8 +69,9 @@ public class PlanetRestController {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        Planet entity = mapper.toEntity(dto);
-        PlanetDto result = mapper.toDto(service.add(entity));
+        PlanetDto result = mapper.toDto(
+            service.add(mapper.toEntity(dto))
+        );
         log.info("added [{}]", result.getId());
 
         return result;
@@ -81,8 +82,9 @@ public class PlanetRestController {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        Planet entity = mapper.toEntity(dto);
-        PlanetDto result = mapper.toDto(service.update(entity));
+        PlanetDto result = mapper.toDto(
+            service.update(mapper.toEntity(dto))
+        );
         log.info("updated [{}]", result.getId());
 
         return result;
