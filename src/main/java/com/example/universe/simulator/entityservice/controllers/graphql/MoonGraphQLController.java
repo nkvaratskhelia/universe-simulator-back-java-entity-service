@@ -33,14 +33,14 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     @QueryMapping
     public Page<MoonDto> getMoons(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
         var filter = MoonFilter.builder()
-                .name(name)
-                .build();
+            .name(name)
+            .build();
         PageRequest pageRequest = assemblePageRequest(pageInput);
         log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
         Specification<Moon> specification = specificationBuilder.build(filter);
 
         Page<MoonDto> result = service.getList(specification, pageRequest)
-                .map(mapper::toDto);
+            .map(mapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
@@ -60,9 +60,9 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     public MoonDto addMoon(@Argument AddMoonInput input) throws AppException {
         log.info("calling add with {}", input);
         MoonDto dto = MoonDto.builder()
-                .name(input.name())
-                .planetId(input.planetId())
-                .build();
+            .name(input.name())
+            .planetId(input.planetId())
+            .build();
         validator.validate(dto, false);
 
         Moon entity = mapper.toEntity(dto);
@@ -76,11 +76,11 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     public MoonDto updateMoon(@Argument UpdateMoonInput input) throws AppException {
         log.info("calling update with {}", input);
         MoonDto dto = MoonDto.builder()
-                .id(input.id())
-                .name(input.name())
-                .version(input.version())
-                .planetId(input.planetId())
-                .build();
+            .id(input.id())
+            .name(input.name())
+            .version(input.version())
+            .planetId(input.planetId())
+            .build();
         validator.validate(dto, true);
 
         Moon entity = mapper.toEntity(dto);

@@ -61,23 +61,23 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    query getPlanets($name: String, $pageInput: PageInput) {
-                      getPlanets(name: $name, pageInput: $pageInput) {
-                        id, name, version, starId
-                      }
-                    }
-                """;
+                query getPlanets($name: String, $pageInput: PageInput) {
+                  getPlanets(name: $name, pageInput: $pageInput) {
+                    id, name, version, starId
+                  }
+                }
+            """;
 
         given(service.getList(any(), any())).willReturn(entityPage);
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("name", filter.getName())
-                .execute()
-                .path("getPlanets")
-                .entityList(PlanetDto.class)
-                .containsExactly(mapper.toDto(entity));
+            .variable("name", filter.getName())
+            .execute()
+            .path("getPlanets")
+            .entityList(PlanetDto.class)
+            .containsExactly(mapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -91,23 +91,23 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    query getPlanet($id:ID!) {
-                      getPlanet(id:$id) {
-                        id, name, version, starId
-                      }
-                    }
-                """;
+                query getPlanet($id:ID!) {
+                  getPlanet(id:$id) {
+                    id, name, version, starId
+                  }
+                }
+            """;
 
         given(service.get(any())).willReturn(entity);
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("id", id)
-                .execute()
-                .path("getPlanet")
-                .entity(PlanetDto.class)
-                .isEqualTo(dto);
+            .variable("id", id)
+            .execute()
+            .path("getPlanet")
+            .entity(PlanetDto.class)
+            .isEqualTo(dto);
         then(service).should().get(id);
     }
 
@@ -120,23 +120,23 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation addPlanet($input: AddPlanetInput!) {
-                      addPlanet(input:$input) {
-                        id, name, version, starId
-                      }
-                    }
-                """;
+                mutation addPlanet($input: AddPlanetInput!) {
+                  addPlanet(input:$input) {
+                    id, name, version, starId
+                  }
+                }
+            """;
 
         given(service.add(any())).willReturn(entity);
 
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForPlanetAdd(inputDto))
-                .execute()
-                .path("addPlanet")
-                .entity(PlanetDto.class)
-                .isEqualTo(resultDto);
+            .variable("input", TestUtils.buildInputMapForPlanetAdd(inputDto))
+            .execute()
+            .path("addPlanet")
+            .entity(PlanetDto.class)
+            .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, false);
         then(service).should().add(mapper.toEntity(inputDto));
@@ -151,23 +151,23 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation updatePlanet($input: UpdatePlanetInput!) {
-                      updatePlanet(input:$input) {
-                        id, name, version, starId
-                      }
-                    }
-                """;
+                mutation updatePlanet($input: UpdatePlanetInput!) {
+                  updatePlanet(input:$input) {
+                    id, name, version, starId
+                  }
+                }
+            """;
 
         given(service.update(any())).willReturn(entity);
 
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForPlanetUpdate(inputDto))
-                .execute()
-                .path("updatePlanet")
-                .entity(PlanetDto.class)
-                .isEqualTo(resultDto);
+            .variable("input", TestUtils.buildInputMapForPlanetUpdate(inputDto))
+            .execute()
+            .path("updatePlanet")
+            .entity(PlanetDto.class)
+            .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
@@ -180,16 +180,16 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation deletePlanet($id: ID!) {
-                      deletePlanet(id:$id)
-                    }
-                """;
+                mutation deletePlanet($id: ID!) {
+                  deletePlanet(id:$id)
+                }
+            """;
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("id", id)
-                .executeAndVerify();
+            .variable("id", id)
+            .executeAndVerify();
         then(service).should().delete(id);
     }
 }

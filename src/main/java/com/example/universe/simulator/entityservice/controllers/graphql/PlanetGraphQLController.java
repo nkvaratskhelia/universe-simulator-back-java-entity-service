@@ -33,14 +33,14 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
     @QueryMapping
     public Page<PlanetDto> getPlanets(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
         var filter = PlanetFilter.builder()
-                .name(name)
-                .build();
+            .name(name)
+            .build();
         PageRequest pageRequest = assemblePageRequest(pageInput);
         log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
         Specification<Planet> specification = specificationBuilder.build(filter);
 
         Page<PlanetDto> result = service.getList(specification, pageRequest)
-                .map(mapper::toDto);
+            .map(mapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
@@ -60,9 +60,9 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
     public PlanetDto addPlanet(@Argument AddPlanetInput input) throws AppException {
         log.info("calling add with {}", input);
         PlanetDto dto = PlanetDto.builder()
-                .name(input.name())
-                .starId(input.starId())
-                .build();
+            .name(input.name())
+            .starId(input.starId())
+            .build();
         validator.validate(dto, false);
 
         Planet entity = mapper.toEntity(dto);
@@ -76,11 +76,11 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
     public PlanetDto updatePlanet(@Argument UpdatePlanetInput input) throws AppException {
         log.info("calling update with {}", input);
         PlanetDto dto = PlanetDto.builder()
-                .id(input.id())
-                .name(input.name())
-                .version(input.version())
-                .starId(input.starId())
-                .build();
+            .id(input.id())
+            .name(input.name())
+            .version(input.version())
+            .starId(input.starId())
+            .build();
         validator.validate(dto, true);
 
         Planet entity = mapper.toEntity(dto);

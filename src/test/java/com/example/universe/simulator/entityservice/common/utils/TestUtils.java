@@ -181,24 +181,24 @@ public final class TestUtils {
             .build();
     }
 
-    public static Map<String, Object> buildInputMapForGalaxyAdd(GalaxyDto dto){
+    public static Map<String, Object> buildInputMapForGalaxyAdd(GalaxyDto dto) {
         return Map.of("name", dto.getName());
     }
 
-    public static Map<String, Object> buildInputMapForGalaxyUpdate(GalaxyDto dto){
+    public static Map<String, Object> buildInputMapForGalaxyUpdate(GalaxyDto dto) {
         return Map.of(
             "id", dto.getId(),
             "name", dto.getName(),
             "version", dto.getVersion());
     }
 
-    public static Map<String, Object> buildInputMapForStarAdd(StarDto dto){
+    public static Map<String, Object> buildInputMapForStarAdd(StarDto dto) {
         return Map.of(
             "name", dto.getName(),
             "galaxyId", dto.getGalaxyId());
     }
 
-    public static Map<String, Object> buildInputMapForStarUpdate(StarDto dto){
+    public static Map<String, Object> buildInputMapForStarUpdate(StarDto dto) {
         return Map.of(
             "id", dto.getId(),
             "name", dto.getName(),
@@ -206,13 +206,13 @@ public final class TestUtils {
             "galaxyId", dto.getGalaxyId());
     }
 
-    public static Map<String, Object> buildInputMapForPlanetAdd(PlanetDto dto){
+    public static Map<String, Object> buildInputMapForPlanetAdd(PlanetDto dto) {
         return Map.of(
             "name", dto.getName(),
             "starId", dto.getStarId());
     }
 
-    public static Map<String, Object> buildInputMapForPlanetUpdate(PlanetDto dto){
+    public static Map<String, Object> buildInputMapForPlanetUpdate(PlanetDto dto) {
         return Map.of(
             "id", dto.getId(),
             "name", dto.getName(),
@@ -220,13 +220,13 @@ public final class TestUtils {
             "starId", dto.getStarId());
     }
 
-    public static Map<String, Object> buildInputMapForMoonAdd(MoonDto dto){
+    public static Map<String, Object> buildInputMapForMoonAdd(MoonDto dto) {
         return Map.of(
             "name", dto.getName(),
             "planetId", dto.getPlanetId());
     }
 
-    public static Map<String, Object> buildInputMapForMoonUpdate(MoonDto dto){
+    public static Map<String, Object> buildInputMapForMoonUpdate(MoonDto dto) {
         return Map.of(
             "id", dto.getId(),
             "name", dto.getName(),

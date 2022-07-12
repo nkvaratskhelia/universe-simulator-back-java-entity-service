@@ -61,23 +61,23 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    query getGalaxies($name: String, $pageInput: PageInput) {
-                      getGalaxies(name: $name, pageInput: $pageInput) {
-                        id, name, version
-                      }
-                    }
-                """;
+                query getGalaxies($name: String, $pageInput: PageInput) {
+                  getGalaxies(name: $name, pageInput: $pageInput) {
+                    id, name, version
+                  }
+                }
+            """;
 
         given(service.getList(any(), any())).willReturn(entityPage);
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("name", filter.getName())
-                .execute()
-                .path("getGalaxies")
-                .entityList(GalaxyDto.class)
-                .containsExactly(mapper.toDto(entity));
+            .variable("name", filter.getName())
+            .execute()
+            .path("getGalaxies")
+            .entityList(GalaxyDto.class)
+            .containsExactly(mapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -91,23 +91,23 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    query getGalaxy($id:ID!) {
-                      getGalaxy(id:$id) {
-                        id, name, version
-                      }
-                    }
-                """;
+                query getGalaxy($id:ID!) {
+                  getGalaxy(id:$id) {
+                    id, name, version
+                  }
+                }
+            """;
 
         given(service.get(any())).willReturn(entity);
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("id", id)
-                .execute()
-                .path("getGalaxy")
-                .entity(GalaxyDto.class)
-                .isEqualTo(dto);
+            .variable("id", id)
+            .execute()
+            .path("getGalaxy")
+            .entity(GalaxyDto.class)
+            .isEqualTo(dto);
         then(service).should().get(id);
     }
 
@@ -120,23 +120,23 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation addGalaxy($input: AddGalaxyInput!) {
-                      addGalaxy(input:$input) {
-                        id, name, version
-                      }
-                    }
-                """;
+                mutation addGalaxy($input: AddGalaxyInput!) {
+                  addGalaxy(input:$input) {
+                    id, name, version
+                  }
+                }
+            """;
 
         given(service.add(any())).willReturn(entity);
 
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForGalaxyAdd(inputDto))
-                .execute()
-                .path("addGalaxy")
-                .entity(GalaxyDto.class)
-                .isEqualTo(resultDto);
+            .variable("input", TestUtils.buildInputMapForGalaxyAdd(inputDto))
+            .execute()
+            .path("addGalaxy")
+            .entity(GalaxyDto.class)
+            .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, false);
         then(service).should().add(mapper.toEntity(inputDto));
@@ -151,23 +151,23 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation updateGalaxy($input: UpdateGalaxyInput!) {
-                      updateGalaxy(input:$input) {
-                        id, name, version
-                      }
-                    }
-                """;
+                mutation updateGalaxy($input: UpdateGalaxyInput!) {
+                  updateGalaxy(input:$input) {
+                    id, name, version
+                  }
+                }
+            """;
 
         given(service.update(any())).willReturn(entity);
 
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForGalaxyUpdate(inputDto))
-                .execute()
-                .path("updateGalaxy")
-                .entity(GalaxyDto.class)
-                .isEqualTo(resultDto);
+            .variable("input", TestUtils.buildInputMapForGalaxyUpdate(inputDto))
+            .execute()
+            .path("updateGalaxy")
+            .entity(GalaxyDto.class)
+            .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
@@ -180,16 +180,16 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation deleteGalaxy($id: ID!) {
-                      deleteGalaxy(id:$id)
-                    }
-                """;
+                mutation deleteGalaxy($id: ID!) {
+                  deleteGalaxy(id:$id)
+                }
+            """;
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("id", id)
-                .executeAndVerify();
+            .variable("id", id)
+            .executeAndVerify();
         then(service).should().delete(id);
     }
 

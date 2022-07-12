@@ -33,14 +33,14 @@ public class StarGraphQLController extends AbstractGraphQLController {
     @QueryMapping
     public Page<StarDto> getStars(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
         var filter = StarFilter.builder()
-                .name(name)
-                .build();
+            .name(name)
+            .build();
         PageRequest pageRequest = assemblePageRequest(pageInput);
         log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
         Specification<Star> specification = specificationBuilder.build(filter);
 
         Page<StarDto> result = service.getList(specification, pageRequest)
-                .map(mapper::toDto);
+            .map(mapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
@@ -60,9 +60,9 @@ public class StarGraphQLController extends AbstractGraphQLController {
     public StarDto addStar(@Argument AddStarInput input) throws AppException {
         log.info("calling add with {}", input);
         StarDto dto = StarDto.builder()
-                .name(input.name())
-                .galaxyId(input.galaxyId())
-                .build();
+            .name(input.name())
+            .galaxyId(input.galaxyId())
+            .build();
         validator.validate(dto, false);
 
         Star entity = mapper.toEntity(dto);
@@ -76,11 +76,11 @@ public class StarGraphQLController extends AbstractGraphQLController {
     public StarDto updateStar(@Argument UpdateStarInput input) throws AppException {
         log.info("calling update with {}", input);
         StarDto dto = StarDto.builder()
-                .id(input.id())
-                .name(input.name())
-                .version(input.version())
-                .galaxyId(input.galaxyId())
-                .build();
+            .id(input.id())
+            .name(input.name())
+            .version(input.version())
+            .galaxyId(input.galaxyId())
+            .build();
         validator.validate(dto, true);
 
         Star entity = mapper.toEntity(dto);

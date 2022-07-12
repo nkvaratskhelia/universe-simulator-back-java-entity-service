@@ -61,23 +61,23 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    query getStars($name: String, $pageInput: PageInput) {
-                      getStars(name: $name, pageInput: $pageInput) {
-                        id, name, version, galaxyId
-                      }
-                    }
-                """;
+                query getStars($name: String, $pageInput: PageInput) {
+                  getStars(name: $name, pageInput: $pageInput) {
+                    id, name, version, galaxyId
+                  }
+                }
+            """;
 
         given(service.getList(any(), any())).willReturn(entityPage);
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("name", filter.getName())
-                .execute()
-                .path("getStars")
-                .entityList(StarDto.class)
-                .containsExactly(mapper.toDto(entity));
+            .variable("name", filter.getName())
+            .execute()
+            .path("getStars")
+            .entityList(StarDto.class)
+            .containsExactly(mapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -91,23 +91,23 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    query getStar($id:ID!) {
-                      getStar(id:$id) {
-                        id, name, version, galaxyId
-                      }
-                    }
-                """;
+                query getStar($id:ID!) {
+                  getStar(id:$id) {
+                    id, name, version, galaxyId
+                  }
+                }
+            """;
 
         given(service.get(any())).willReturn(entity);
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("id", id)
-                .execute()
-                .path("getStar")
-                .entity(StarDto.class)
-                .isEqualTo(dto);
+            .variable("id", id)
+            .execute()
+            .path("getStar")
+            .entity(StarDto.class)
+            .isEqualTo(dto);
         then(service).should().get(id);
     }
 
@@ -120,23 +120,23 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation addStar($input: AddStarInput!) {
-                      addStar(input:$input) {
-                        id, name, version, galaxyId
-                      }
-                    }
-                """;
+                mutation addStar($input: AddStarInput!) {
+                  addStar(input:$input) {
+                    id, name, version, galaxyId
+                  }
+                }
+            """;
 
         given(service.add(any())).willReturn(entity);
 
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForStarAdd(inputDto))
-                .execute()
-                .path("addStar")
-                .entity(StarDto.class)
-                .isEqualTo(resultDto);
+            .variable("input", TestUtils.buildInputMapForStarAdd(inputDto))
+            .execute()
+            .path("addStar")
+            .entity(StarDto.class)
+            .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, false);
         then(service).should().add(mapper.toEntity(inputDto));
@@ -151,23 +151,23 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation updateStar($input: UpdateStarInput!) {
-                      updateStar(input:$input) {
-                        id, name, version, galaxyId
-                      }
-                    }
-                """;
+                mutation updateStar($input: UpdateStarInput!) {
+                  updateStar(input:$input) {
+                    id, name, version, galaxyId
+                  }
+                }
+            """;
 
         given(service.update(any())).willReturn(entity);
 
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForStarUpdate(inputDto))
-                .execute()
-                .path("updateStar")
-                .entity(StarDto.class)
-                .isEqualTo(resultDto);
+            .variable("input", TestUtils.buildInputMapForStarUpdate(inputDto))
+            .execute()
+            .path("updateStar")
+            .entity(StarDto.class)
+            .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
@@ -180,16 +180,16 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation deleteStar($id: ID!) {
-                      deleteStar(id:$id)
-                    }
-                """;
+                mutation deleteStar($id: ID!) {
+                  deleteStar(id:$id)
+                }
+            """;
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("id", id)
-                .executeAndVerify();
+            .variable("id", id)
+            .executeAndVerify();
         then(service).should().delete(id);
     }
 }

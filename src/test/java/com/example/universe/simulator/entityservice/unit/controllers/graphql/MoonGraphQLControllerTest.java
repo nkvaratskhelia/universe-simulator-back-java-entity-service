@@ -61,23 +61,23 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    query getMoons($name: String, $pageInput: PageInput) {
-                      getMoons(name: $name, pageInput: $pageInput) {
-                        id, name, version, planetId
-                      }
-                    }
-                """;
+                query getMoons($name: String, $pageInput: PageInput) {
+                  getMoons(name: $name, pageInput: $pageInput) {
+                    id, name, version, planetId
+                  }
+                }
+            """;
 
         given(service.getList(any(), any())).willReturn(entityPage);
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("name", filter.getName())
-                .execute()
-                .path("getMoons")
-                .entityList(MoonDto.class)
-                .containsExactly(mapper.toDto(entity));
+            .variable("name", filter.getName())
+            .execute()
+            .path("getMoons")
+            .entityList(MoonDto.class)
+            .containsExactly(mapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -91,23 +91,23 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    query getMoon($id:ID!) {
-                      getMoon(id:$id) {
-                        id, name, version, planetId
-                      }
-                    }
-                """;
+                query getMoon($id:ID!) {
+                  getMoon(id:$id) {
+                    id, name, version, planetId
+                  }
+                }
+            """;
 
         given(service.get(any())).willReturn(entity);
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("id", id)
-                .execute()
-                .path("getMoon")
-                .entity(MoonDto.class)
-                .isEqualTo(dto);
+            .variable("id", id)
+            .execute()
+            .path("getMoon")
+            .entity(MoonDto.class)
+            .isEqualTo(dto);
         then(service).should().get(id);
     }
 
@@ -120,23 +120,23 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation addMoon($input: AddMoonInput!) {
-                      addMoon(input:$input) {
-                        id, name, version, planetId
-                      }
-                    }
-                """;
+                mutation addMoon($input: AddMoonInput!) {
+                  addMoon(input:$input) {
+                    id, name, version, planetId
+                  }
+                }
+            """;
 
         given(service.add(any())).willReturn(entity);
 
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForMoonAdd(inputDto))
-                .execute()
-                .path("addMoon")
-                .entity(MoonDto.class)
-                .isEqualTo(resultDto);
+            .variable("input", TestUtils.buildInputMapForMoonAdd(inputDto))
+            .execute()
+            .path("addMoon")
+            .entity(MoonDto.class)
+            .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, false);
         then(service).should().add(mapper.toEntity(inputDto));
@@ -151,23 +151,23 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation updateMoon($input: UpdateMoonInput!) {
-                      updateMoon(input:$input) {
-                        id, name, version, planetId
-                      }
-                    }
-                """;
+                mutation updateMoon($input: UpdateMoonInput!) {
+                  updateMoon(input:$input) {
+                    id, name, version, planetId
+                  }
+                }
+            """;
 
         given(service.update(any())).willReturn(entity);
 
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForMoonUpdate(inputDto))
-                .execute()
-                .path("updateMoon")
-                .entity(MoonDto.class)
-                .isEqualTo(resultDto);
+            .variable("input", TestUtils.buildInputMapForMoonUpdate(inputDto))
+            .execute()
+            .path("updateMoon")
+            .entity(MoonDto.class)
+            .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
@@ -180,16 +180,16 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
         // language=GraphQL
         String document = """
-                    mutation deleteMoon($id: ID!) {
-                      deleteMoon(id:$id)
-                    }
-                """;
+                mutation deleteMoon($id: ID!) {
+                  deleteMoon(id:$id)
+                }
+            """;
 
         //when
         //then
         graphQlTester.document(document)
-                .variable("id", id)
-                .executeAndVerify();
+            .variable("id", id)
+            .executeAndVerify();
         then(service).should().delete(id);
     }
 }

@@ -33,14 +33,14 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     @QueryMapping
     public Page<GalaxyDto> getGalaxies(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
         var filter = GalaxyFilter.builder()
-                .name(name)
-                .build();
+            .name(name)
+            .build();
         PageRequest pageRequest = assemblePageRequest(pageInput);
         log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
         Specification<Galaxy> specification = specificationBuilder.build(filter);
 
         Page<GalaxyDto> result = service.getList(specification, pageRequest)
-                .map(mapper::toDto);
+            .map(mapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
@@ -60,8 +60,8 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     public GalaxyDto addGalaxy(@Argument AddGalaxyInput input) throws AppException {
         log.info("calling add with {}", input);
         GalaxyDto dto = GalaxyDto.builder()
-                .name(input.name())
-                .build();
+            .name(input.name())
+            .build();
         validator.validate(dto, false);
 
         Galaxy entity = mapper.toEntity(dto);
@@ -75,10 +75,10 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     public GalaxyDto updateGalaxy(@Argument UpdateGalaxyInput input) throws AppException {
         log.info("calling update with {}", input);
         GalaxyDto dto = GalaxyDto.builder()
-                .id(input.id())
-                .name(input.name())
-                .version(input.version())
-                .build();
+            .id(input.id())
+            .name(input.name())
+            .version(input.version())
+            .build();
         validator.validate(dto, true);
 
         Galaxy entity = mapper.toEntity(dto);
