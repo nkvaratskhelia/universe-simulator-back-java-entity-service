@@ -3,15 +3,15 @@ package com.example.universe.simulator.entityservice.unit.controllers.graphql;
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractGraphQLTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.config.GraphQLConfig;
-import com.example.universe.simulator.entityservice.controllers.graphql.GalaxyGraphQLController;
-import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
-import com.example.universe.simulator.entityservice.entities.Galaxy;
-import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
-import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
-import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
-import com.example.universe.simulator.entityservice.services.GalaxyService;
-import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
+import com.example.universe.simulator.entityservice.controllers.graphql.StarGraphQLController;
+import com.example.universe.simulator.entityservice.dtos.StarDto;
+import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.filters.StarFilter;
+import com.example.universe.simulator.entityservice.mappers.StarMapper;
+import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
+import com.example.universe.simulator.entityservice.services.StarService;
+import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
+import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
@@ -30,40 +30,40 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-@GraphQlTest(GalaxyGraphQLController.class)
-@Import({GraphQLConfig.class, GalaxyMapperImpl.class})
-class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
+@GraphQlTest(StarGraphQLController.class)
+@Import({GraphQLConfig.class, StarMapperImpl.class})
+class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
     @Autowired
     private GraphQlTester graphQlTester;
 
     @MockBean
-    private GalaxyService service;
+    private StarService service;
 
     @MockBean
-    private GalaxyDtoValidator validator;
+    private StarDtoValidator validator;
 
     @MockBean
-    private GalaxySpecificationBuilder specificationBuilder;
+    private StarSpecificationBuilder specificationBuilder;
 
     @SpyBean
-    private GalaxyMapper mapper;
+    private StarMapper mapper;
 
     @Test
-    void testGetGalaxies() {
+    void testGetStars() {
         //given
-        Galaxy entity = TestUtils.buildGalaxy();
-        List<Galaxy> entityList = List.of(entity);
+        Star entity = TestUtils.buildStar();
+        List<Star> entityList = List.of(entity);
 
-        GalaxyFilter filter = TestUtils.buildGalaxyFilter();
+        StarFilter filter = TestUtils.buildStarFilter();
         Pageable pageable = TestUtils.getDefaultPageable();
-        Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
 
         // language=GraphQL
         String document = """
-                    query getGalaxies($name: String, $pageInput: PageInput) {
-                      getGalaxies(name: $name, pageInput: $pageInput) {
-                        id, name, version
+                    query getStars($name: String, $pageInput: PageInput) {
+                      getStars(name: $name, pageInput: $pageInput) {
+                        id, name, version, galaxyId
                       }
                     }
                 """;
@@ -75,25 +75,25 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         graphQlTester.document(document)
                 .variable("name", filter.getName())
                 .execute()
-                .path("getGalaxies")
-                .entityList(GalaxyDto.class)
+                .path("getStars")
+                .entityList(StarDto.class)
                 .containsExactly(mapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
 
     @Test
-    void testGetGalaxy() throws Exception {
+    void testGetStar() throws Exception {
         //given
         UUID id = UUID.randomUUID();
-        Galaxy entity = TestUtils.buildGalaxy();
-        GalaxyDto dto = mapper.toDto(entity);
+        Star entity = TestUtils.buildStar();
+        StarDto dto = mapper.toDto(entity);
 
         // language=GraphQL
         String document = """
-                    query getGalaxy($id:ID!) {
-                      getGalaxy(id:$id) {
-                        id, name, version
+                    query getStar($id:ID!) {
+                      getStar(id:$id) {
+                        id, name, version, galaxyId
                       }
                     }
                 """;
@@ -105,24 +105,24 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         graphQlTester.document(document)
                 .variable("id", id)
                 .execute()
-                .path("getGalaxy")
-                .entity(GalaxyDto.class)
+                .path("getStar")
+                .entity(StarDto.class)
                 .isEqualTo(dto);
         then(service).should().get(id);
     }
 
     @Test
-    void testAddGalaxy() throws Exception {
+    void testAddStar() throws Exception {
         // given
-        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForAdd();
-        Galaxy entity = TestUtils.buildGalaxy();
-        GalaxyDto resultDto = mapper.toDto(entity);
+        StarDto inputDto = TestUtils.buildStarDtoForAdd();
+        Star entity = TestUtils.buildStar();
+        StarDto resultDto = mapper.toDto(entity);
 
         // language=GraphQL
         String document = """
-                    mutation addGalaxy($input: AddGalaxyInput!) {
-                      addGalaxy(input:$input) {
-                        id, name, version
+                    mutation addStar($input: AddStarInput!) {
+                      addStar(input:$input) {
+                        id, name, version, galaxyId
                       }
                     }
                 """;
@@ -132,10 +132,10 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForGalaxyAdd(inputDto))
+                .variable("input", TestUtils.buildInputMapForStarAdd(inputDto))
                 .execute()
-                .path("addGalaxy")
-                .entity(GalaxyDto.class)
+                .path("addStar")
+                .entity(StarDto.class)
                 .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, false);
@@ -143,17 +143,17 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
     }
 
     @Test
-    void testUpdateGalaxy() throws Exception {
+    void testUpdateStar() throws Exception {
         // given
-        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = mapper.toEntity(inputDto);
-        GalaxyDto resultDto = mapper.toDto(entity);
+        StarDto inputDto = TestUtils.buildStarDtoForUpdate();
+        Star entity = mapper.toEntity(inputDto);
+        StarDto resultDto = mapper.toDto(entity);
 
         // language=GraphQL
         String document = """
-                    mutation updateGalaxy($input: UpdateGalaxyInput!) {
-                      updateGalaxy(input:$input) {
-                        id, name, version
+                    mutation updateStar($input: UpdateStarInput!) {
+                      updateStar(input:$input) {
+                        id, name, version, galaxyId
                       }
                     }
                 """;
@@ -163,10 +163,10 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-                .variable("input", TestUtils.buildInputMapForGalaxyUpdate(inputDto))
+                .variable("input", TestUtils.buildInputMapForStarUpdate(inputDto))
                 .execute()
-                .path("updateGalaxy")
-                .entity(GalaxyDto.class)
+                .path("updateStar")
+                .entity(StarDto.class)
                 .isEqualTo(resultDto);
 
         then(validator).should().validate(inputDto, true);
@@ -174,14 +174,14 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
     }
 
     @Test
-    void testDeleteGalaxy() throws Exception {
+    void testDeleteStar() throws Exception {
         //given
         UUID id = UUID.randomUUID();
 
         // language=GraphQL
         String document = """
-                    mutation deleteGalaxy($id: ID!) {
-                      deleteGalaxy(id:$id)
+                    mutation deleteStar($id: ID!) {
+                      deleteStar(id:$id)
                     }
                 """;
 
@@ -192,5 +192,4 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
                 .executeAndVerify();
         then(service).should().delete(id);
     }
-
 }

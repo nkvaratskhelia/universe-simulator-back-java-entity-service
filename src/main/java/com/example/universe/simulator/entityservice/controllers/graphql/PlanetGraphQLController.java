@@ -1,16 +1,15 @@
 package com.example.universe.simulator.entityservice.controllers.graphql;
 
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
-import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,50 +23,50 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class PlanetGraphQLController {
+public class PlanetGraphQLController extends AbstractGraphQLController {
 
     private final PlanetService service;
     private final PlanetDtoValidator validator;
     private final PlanetSpecificationBuilder specificationBuilder;
-    private final ModelMapper modelMapper;
+    private final PlanetMapper mapper;
 
     @QueryMapping
-    public PlanetDto getPlanet(@Argument UUID id) throws AppException {
-        log.info("calling get with id [{}]", id);
-        PlanetDto result = modelMapper.map(service.get(id), PlanetDto.class);
-        log.info("fetched [{}]", result.getId());
-
-        return result;
-    }
-
-    @QueryMapping
-    public Page<PlanetDto> getPlanets(@Argument String name, @Argument int page, @Argument int size) {
+    public Page<PlanetDto> getPlanets(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
         var filter = PlanetFilter.builder()
                 .name(name)
                 .build();
-        log.info("calling getList with filter [{}] and page {} and size {}", filter, page, size);
+        PageRequest pageRequest = assemblePageRequest(pageInput);
+        log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
         Specification<Planet> specification = specificationBuilder.build(filter);
-        Page<PlanetDto> result = service.getList(specification, PageRequest.of(page, size))
-                .map(item -> modelMapper.map(item, PlanetDto.class));
+
+        Page<PlanetDto> result = service.getList(specification, pageRequest)
+                .map(mapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
 
     }
 
+    @QueryMapping
+    public PlanetDto getPlanet(@Argument UUID id) throws AppException {
+        log.info("calling get with id [{}]", id);
+        PlanetDto result = mapper.toDto(service.get(id));
+        log.info("fetched [{}]", result.getId());
+
+        return result;
+    }
+
     @MutationMapping
     public PlanetDto addPlanet(@Argument AddPlanetInput input) throws AppException {
-        log.info("calling add with {}, star id [{}]", input, input.starId());
+        log.info("calling add with {}", input);
         PlanetDto dto = PlanetDto.builder()
                 .name(input.name())
-                .star(StarDto.builder()
-                        .id(input.starId())
-                        .build())
+                .starId(input.starId())
                 .build();
         validator.validate(dto, false);
 
-        Planet entity = modelMapper.map(dto, Planet.class);
-        PlanetDto result = modelMapper.map(service.add(entity), PlanetDto.class);
+        Planet entity = mapper.toEntity(dto);
+        PlanetDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
         return result;
@@ -75,19 +74,17 @@ public class PlanetGraphQLController {
 
     @MutationMapping
     public PlanetDto updatePlanet(@Argument UpdatePlanetInput input) throws AppException {
-        log.info("calling update with {}, star id [{}]", input, input.starId());
+        log.info("calling update with {}", input);
         PlanetDto dto = PlanetDto.builder()
                 .id(input.id())
                 .name(input.name())
                 .version(input.version())
-                .star(StarDto.builder()
-                        .id(input.starId())
-                        .build())
+                .starId(input.starId())
                 .build();
         validator.validate(dto, true);
 
-        Planet entity = modelMapper.map(dto, Planet.class);
-        PlanetDto result = modelMapper.map(service.update(entity), PlanetDto.class);
+        Planet entity = mapper.toEntity(dto);
+        PlanetDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
         return result;

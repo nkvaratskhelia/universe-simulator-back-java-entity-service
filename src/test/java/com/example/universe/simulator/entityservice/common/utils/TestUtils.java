@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 public final class TestUtils {
@@ -178,5 +179,58 @@ public final class TestUtils {
             .name("name")
             .planetId(UUID.randomUUID())
             .build();
+    }
+
+    public static Map<String, Object> buildInputMapForGalaxyAdd(GalaxyDto dto){
+        return Map.of("name", dto.getName());
+    }
+
+    public static Map<String, Object> buildInputMapForGalaxyUpdate(GalaxyDto dto){
+        return Map.of(
+            "id", dto.getId(),
+            "name", dto.getName(),
+            "version", dto.getVersion());
+    }
+
+    public static Map<String, Object> buildInputMapForStarAdd(StarDto dto){
+        return Map.of(
+            "name", dto.getName(),
+            "galaxyId", dto.getGalaxyId());
+    }
+
+    public static Map<String, Object> buildInputMapForStarUpdate(StarDto dto){
+        return Map.of(
+            "id", dto.getId(),
+            "name", dto.getName(),
+            "version", dto.getVersion(),
+            "galaxyId", dto.getGalaxyId());
+    }
+
+    public static Map<String, Object> buildInputMapForPlanetAdd(PlanetDto dto){
+        return Map.of(
+            "name", dto.getName(),
+            "starId", dto.getStarId());
+    }
+
+    public static Map<String, Object> buildInputMapForPlanetUpdate(PlanetDto dto){
+        return Map.of(
+            "id", dto.getId(),
+            "name", dto.getName(),
+            "version", dto.getVersion(),
+            "starId", dto.getStarId());
+    }
+
+    public static Map<String, Object> buildInputMapForMoonAdd(MoonDto dto){
+        return Map.of(
+            "name", dto.getName(),
+            "planetId", dto.getPlanetId());
+    }
+
+    public static Map<String, Object> buildInputMapForMoonUpdate(MoonDto dto){
+        return Map.of(
+            "id", dto.getId(),
+            "name", dto.getName(),
+            "version", dto.getVersion(),
+            "planetId", dto.getPlanetId());
     }
 }
