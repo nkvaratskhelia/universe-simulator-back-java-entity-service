@@ -91,7 +91,7 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     }
 
     @MutationMapping
-    public UUID deleteMoon(@Argument UUID id) throws AppException {
+    public UUID deleteMoon(@Argument UUID id) {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);

@@ -20,12 +20,14 @@ import org.springframework.data.domain.Sort;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public final class TestUtils {
 
-    private TestUtils() {}
+    private TestUtils() {
+    }
 
     public static Pageable getDefaultPageable() {
         return PageRequest.of(0, 20, Sort.unsorted());
@@ -64,6 +66,13 @@ public final class TestUtils {
     public static GalaxyFilter buildGalaxyFilter() {
         return GalaxyFilter.builder()
             .name("name")
+            .build();
+    }
+
+    public static Galaxy buildGalaxyWithName(String name) {
+        return Galaxy.builder()
+            .id(UUID.randomUUID())
+            .name(name)
             .build();
     }
 
@@ -232,5 +241,20 @@ public final class TestUtils {
             "name", dto.getName(),
             "version", dto.getVersion(),
             "planetId", dto.getPlanetId());
+    }
+
+    public static Map<String, Object> buildInputMapForPaging(Pageable pageable) {
+        Map sortVersionMap = Map.of(
+            "property", "version",
+            "direction", Sort.Direction.DESC
+        );
+        Map sortNameMap = Map.of(
+            "property", "name",
+            "direction", Sort.Direction.ASC
+        );
+        return Map.of(
+            "page", pageable.getPageNumber(),
+            "size", pageable.getPageSize(),
+            "sortOrders", List.of(sortVersionMap, sortNameMap));
     }
 }
