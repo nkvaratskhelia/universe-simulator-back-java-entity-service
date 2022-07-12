@@ -59,10 +59,7 @@ public class StarGraphQLController extends AbstractGraphQLController {
     @MutationMapping
     public StarDto addStar(@Argument AddStarInput input) throws AppException {
         log.info("calling add with {}", input);
-        StarDto dto = StarDto.builder()
-            .name(input.name())
-            .galaxyId(input.galaxyId())
-            .build();
+        StarDto dto = mapper.toDto(input);
         validator.validate(dto, false);
 
         Star entity = mapper.toEntity(dto);
@@ -75,12 +72,7 @@ public class StarGraphQLController extends AbstractGraphQLController {
     @MutationMapping
     public StarDto updateStar(@Argument UpdateStarInput input) throws AppException {
         log.info("calling update with {}", input);
-        StarDto dto = StarDto.builder()
-            .id(input.id())
-            .name(input.name())
-            .version(input.version())
-            .galaxyId(input.galaxyId())
-            .build();
+        StarDto dto = mapper.toDto(input);
         validator.validate(dto, true);
 
         Star entity = mapper.toEntity(dto);
@@ -99,10 +91,10 @@ public class StarGraphQLController extends AbstractGraphQLController {
         return id;
     }
 
-    record AddStarInput(String name, UUID galaxyId) {
+    public record AddStarInput(String name, UUID galaxyId) {
     }
 
-    record UpdateStarInput(UUID id, String name, Long version, UUID galaxyId) {
+    public record UpdateStarInput(UUID id, String name, Long version, UUID galaxyId) {
     }
 
 }

@@ -59,10 +59,7 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
     @MutationMapping
     public PlanetDto addPlanet(@Argument AddPlanetInput input) throws AppException {
         log.info("calling add with {}", input);
-        PlanetDto dto = PlanetDto.builder()
-            .name(input.name())
-            .starId(input.starId())
-            .build();
+        PlanetDto dto = mapper.toDto(input);
         validator.validate(dto, false);
 
         Planet entity = mapper.toEntity(dto);
@@ -75,12 +72,7 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
     @MutationMapping
     public PlanetDto updatePlanet(@Argument UpdatePlanetInput input) throws AppException {
         log.info("calling update with {}", input);
-        PlanetDto dto = PlanetDto.builder()
-            .id(input.id())
-            .name(input.name())
-            .version(input.version())
-            .starId(input.starId())
-            .build();
+        PlanetDto dto = mapper.toDto(input);
         validator.validate(dto, true);
 
         Planet entity = mapper.toEntity(dto);
@@ -99,10 +91,10 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
         return id;
     }
 
-    record AddPlanetInput(String name, UUID starId) {
+    public record AddPlanetInput(String name, UUID starId) {
     }
 
-    record UpdatePlanetInput(UUID id, String name, Long version, UUID starId) {
+    public record UpdatePlanetInput(UUID id, String name, Long version, UUID starId) {
     }
 
 }

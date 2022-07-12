@@ -59,10 +59,7 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     @MutationMapping
     public MoonDto addMoon(@Argument AddMoonInput input) throws AppException {
         log.info("calling add with {}", input);
-        MoonDto dto = MoonDto.builder()
-            .name(input.name())
-            .planetId(input.planetId())
-            .build();
+        MoonDto dto = mapper.toDto(input);
         validator.validate(dto, false);
 
         Moon entity = mapper.toEntity(dto);
@@ -75,12 +72,7 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     @MutationMapping
     public MoonDto updateMoon(@Argument UpdateMoonInput input) throws AppException {
         log.info("calling update with {}", input);
-        MoonDto dto = MoonDto.builder()
-            .id(input.id())
-            .name(input.name())
-            .version(input.version())
-            .planetId(input.planetId())
-            .build();
+        MoonDto dto = mapper.toDto(input);
         validator.validate(dto, true);
 
         Moon entity = mapper.toEntity(dto);
@@ -99,10 +91,10 @@ public class MoonGraphQLController extends AbstractGraphQLController {
         return id;
     }
 
-    record AddMoonInput(String name, UUID planetId) {
+    public record AddMoonInput(String name, UUID planetId) {
     }
 
-    record UpdateMoonInput(UUID id, String name, Long version, UUID planetId) {
+    public record UpdateMoonInput(UUID id, String name, Long version, UUID planetId) {
     }
 
 }

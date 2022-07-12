@@ -13,7 +13,6 @@ import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
 import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -21,7 +20,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.graphql.test.tester.GraphQlTester;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,9 +31,6 @@ import static org.mockito.BDDMockito.then;
 @GraphQlTest(StarGraphQLController.class)
 @Import({GraphQLConfig.class, StarMapperImpl.class})
 class StarGraphQLControllerTest extends AbstractGraphQLTest {
-
-    @Autowired
-    private GraphQlTester graphQlTester;
 
     @MockBean
     private StarService service;

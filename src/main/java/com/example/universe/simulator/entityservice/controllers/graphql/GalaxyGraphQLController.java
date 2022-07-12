@@ -59,9 +59,7 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     @MutationMapping
     public GalaxyDto addGalaxy(@Argument AddGalaxyInput input) throws AppException {
         log.info("calling add with {}", input);
-        GalaxyDto dto = GalaxyDto.builder()
-            .name(input.name())
-            .build();
+        GalaxyDto dto = mapper.toDto(input);
         validator.validate(dto, false);
 
         Galaxy entity = mapper.toEntity(dto);
@@ -74,11 +72,7 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     @MutationMapping
     public GalaxyDto updateGalaxy(@Argument UpdateGalaxyInput input) throws AppException {
         log.info("calling update with {}", input);
-        GalaxyDto dto = GalaxyDto.builder()
-            .id(input.id())
-            .name(input.name())
-            .version(input.version())
-            .build();
+        GalaxyDto dto = mapper.toDto(input);
         validator.validate(dto, true);
 
         Galaxy entity = mapper.toEntity(dto);
@@ -97,10 +91,10 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
         return id;
     }
 
-    record AddGalaxyInput(String name) {
+    public record AddGalaxyInput(String name) {
     }
 
-    record UpdateGalaxyInput(UUID id, String name, Long version) {
+    public record UpdateGalaxyInput(UUID id, String name, Long version) {
     }
 
 }
