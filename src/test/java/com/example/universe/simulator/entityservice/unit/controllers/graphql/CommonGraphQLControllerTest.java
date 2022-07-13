@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+// Exception handling is tested using GalaxyGraphQLController.
 @GraphQlTest(GalaxyGraphQLController.class)
 @Import({GraphQLConfig.class, GalaxyMapperImpl.class})
 class CommonGraphQLControllerTest extends AbstractGraphQLTest {
@@ -43,7 +44,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
     private GalaxyMapper mapper;
 
     @Test
-    void testGetGalaxies_customPageable() throws Exception {
+    void testGetGalaxies_customPageable() {
         // given
         Galaxy firstEntity = TestUtils.buildGalaxyWithName("name1");
         Galaxy secondEntity = TestUtils.buildGalaxyWithName("name2");
