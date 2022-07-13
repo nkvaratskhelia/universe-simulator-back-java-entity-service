@@ -44,7 +44,38 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
     private GalaxyMapper mapper;
 
     @Test
-    void testGetGalaxies_customPageable() {
+    void testGetGalaxies_customPageable_withoutSorting() {
+        // given
+        Galaxy firstEntity = TestUtils.buildGalaxyWithName("name1");
+        Galaxy secondEntity = TestUtils.buildGalaxyWithName("name2");
+        List<Galaxy> entityList = List.of(firstEntity, secondEntity);
+
+        Pageable pageable = TestUtils.getSpaceEntityPageableWithoutSorting();
+        Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+
+        // language=GraphQL
+        String document = """
+                query getGalaxies($name: String, $pageInput: PageInput) {
+                  getGalaxies(name: $name, pageInput: $pageInput) {
+                    id, name, version
+                  }
+                }
+            """;
+
+        given(service.getList(any(), any())).willReturn(entityPage);
+        // when
+        // then
+        graphQlTester.document(document)
+            .variable("pageInput", TestUtils.buildInputMapForOnlyPaging(pageable))
+            .execute()
+            .path("getGalaxies")
+            .entityList(GalaxyDto.class)
+            .containsExactly(mapper.toDto(firstEntity), mapper.toDto(secondEntity));
+        then(service).should().getList(null, pageable);
+    }
+
+    @Test
+    void testGetGalaxies_customPageable_withSorting() {
         // given
         Galaxy firstEntity = TestUtils.buildGalaxyWithName("name1");
         Galaxy secondEntity = TestUtils.buildGalaxyWithName("name2");
@@ -66,7 +97,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("pageInput", TestUtils.buildInputMapForPaging(pageable))
+            .variable("pageInput", TestUtils.buildInputMapForPagingAndSorting(pageable))
             .execute()
             .path("getGalaxies")
             .entityList(GalaxyDto.class)

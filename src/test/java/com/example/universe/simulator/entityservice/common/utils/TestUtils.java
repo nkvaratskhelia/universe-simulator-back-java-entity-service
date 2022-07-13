@@ -41,6 +41,10 @@ public final class TestUtils {
         return PageRequest.of(1, 2, sort);
     }
 
+    public static Pageable getSpaceEntityPageableWithoutSorting() {
+        return PageRequest.of(1, 2, Sort.unsorted());
+    }
+
     public static EventDto buildEventDto(Clock clock) {
         return new EventDto(
             EventType.SPACE_ENTITY_STATISTICS.toString(),
@@ -243,7 +247,7 @@ public final class TestUtils {
             "planetId", dto.getPlanetId());
     }
 
-    public static Map<String, Object> buildInputMapForPaging(Pageable pageable) {
+    public static Map<String, Object> buildInputMapForPagingAndSorting(Pageable pageable) {
         Map sortVersionMap = Map.of(
             "property", "version",
             "direction", Sort.Direction.DESC
@@ -256,5 +260,11 @@ public final class TestUtils {
             "page", pageable.getPageNumber(),
             "size", pageable.getPageSize(),
             "sortOrders", List.of(sortVersionMap, sortNameMap));
+    }
+
+    public static Map<String, Object> buildInputMapForOnlyPaging(Pageable pageable) {
+        return Map.of(
+            "page", pageable.getPageNumber(),
+            "size", pageable.getPageSize());
     }
 }
