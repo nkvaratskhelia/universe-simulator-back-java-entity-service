@@ -18,3 +18,9 @@ in the `db/changelog/db.changelog-master.yaml` file. Add changelogs to the
 
 === ORM
 `JPA` + `Hibernate`
+
+=== GraphQL
+Api is exposed via GraphQL using `spring-boot-starter-graphql`
+
+To enable graphiql gui for test purposes, add `spring.graphql.graphiql.enabled=true` to your application-local.properties.
+it will be available at `/graphiql`
