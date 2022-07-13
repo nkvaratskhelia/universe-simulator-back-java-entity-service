@@ -3,7 +3,7 @@
 Service that manages the data model of the distributed application.
 
 == Web
-`Spring MVC`
+`Spring MVC`, `GraphQL`
 
 === Api
 The application provides both `REST` and `GraphQL` endpoints. `REST`
