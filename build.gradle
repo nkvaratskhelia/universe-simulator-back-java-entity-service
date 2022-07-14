@@ -97,11 +97,11 @@ repositories {
 
 ext {
     set('commonVersion', '1.4.3')
+    set('graphqlJavaExtendedScalarsVersion', '18.1')
     set('mapstructVersion', '1.5.2.Final')
+    set('springdocOpenapiVersion', '1.6.9')
     set('logstashLogbackEncoderVersion', '7.2')
     set('springBootAdminVersion', '2.7.2')
-    set('springdocOpenapiVersion', '1.6.9')
-    set('graphqlJavaExtendedScalarsVersion', '18.1')
 }
 
 dependencyManagement {
@@ -134,9 +134,9 @@ dependencies {
     runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-data-redis'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.springframework.graphql:spring-graphql-test"
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:rabbitmq'
-    testImplementation "org.springframework.graphql:spring-graphql-test"
     // needed for smoke tests
     testRuntimeOnly 'com.h2database:h2'
     // adds ability to mock/verify final methods
