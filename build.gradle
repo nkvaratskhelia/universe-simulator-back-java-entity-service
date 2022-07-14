@@ -102,7 +102,6 @@ ext {
     set('springBootAdminVersion', '2.7.2')
     set('springdocOpenapiVersion', '1.6.9')
     set('graphqlJavaExtendedScalarsVersion', '18.1')
-    set('springGraphqlTestVersion', '1.0.0')
 }
 
 dependencyManagement {
@@ -118,7 +117,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly "com.graphql-java:graphql-java-extended-scalars:${graphqlJavaExtendedScalarsVersion}"
+    implementation "com.graphql-java:graphql-java-extended-scalars:${graphqlJavaExtendedScalarsVersion}"
     compileOnly 'org.projectlombok:lombok'
     compileOnly "org.mapstruct:mapstruct:${mapstructVersion}"
     compileOnly "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
@@ -137,8 +136,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:rabbitmq'
-    testImplementation "org.springframework.graphql:spring-graphql-test:${springGraphqlTestVersion}"
-    testRuntimeOnly "com.graphql-java:graphql-java-extended-scalars:${graphqlJavaExtendedScalarsVersion}"
+    testImplementation "org.springframework.graphql:spring-graphql-test"
     // needed for smoke tests
     testRuntimeOnly 'com.h2database:h2'
     // adds ability to mock/verify final methods
