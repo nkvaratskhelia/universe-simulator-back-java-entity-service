@@ -118,10 +118,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
     compileOnly "com.graphql-java:graphql-java-extended-scalars:${graphqlJavaExtendedScalarsVersion}"
     compileOnly 'org.projectlombok:lombok'
     compileOnly "org.mapstruct:mapstruct:${mapstructVersion}"
+    compileOnly "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
     runtimeOnly 'org.springframework.boot:spring-boot-starter-data-redis'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-config'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
