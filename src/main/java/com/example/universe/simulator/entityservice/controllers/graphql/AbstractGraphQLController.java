@@ -13,15 +13,15 @@ public abstract class AbstractGraphQLController {
 
     public static PageRequest assemblePageRequest(PageInput pageInput) {
         return pageInput != null ? PageRequest.of(pageInput.page(), pageInput.size(), Sort.by(assembleSortOrders(pageInput)))
-            : PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.unsorted());
+                                 : PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.unsorted());
     }
 
     public static List<Sort.Order> assembleSortOrders(PageInput pageInput) {
         return pageInput.sortOrders() != null ?
-            pageInput.sortOrders().stream()
-                .map(s -> new Sort.Order(s.direction(), s.property()))
-                .toList()
-            : Collections.emptyList();
+               pageInput.sortOrders().stream()
+                   .map(s -> new Sort.Order(s.direction(), s.property()))
+                   .toList()
+                                              : Collections.emptyList();
     }
 
     record SortOrder(String property, Sort.Direction direction) {

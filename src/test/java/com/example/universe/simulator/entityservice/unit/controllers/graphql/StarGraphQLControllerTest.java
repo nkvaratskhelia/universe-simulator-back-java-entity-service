@@ -46,7 +46,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
     @Test
     void testGetStars() {
-        //given
+        // given
         Star entity = TestUtils.buildStar();
         List<Star> entityList = List.of(entity);
 
@@ -65,8 +65,8 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
 
-        //when
-        //then
+        // when
+        // then
         graphQlTester.document(document)
             .variable("name", filter.getName())
             .execute()
@@ -79,7 +79,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
     @Test
     void testGetStar() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         Star entity = TestUtils.buildStar();
         StarDto dto = mapper.toDto(entity);
@@ -95,8 +95,8 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
         given(service.get(any())).willReturn(entity);
 
-        //when
-        //then
+        // when
+        // then
         graphQlTester.document(document)
             .variable("id", id)
             .execute()
@@ -170,7 +170,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
     @Test
     void testDeleteStar() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
 
         // language=GraphQL
@@ -180,8 +180,8 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
                 }
             """;
 
-        //when
-        //then
+        // when
+        // then
         graphQlTester.document(document)
             .variable("id", id)
             .executeAndVerify();

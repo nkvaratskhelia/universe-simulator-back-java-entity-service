@@ -46,7 +46,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
     @Test
     void testGetMoons() {
-        //given
+        // given
         Moon entity = TestUtils.buildMoon();
         List<Moon> entityList = List.of(entity);
 
@@ -65,8 +65,8 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
         given(service.getList(any(), any())).willReturn(entityPage);
 
-        //when
-        //then
+        // when
+        // then
         graphQlTester.document(document)
             .variable("name", filter.getName())
             .execute()
@@ -79,7 +79,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
     @Test
     void testGetMoon() throws Exception {
-        //given
+        // given
         UUID id = UUID.randomUUID();
         Moon entity = TestUtils.buildMoon();
         MoonDto dto = mapper.toDto(entity);
@@ -95,8 +95,8 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
         given(service.get(any())).willReturn(entity);
 
-        //when
-        //then
+        // when
+        // then
         graphQlTester.document(document)
             .variable("id", id)
             .execute()
@@ -170,7 +170,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
     @Test
     void testDeleteMoon() {
-        //given
+        // given
         UUID id = UUID.randomUUID();
 
         // language=GraphQL
@@ -180,8 +180,8 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
                 }
             """;
 
-        //when
-        //then
+        // when
+        // then
         graphQlTester.document(document)
             .variable("id", id)
             .executeAndVerify();

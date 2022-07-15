@@ -36,7 +36,7 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
             .name(name)
             .build();
         PageRequest pageRequest = assemblePageRequest(pageInput);
-        log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
+        log.info("calling getList with filter {} and page {}", filter, pageRequest);
         Specification<Galaxy> specification = specificationBuilder.build(filter);
 
         Page<GalaxyDto> result = service.getList(specification, pageRequest)
