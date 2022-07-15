@@ -73,7 +73,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testGetList() throws Exception {
+    void testGetPlanets() throws Exception {
         // given
         var nameFilter = "E1";
 
@@ -90,7 +90,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testGet() throws Exception {
+    void testGetPlanet() throws Exception {
         // given
         UUID id = planet1.getId();
 
@@ -103,7 +103,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAddPlanet() throws Exception {
         // given
         PlanetDto planetDto3 = PlanetDto.builder()
             .name("name3")
@@ -131,7 +131,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdatePlanet() throws Exception {
         // given
         planet1.setName(planet1.getName() + "Update");
         MockHttpServletResponse response = performRequestWithBody(put("/planets"), planet1);
@@ -152,7 +152,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testDelete() throws Exception {
+    void testDeletePlanet() throws Exception {
         // given
         performRequest(delete("/planets/{id}", planet1.getId()));
 

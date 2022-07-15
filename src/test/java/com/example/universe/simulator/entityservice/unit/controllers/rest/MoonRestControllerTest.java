@@ -49,7 +49,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     private MoonMapper mapper;
 
     @Test
-    void testGetList() throws Exception {
+    void testGetMoons() throws Exception {
         // given
         List<Moon> entityList = List.of(
             TestUtils.buildMoon()
@@ -72,7 +72,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testGet() throws Exception {
+    void testGetMoon() throws Exception {
         // given
         UUID id = UUID.randomUUID();
         Moon entity = TestUtils.buildMoon();
@@ -86,7 +86,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAddMoon() throws Exception {
         // given
         MoonDto inputDto = TestUtils.buildMoonDtoForAdd();
         Moon entity = mapper.toEntity(inputDto);
@@ -101,7 +101,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdateMoon() throws Exception {
         // given
         MoonDto inputDto = TestUtils.buildMoonDtoForUpdate();
         Moon entity = mapper.toEntity(inputDto);
@@ -116,7 +116,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testDelete() throws Exception {
+    void testDeleteMoon() throws Exception {
         // given
         UUID id = UUID.randomUUID();
         // when

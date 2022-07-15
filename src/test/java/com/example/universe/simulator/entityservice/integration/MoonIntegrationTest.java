@@ -83,7 +83,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testGetList() throws Exception {
+    void testGetMoons() throws Exception {
         // given
         var nameFilter = "E1";
 
@@ -100,7 +100,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testGet() throws Exception {
+    void testGetMoon() throws Exception {
         // given
         UUID id = moon1.getId();
 
@@ -113,7 +113,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAddMoon() throws Exception {
         // given
         MoonDto moonDto3 = MoonDto.builder()
             .name("name3")
@@ -141,7 +141,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdateMoon() throws Exception {
         // given
         moon1.setName(moon1.getName() + "Update");
         MockHttpServletResponse response = performRequestWithBody(put("/moons"), moon1);
@@ -162,7 +162,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testDelete() throws Exception {
+    void testDeleteMoon() throws Exception {
         // given
         performRequest(delete("/moons/{id}", moon1.getId()));
 

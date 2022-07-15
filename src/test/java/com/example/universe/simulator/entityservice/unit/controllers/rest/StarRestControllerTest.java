@@ -49,7 +49,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     private StarMapper mapper;
 
     @Test
-    void testGetList() throws Exception {
+    void testGetStars() throws Exception {
         // given
         List<Star> entityList = List.of(
             TestUtils.buildStar()
@@ -72,7 +72,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testGet() throws Exception {
+    void testGetStar() throws Exception {
         // given
         UUID id = UUID.randomUUID();
         Star entity = TestUtils.buildStar();
@@ -86,7 +86,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAddStar() throws Exception {
         // given
         StarDto inputDto = TestUtils.buildStarDtoForAdd();
         Star entity = mapper.toEntity(inputDto);
@@ -101,7 +101,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdateStar() throws Exception {
         // given
         StarDto inputDto = TestUtils.buildStarDtoForUpdate();
         Star entity = mapper.toEntity(inputDto);
@@ -116,7 +116,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testDelete() throws Exception {
+    void testDeleteStar() throws Exception {
         // given
         UUID id = UUID.randomUUID();
         // when

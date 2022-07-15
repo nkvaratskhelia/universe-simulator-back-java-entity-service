@@ -49,7 +49,7 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     private GalaxyMapper mapper;
 
     @Test
-    void testGetList() throws Exception {
+    void testGetGalaxies() throws Exception {
         // given
         List<Galaxy> entityList = List.of(
             TestUtils.buildGalaxy()
@@ -72,7 +72,7 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testGet() throws Exception {
+    void testGetGalaxy() throws Exception {
         // given
         UUID id = UUID.randomUUID();
         Galaxy entity = TestUtils.buildGalaxy();
@@ -86,7 +86,7 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAddGalaxy() throws Exception {
         // given
         GalaxyDto inputDto = TestUtils.buildGalaxyDtoForAdd();
         Galaxy entity = mapper.toEntity(inputDto);
@@ -101,7 +101,7 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdateGalaxy() throws Exception {
         // given
         GalaxyDto inputDto = TestUtils.buildGalaxyDtoForUpdate();
         Galaxy entity = mapper.toEntity(inputDto);
@@ -116,7 +116,7 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testDelete() throws Exception {
+    void testDeleteGalaxy() throws Exception {
         // given
         UUID id = UUID.randomUUID();
         // when

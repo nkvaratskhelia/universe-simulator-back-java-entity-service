@@ -39,7 +39,7 @@ public class PlanetRestController {
     private final PlanetMapper mapper;
 
     @GetMapping
-    public Callable<Page<PlanetDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
+    public Callable<Page<PlanetDto>> getPlanets(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = PlanetFilter.builder()
             .name(name)
             .build();
@@ -56,7 +56,7 @@ public class PlanetRestController {
     }
 
     @GetMapping("{id}")
-    public PlanetDto get(@PathVariable UUID id) throws AppException {
+    public PlanetDto getPlanet(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
         PlanetDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
@@ -65,7 +65,7 @@ public class PlanetRestController {
     }
 
     @PostMapping
-    public PlanetDto add(@RequestBody PlanetDto dto) throws AppException {
+    public PlanetDto addPlanet(@RequestBody PlanetDto dto) throws AppException {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
@@ -78,7 +78,7 @@ public class PlanetRestController {
     }
 
     @PutMapping
-    public PlanetDto update(@RequestBody PlanetDto dto) throws AppException {
+    public PlanetDto updatePlanet(@RequestBody PlanetDto dto) throws AppException {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
@@ -91,7 +91,7 @@ public class PlanetRestController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable UUID id) throws AppException {
+    public void deletePlanet(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);

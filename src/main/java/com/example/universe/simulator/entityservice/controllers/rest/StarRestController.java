@@ -39,7 +39,7 @@ public class StarRestController {
     private final StarMapper mapper;
 
     @GetMapping
-    public Callable<Page<StarDto>> getList(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
+    public Callable<Page<StarDto>> getStars(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = StarFilter.builder()
             .name(name)
             .build();
@@ -56,7 +56,7 @@ public class StarRestController {
     }
 
     @GetMapping("{id}")
-    public StarDto get(@PathVariable UUID id) throws AppException {
+    public StarDto getStar(@PathVariable UUID id) throws AppException {
         log.info("calling get with id [{}]", id);
         StarDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
@@ -65,7 +65,7 @@ public class StarRestController {
     }
 
     @PostMapping
-    public StarDto add(@RequestBody StarDto dto) throws AppException {
+    public StarDto addStar(@RequestBody StarDto dto) throws AppException {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
@@ -78,7 +78,7 @@ public class StarRestController {
     }
 
     @PutMapping
-    public StarDto update(@RequestBody StarDto dto) throws AppException {
+    public StarDto updateStar(@RequestBody StarDto dto) throws AppException {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
@@ -91,7 +91,7 @@ public class StarRestController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable UUID id) throws AppException {
+    public void deleteStar(@PathVariable UUID id) throws AppException {
         log.info("calling delete with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);
