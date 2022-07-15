@@ -1,22 +1,20 @@
 package com.example.universe.simulator.entityservice.mappers;
 
-import com.example.universe.simulator.entityservice.controllers.graphql.MoonGraphQLController;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(config = MappingConfig.class)
 public interface MoonMapper {
 
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Moon toEntity(AddMoonInput input);
+
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Moon toEntity(UpdateMoonInput input);
+
     MoonDto toDto(Moon entity);
-
-    Moon toEntity(MoonDto dto);
-
-    MoonDto toDto(MoonGraphQLController.UpdateMoonInput input);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "version", ignore = true)
-    MoonDto toDto(MoonGraphQLController.AddMoonInput input);
-
 }

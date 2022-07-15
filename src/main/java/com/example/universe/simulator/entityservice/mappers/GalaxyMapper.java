@@ -1,22 +1,20 @@
 package com.example.universe.simulator.entityservice.mappers;
 
-import com.example.universe.simulator.entityservice.controllers.graphql.GalaxyGraphQLController;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(config = MappingConfig.class)
 public interface GalaxyMapper {
 
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Galaxy toEntity(AddGalaxyInput input);
+
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Galaxy toEntity(UpdateGalaxyInput input);
+
     GalaxyDto toDto(Galaxy entity);
-
-    Galaxy toEntity(GalaxyDto dto);
-
-    GalaxyDto toDto(GalaxyGraphQLController.UpdateGalaxyInput input);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "version", ignore = true)
-    GalaxyDto toDto(GalaxyGraphQLController.AddGalaxyInput input);
-
 }

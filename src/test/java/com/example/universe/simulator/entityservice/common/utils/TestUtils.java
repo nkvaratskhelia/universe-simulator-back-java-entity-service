@@ -1,10 +1,6 @@
 package com.example.universe.simulator.entityservice.common.utils;
 
 import com.example.universe.simulator.common.dtos.EventDto;
-import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
-import com.example.universe.simulator.entityservice.dtos.MoonDto;
-import com.example.universe.simulator.entityservice.dtos.PlanetDto;
-import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.entities.Planet;
@@ -13,6 +9,14 @@ import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.AddPlanetInput;
+import com.example.universe.simulator.entityservice.inputs.AddStarInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
+import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
 import com.example.universe.simulator.entityservice.types.EventType;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -53,18 +57,12 @@ public final class TestUtils {
         );
     }
 
-    public static GalaxyDto buildGalaxyDtoForAdd() {
-        return GalaxyDto.builder()
-            .name("name")
-            .build();
+    public static AddGalaxyInput buildAddGalaxyInput() {
+        return new AddGalaxyInput("name");
     }
 
-    public static GalaxyDto buildGalaxyDtoForUpdate() {
-        GalaxyDto result = buildGalaxyDtoForAdd();
-        result.setId(UUID.randomUUID());
-        result.setVersion(0L);
-
-        return result;
+    public static UpdateGalaxyInput buildUpdateGalaxyInput() {
+        return new UpdateGalaxyInput(UUID.randomUUID(), 0L, "name");
     }
 
     public static GalaxyFilter buildGalaxyFilter() {
@@ -93,19 +91,12 @@ public final class TestUtils {
             .build();
     }
 
-    public static StarDto buildStarDtoForAdd() {
-        return StarDto.builder()
-            .name("name")
-            .galaxyId(UUID.randomUUID())
-            .build();
+    public static AddStarInput buildAddStarInput() {
+        return new AddStarInput("name", UUID.randomUUID());
     }
 
-    public static StarDto buildStarDtoForUpdate() {
-        StarDto result = buildStarDtoForAdd();
-        result.setId(UUID.randomUUID());
-        result.setVersion(0L);
-
-        return result;
+    public static UpdateStarInput buildUpdateStarInput() {
+        return new UpdateStarInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
     }
 
     public static StarFilter buildStarFilter() {
@@ -129,19 +120,12 @@ public final class TestUtils {
             .build();
     }
 
-    public static PlanetDto buildPlanetDtoForAdd() {
-        return PlanetDto.builder()
-            .name("name")
-            .starId(UUID.randomUUID())
-            .build();
+    public static AddPlanetInput buildAddPlanetInput() {
+        return new AddPlanetInput("name", UUID.randomUUID());
     }
 
-    public static PlanetDto buildPlanetDtoForUpdate() {
-        PlanetDto result = buildPlanetDtoForAdd();
-        result.setId(UUID.randomUUID());
-        result.setVersion(0L);
-
-        return result;
+    public static UpdatePlanetInput buildUpdatePlanetInput() {
+        return new UpdatePlanetInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
     }
 
     public static PlanetFilter buildPlanetFilter() {
@@ -165,19 +149,12 @@ public final class TestUtils {
             .build();
     }
 
-    public static MoonDto buildMoonDtoForAdd() {
-        return MoonDto.builder()
-            .name("name")
-            .planetId(UUID.randomUUID())
-            .build();
+    public static AddMoonInput buildAddMoonInput() {
+        return new AddMoonInput("name", UUID.randomUUID());
     }
 
-    public static MoonDto buildMoonDtoForUpdate() {
-        MoonDto result = buildMoonDtoForAdd();
-        result.setId(UUID.randomUUID());
-        result.setVersion(0L);
-
-        return result;
+    public static UpdateMoonInput buildUpdateMoonInput() {
+        return new UpdateMoonInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
     }
 
     public static MoonFilter buildMoonFilter() {

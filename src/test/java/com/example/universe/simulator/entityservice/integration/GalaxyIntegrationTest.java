@@ -3,6 +3,8 @@ package com.example.universe.simulator.entityservice.integration;
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.types.EventType;
@@ -84,9 +86,8 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testAddGalaxy() throws Exception {
         // given
-        MockHttpServletResponse response = performRequestWithBody(
-            post("/galaxies"),
-            GalaxyDto.builder().name("name3").build()
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxies"),
+            new AddGalaxyInput("name3")
         );
         GalaxyDto galaxy3 = readResponse(response, GalaxyDto.class);
 
@@ -107,9 +108,10 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testUpdateGalaxy() throws Exception {
         // given
-        galaxy1.setName(galaxy1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), galaxy1);
-        galaxy1 = readResponse(response, GalaxyDto.class);
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"),
+            new UpdateGalaxyInput(galaxy1.getId(), galaxy1.getVersion(), galaxy1.getName() + "Update")
+        );
+        GalaxyDto dto = readResponse(response, GalaxyDto.class);
 
         // when
         response = performRequest(get("/galaxies"));
@@ -118,7 +120,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(2)
-            .hasSameElementsAs(List.of(galaxy1, galaxy2));
+            .hasSameElementsAs(List.of(dto, galaxy2));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.GALAXY_UPDATE.toString(), 1L)
@@ -163,7 +165,9 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testCaching_update_keyNotInCache() throws Exception {
         // when
-        performRequestWithBody(put("/galaxies"), galaxy1);
+        performRequestWithBody(put("/galaxies"),
+            new UpdateGalaxyInput(galaxy1.getId(), galaxy1.getVersion(), galaxy1.getName() + "Update")
+        );
 
         // then
         Optional<Galaxy> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
@@ -179,16 +183,16 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         performRequest(get("/galaxies/{id}", galaxy1.getId()));
 
         // when
-        galaxy1.setName(galaxy1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), galaxy1);
-        galaxy1 = readResponse(response, GalaxyDto.class);
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"),
+            new UpdateGalaxyInput(galaxy1.getId(), galaxy1.getVersion(), galaxy1.getName() + "Update")
+        );
+        GalaxyDto dto = readResponse(response, GalaxyDto.class);
 
         // then
         Optional<GalaxyDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(galaxy1.getId(), Galaxy.class))
             .map(mapper::toDto);
-        assertThat(cache)
-            .hasValue(galaxy1);
+        assertThat(cache).hasValue(dto);
     }
 
     @Test

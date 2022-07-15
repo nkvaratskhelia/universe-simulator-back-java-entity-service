@@ -7,6 +7,8 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.MoonRepository;
@@ -115,14 +117,8 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testAddMoon() throws Exception {
         // given
-        MoonDto moonDto3 = MoonDto.builder()
-            .name("name3")
-            .planetId(planet.getId())
-            .build();
-
-        MockHttpServletResponse response = performRequestWithBody(
-            post("/moons"),
-            moonDto3
+        MockHttpServletResponse response = performRequestWithBody(post("/moons"),
+            new AddMoonInput("name3", planet.getId())
         );
         MoonDto moon3 = readResponse(response, MoonDto.class);
 
@@ -143,9 +139,10 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testUpdateMoon() throws Exception {
         // given
-        moon1.setName(moon1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/moons"), moon1);
-        moon1 = readResponse(response, MoonDto.class);
+        MockHttpServletResponse response = performRequestWithBody(put("/moons"),
+            new UpdateMoonInput(moon1.getId(), moon1.getVersion(), moon1.getName() + "Update", moon1.getPlanetId())
+        );
+        MoonDto dto = readResponse(response, MoonDto.class);
 
         // when
         response = performRequest(get("/moons"));
@@ -154,7 +151,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(2)
-            .hasSameElementsAs(List.of(moon1, moon2));
+            .hasSameElementsAs(List.of(dto, moon2));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.MOON_UPDATE.toString(), 1L)
@@ -199,7 +196,9 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testCaching_update_keyNotInCache() throws Exception {
         // when
-        performRequestWithBody(put("/moons"), moon1);
+        performRequestWithBody(put("/moons"),
+            new UpdateMoonInput(moon1.getId(), moon1.getVersion(), moon1.getName() + "Update", moon1.getPlanetId())
+        );
 
         // then
         Optional<Moon> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
@@ -215,16 +214,16 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         performRequest(get("/moons/{id}", moon1.getId()));
 
         // when
-        moon1.setName(moon1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/moons"), moon1);
-        moon1 = readResponse(response, MoonDto.class);
+        MockHttpServletResponse response = performRequestWithBody(put("/moons"),
+            new UpdateMoonInput(moon1.getId(), moon1.getVersion(), moon1.getName() + "Update", moon1.getPlanetId())
+        );
+        MoonDto dto = readResponse(response, MoonDto.class);
 
         // then
         Optional<MoonDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(moon1.getId(), Moon.class))
             .map(mapper::toDto);
-        assertThat(cache)
-            .hasValue(moon1);
+        assertThat(cache).hasValue(dto);
     }
 
     @Test
