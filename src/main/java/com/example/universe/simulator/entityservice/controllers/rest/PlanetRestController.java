@@ -82,7 +82,7 @@ public class PlanetRestController {
         validator.validate(dto, true);
 
         Planet entity = mapper.toEntity(dto);
-        PlanetDto result = mapper.toDto(service.add(entity));
+        PlanetDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
         return result;

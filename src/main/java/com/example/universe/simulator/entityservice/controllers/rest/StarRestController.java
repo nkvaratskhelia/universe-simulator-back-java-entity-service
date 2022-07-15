@@ -82,7 +82,7 @@ public class StarRestController {
         validator.validate(dto, true);
 
         Star entity = mapper.toEntity(dto);
-        StarDto result = mapper.toDto(service.add(entity));
+        StarDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
         return result;

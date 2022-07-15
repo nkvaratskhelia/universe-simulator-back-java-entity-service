@@ -82,7 +82,7 @@ public class GalaxyRestController {
         validator.validate(dto, true);
 
         Galaxy entity = mapper.toEntity(dto);
-        GalaxyDto result = mapper.toDto(service.add(entity));
+        GalaxyDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
         return result;
