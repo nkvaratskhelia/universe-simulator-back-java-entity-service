@@ -6,11 +6,12 @@ import com.example.universe.simulator.entityservice.controllers.rest.StarRestCon
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
+import com.example.universe.simulator.entityservice.inputs.AddStarInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
 import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,9 +39,6 @@ class StarRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private StarService service;
-
-    @MockBean
-    private StarDtoValidator validator;
 
     @MockBean
     private StarSpecificationBuilder specificationBuilder;
@@ -88,30 +86,28 @@ class StarRestControllerTest extends AbstractWebMvcTest {
     @Test
     void testAddStar() throws Exception {
         // given
-        StarDto inputDto = TestUtils.buildStarDtoForAdd();
-        Star entity = mapper.toEntity(inputDto);
-        StarDto resultDto = mapper.toDto(entity);
+        AddStarInput input = TestUtils.buildAddStarInput();
+        Star entity = mapper.toEntity(input);
+        StarDto dto = mapper.toDto(entity);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/stars"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/stars"), input);
         // then
-        verifySuccessfulResponse(response, resultDto);
-        then(validator).should().validate(inputDto, false);
+        verifySuccessfulResponse(response, dto);
         then(service).should().add(entity);
     }
 
     @Test
     void testUpdateStar() throws Exception {
         // given
-        StarDto inputDto = TestUtils.buildStarDtoForUpdate();
-        Star entity = mapper.toEntity(inputDto);
-        StarDto resultDto = mapper.toDto(entity);
+        UpdateStarInput input = TestUtils.buildUpdateStarInput();
+        Star entity = mapper.toEntity(input);
+        StarDto dto = mapper.toDto(entity);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/stars"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/stars"), input);
         // then
-        verifySuccessfulResponse(response, resultDto);
-        then(validator).should().validate(inputDto, true);
+        verifySuccessfulResponse(response, dto);
         then(service).should().update(entity);
     }
 

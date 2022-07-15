@@ -3,14 +3,14 @@ package com.example.universe.simulator.entityservice.unit.exception;
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestController;
-import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
-import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -47,9 +47,6 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     private GalaxyService service;
 
     @MockBean
-    private GalaxyDtoValidator validator;
-
-    @MockBean
     private GalaxySpecificationBuilder specificationBuilder;
 
     @SpyBean
@@ -83,10 +80,10 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     @Test
     void testHttpMediaTypeNotSupportedException_missingContentType() throws Exception {
         // given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
+        AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
         // when
         MockHttpServletResponse response = performRequest(post("/galaxies")
-            .content(objectMapper.writeValueAsString(dto))
+            .content(objectMapper.writeValueAsString(input))
         );
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
@@ -96,11 +93,11 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     @Test
     void testHttpMediaTypeNotSupportedException_invalidContentType() throws Exception {
         // given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
+        AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
         // when
         MockHttpServletResponse response = performRequest(post("/galaxies")
             .contentType(MediaType.APPLICATION_XML)
-            .content(objectMapper.writeValueAsString(dto))
+            .content(objectMapper.writeValueAsString(input))
         );
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
@@ -141,11 +138,11 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     @Test
     void testObjectOptimisticLockingFailureException() throws Exception {
         // given
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = mapper.toEntity(dto);
+        UpdateGalaxyInput input = TestUtils.buildUpdateGalaxyInput();
+        Galaxy entity = mapper.toEntity(input);
         given(service.update(any())).willThrow(ObjectOptimisticLockingFailureException.class);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), dto);
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), input);
         // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
         then(service).should().update(entity);

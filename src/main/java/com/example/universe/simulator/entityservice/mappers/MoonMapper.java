@@ -2,12 +2,19 @@ package com.example.universe.simulator.entityservice.mappers;
 
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
+import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(config = MappingConfig.class)
 public interface MoonMapper {
 
-    MoonDto toDto(Moon entity);
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Moon toEntity(AddMoonInput input);
 
-    Moon toEntity(MoonDto dto);
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Moon toEntity(UpdateMoonInput input);
+
+    MoonDto toDto(Moon entity);
 }

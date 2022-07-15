@@ -4,10 +4,11 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -34,7 +36,6 @@ import java.util.concurrent.Callable;
 public class GalaxyRestController {
 
     private final GalaxyService service;
-    private final GalaxyDtoValidator validator;
     private final GalaxySpecificationBuilder specificationBuilder;
     private final GalaxyMapper mapper;
 
@@ -65,11 +66,10 @@ public class GalaxyRestController {
     }
 
     @PostMapping
-    public GalaxyDto addGalaxy(@RequestBody GalaxyDto dto) throws AppException {
-        log.info("calling add with {}", dto);
-        validator.validate(dto, false);
+    public GalaxyDto addGalaxy(@RequestBody @Valid AddGalaxyInput input) throws AppException {
+        log.info("calling add with {}", input);
 
-        Galaxy entity = mapper.toEntity(dto);
+        Galaxy entity = mapper.toEntity(input);
         GalaxyDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
@@ -77,11 +77,10 @@ public class GalaxyRestController {
     }
 
     @PutMapping
-    public GalaxyDto updateGalaxy(@RequestBody GalaxyDto dto) throws AppException {
-        log.info("calling update with {}", dto);
-        validator.validate(dto, true);
+    public GalaxyDto updateGalaxy(@RequestBody @Valid UpdateGalaxyInput input) throws AppException {
+        log.info("calling update with {}", input);
 
-        Galaxy entity = mapper.toEntity(dto);
+        Galaxy entity = mapper.toEntity(input);
         GalaxyDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 

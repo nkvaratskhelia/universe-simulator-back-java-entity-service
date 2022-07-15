@@ -2,6 +2,7 @@ package com.example.universe.simulator.entityservice.integration;
 
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -35,25 +36,28 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
         // given
 
         // add entity
-        GalaxyDto dto = TestUtils.buildGalaxyDtoForAdd();
-        MockHttpServletResponse response = performRequestWithBody(post("/galaxies"), dto);
-        GalaxyDto addedDto = readResponse(response, GalaxyDto.class);
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxies"),
+            TestUtils.buildAddGalaxyInput()
+        );
+        GalaxyDto dto = readResponse(response, GalaxyDto.class);
 
         // update entity once
-        addedDto.setName(addedDto.getName() + "Update1");
-        performRequestWithBody(put("/galaxies"), addedDto);
+        performRequestWithBody(put("/galaxies"),
+            new UpdateGalaxyInput(dto.getId(), dto.getVersion(), dto.getName() + "Update1")
+        );
 
         // when
 
         // update entity second time without increasing version
-        addedDto.setName(addedDto.getName() + "Update2");
-        response = performRequestWithBody(put("/galaxies"), addedDto);
+        response = performRequestWithBody(put("/galaxies"),
+            new UpdateGalaxyInput(dto.getId(), dto.getVersion(), dto.getName() + "Update2")
+        );
 
         // then
         verifyErrorResponse(response, ErrorCodeType.ENTITY_MODIFIED);
 
         // cleanup
-        performRequest(delete("/galaxies/{id}", addedDto.getId()));
+        performRequest(delete("/galaxies/{id}", dto.getId()));
     }
 
     @Test

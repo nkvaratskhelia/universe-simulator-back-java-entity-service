@@ -5,6 +5,8 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.inputs.AddStarInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
 import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
@@ -94,14 +96,8 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testAddStar() throws Exception {
         // given
-        StarDto starDto3 = StarDto.builder()
-            .name("name3")
-            .galaxyId(galaxy.getId())
-            .build();
-
-        MockHttpServletResponse response = performRequestWithBody(
-            post("/stars"),
-            starDto3
+        MockHttpServletResponse response = performRequestWithBody(post("/stars"),
+            new AddStarInput("name3", galaxy.getId())
         );
         StarDto star3 = readResponse(response, StarDto.class);
 
@@ -122,9 +118,10 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testUpdateStar() throws Exception {
         // given
-        star1.setName(star1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/stars"), star1);
-        star1 = readResponse(response, StarDto.class);
+        MockHttpServletResponse response = performRequestWithBody(put("/stars"),
+            new UpdateStarInput(star1.getId(), star1.getVersion(), star1.getName() + "Update", star1.getGalaxyId())
+        );
+        StarDto dto = readResponse(response, StarDto.class);
 
         // when
         response = performRequest(get("/stars"));
@@ -133,7 +130,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(2)
-            .hasSameElementsAs(List.of(star1, star2));
+            .hasSameElementsAs(List.of(dto, star2));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.STAR_UPDATE.toString(), 1L)
@@ -178,7 +175,9 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testCaching_update_keyNotInCache() throws Exception {
         // when
-        performRequestWithBody(put("/stars"), star1);
+        performRequestWithBody(put("/stars"),
+            new UpdateStarInput(star1.getId(), star1.getVersion(), star1.getName() + "Update", star1.getGalaxyId())
+        );
 
         // then
         Optional<Star> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
@@ -194,16 +193,16 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         performRequest(get("/stars/{id}", star1.getId()));
 
         // when
-        star1.setName(star1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/stars"), star1);
-        star1 = readResponse(response, StarDto.class);
+        MockHttpServletResponse response = performRequestWithBody(put("/stars"),
+            new UpdateStarInput(star1.getId(), star1.getVersion(), star1.getName() + "Update", star1.getGalaxyId())
+        );
+        StarDto dto = readResponse(response, StarDto.class);
 
         // then
         Optional<StarDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(star1.getId(), Star.class))
             .map(mapper::toDto);
-        assertThat(cache)
-            .hasValue(star1);
+        assertThat(cache).hasValue(dto);
     }
 
     @Test

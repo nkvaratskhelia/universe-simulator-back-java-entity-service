@@ -4,10 +4,11 @@ import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
+import com.example.universe.simulator.entityservice.inputs.AddStarInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
 import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -34,7 +36,6 @@ import java.util.concurrent.Callable;
 public class StarRestController {
 
     private final StarService service;
-    private final StarDtoValidator validator;
     private final StarSpecificationBuilder specificationBuilder;
     private final StarMapper mapper;
 
@@ -65,11 +66,10 @@ public class StarRestController {
     }
 
     @PostMapping
-    public StarDto addStar(@RequestBody StarDto dto) throws AppException {
-        log.info("calling add with {}", dto);
-        validator.validate(dto, false);
+    public StarDto addStar(@RequestBody @Valid AddStarInput input) throws AppException {
+        log.info("calling add with {}", input);
 
-        Star entity = mapper.toEntity(dto);
+        Star entity = mapper.toEntity(input);
         StarDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
@@ -77,11 +77,10 @@ public class StarRestController {
     }
 
     @PutMapping
-    public StarDto updateStar(@RequestBody StarDto dto) throws AppException {
-        log.info("calling update with {}", dto);
-        validator.validate(dto, true);
+    public StarDto updateStar(@RequestBody @Valid UpdateStarInput input) throws AppException {
+        log.info("calling update with {}", input);
 
-        Star entity = mapper.toEntity(dto);
+        Star entity = mapper.toEntity(input);
         StarDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
