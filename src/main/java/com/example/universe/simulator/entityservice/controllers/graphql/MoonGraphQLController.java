@@ -36,7 +36,7 @@ public class MoonGraphQLController extends AbstractGraphQLController {
             .name(name)
             .build();
         PageRequest pageRequest = assemblePageRequest(pageInput);
-        log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
+        log.info("calling getList with filter {} and page {}", filter, pageRequest);
         Specification<Moon> specification = specificationBuilder.build(filter);
 
         Page<MoonDto> result = service.getList(specification, pageRequest)
@@ -44,7 +44,6 @@ public class MoonGraphQLController extends AbstractGraphQLController {
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
-
     }
 
     @QueryMapping
@@ -91,10 +90,7 @@ public class MoonGraphQLController extends AbstractGraphQLController {
         return id;
     }
 
-    public record AddMoonInput(String name, UUID planetId) {
-    }
+    public record AddMoonInput(String name, UUID planetId) {}
 
-    public record UpdateMoonInput(UUID id, String name, Long version, UUID planetId) {
-    }
-
+    public record UpdateMoonInput(UUID id, String name, Long version, UUID planetId) {}
 }

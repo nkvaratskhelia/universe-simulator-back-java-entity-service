@@ -36,7 +36,7 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
             .name(name)
             .build();
         PageRequest pageRequest = assemblePageRequest(pageInput);
-        log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
+        log.info("calling getList with filter {} and page {}", filter, pageRequest);
         Specification<Planet> specification = specificationBuilder.build(filter);
 
         Page<PlanetDto> result = service.getList(specification, pageRequest)
@@ -44,7 +44,6 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
-
     }
 
     @QueryMapping
@@ -91,10 +90,7 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
         return id;
     }
 
-    public record AddPlanetInput(String name, UUID starId) {
-    }
+    public record AddPlanetInput(String name, UUID starId) {}
 
-    public record UpdatePlanetInput(UUID id, String name, Long version, UUID starId) {
-    }
-
+    public record UpdatePlanetInput(UUID id, String name, Long version, UUID starId) {}
 }

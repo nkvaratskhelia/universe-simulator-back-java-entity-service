@@ -44,7 +44,6 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
-
     }
 
     @QueryMapping
@@ -91,10 +90,7 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
         return id;
     }
 
-    public record AddGalaxyInput(String name) {
-    }
+    public record AddGalaxyInput(String name) {}
 
-    public record UpdateGalaxyInput(UUID id, String name, Long version) {
-    }
-
+    public record UpdateGalaxyInput(UUID id, String name, Long version) {}
 }

@@ -36,7 +36,7 @@ public class StarGraphQLController extends AbstractGraphQLController {
             .name(name)
             .build();
         PageRequest pageRequest = assemblePageRequest(pageInput);
-        log.info("calling getList with filter [{}] and page {}", filter, pageRequest);
+        log.info("calling getList with filter {} and page {}", filter, pageRequest);
         Specification<Star> specification = specificationBuilder.build(filter);
 
         Page<StarDto> result = service.getList(specification, pageRequest)
@@ -44,7 +44,6 @@ public class StarGraphQLController extends AbstractGraphQLController {
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
-
     }
 
     @QueryMapping
@@ -91,10 +90,7 @@ public class StarGraphQLController extends AbstractGraphQLController {
         return id;
     }
 
-    public record AddStarInput(String name, UUID galaxyId) {
-    }
+    public record AddStarInput(String name, UUID galaxyId) {}
 
-    public record UpdateStarInput(UUID id, String name, Long version, UUID galaxyId) {
-    }
-
+    public record UpdateStarInput(UUID id, String name, Long version, UUID galaxyId) {}
 }
