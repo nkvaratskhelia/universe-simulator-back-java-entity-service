@@ -69,9 +69,8 @@ public class GalaxyRestController {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        GalaxyDto result = mapper.toDto(
-            service.add(mapper.toEntity(dto))
-        );
+        Galaxy entity = mapper.toEntity(dto);
+        GalaxyDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
         return result;
@@ -82,9 +81,8 @@ public class GalaxyRestController {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        GalaxyDto result = mapper.toDto(
-            service.update(mapper.toEntity(dto))
-        );
+        Galaxy entity = mapper.toEntity(dto);
+        GalaxyDto result = mapper.toDto(service.add(entity));
         log.info("updated [{}]", result.getId());
 
         return result;
