@@ -82,7 +82,7 @@ public class MoonRestController {
         validator.validate(dto, true);
 
         Moon entity = mapper.toEntity(dto);
-        MoonDto result = mapper.toDto(service.add(entity));
+        MoonDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
         return result;
