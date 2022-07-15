@@ -223,8 +223,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         Optional<MoonDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(moon1.getId(), Moon.class))
             .map(mapper::toDto);
-        assertThat(cache)
-            .hasValue(dto);
+        assertThat(cache).hasValue(dto);
     }
 
     @Test
