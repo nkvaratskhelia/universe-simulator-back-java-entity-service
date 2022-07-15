@@ -1,17 +1,17 @@
 scalar Long
 
 type Query {
+    getGalaxies(name: String, pageInput: PageInput): [GalaxyDto]
     getGalaxy(id: ID!): GalaxyDto
-    getGalaxies(name: String pageInput: PageInput): [GalaxyDto]
 
+    getStars(name: String, pageInput: PageInput): [StarDto]
     getStar(id: ID!): StarDto
-    getStars(name: String pageInput: PageInput): [StarDto]
 
+    getPlanets(name: String, pageInput: PageInput): [PlanetDto]
     getPlanet(id: ID!): PlanetDto
-    getPlanets(name: String pageInput: PageInput): [PlanetDto]
 
+    getMoons(name: String, pageInput: PageInput): [MoonDto]
     getMoon(id: ID!): MoonDto
-    getMoons(name: String pageInput: PageInput): [MoonDto]
 }
 
 type Mutation {
@@ -32,46 +32,46 @@ type Mutation {
     deleteMoon(id: ID!): ID
 }
 
-enum Direction {
-    ASC
-    DESC
-}
-
-input SortOrder {
-    direction: Direction
-    property: String!
-}
-
 input PageInput {
     page: Int!
     size: Int!
     sortOrders: [SortOrder]
 }
 
+input SortOrder {
+    property: String!
+    direction: Direction
+}
+
+enum Direction {
+    ASC
+    DESC
+}
+
 type GalaxyDto {
     id: ID!
-    name: String
     version: Long
+    name: String
 }
 
 type StarDto {
     id: ID!
-    name: String
     version: Long
+    name: String
     galaxyId: ID
 }
 
 type PlanetDto {
     id: ID!
-    name: String
     version: Long
+    name: String
     starId: ID
 }
 
 type MoonDto {
     id: ID!
-    name: String
     version: Long
+    name: String
     planetId: ID
 }
 
@@ -81,8 +81,8 @@ input AddGalaxyInput {
 
 input UpdateGalaxyInput {
     id: ID!
-    name: String!
     version: Long!
+    name: String!
 }
 
 input AddStarInput {
@@ -92,8 +92,8 @@ input AddStarInput {
 
 input UpdateStarInput {
     id: ID!
-    name: String!
     version: Long!
+    name: String!
     galaxyId: ID!
 }
 
@@ -104,8 +104,8 @@ input AddPlanetInput {
 
 input UpdatePlanetInput {
     id: ID!
-    name: String!
     version: Long!
+    name: String!
     starId: ID!
 }
 
@@ -116,7 +116,7 @@ input AddMoonInput {
 
 input UpdateMoonInput {
     id: ID!
-    name: String!
     version: Long!
+    name: String!
     planetId: ID!
 }
