@@ -6,11 +6,12 @@ import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestC
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,9 +39,6 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private GalaxyService service;
-
-    @MockBean
-    private GalaxyDtoValidator validator;
 
     @MockBean
     private GalaxySpecificationBuilder specificationBuilder;
@@ -88,30 +86,28 @@ class GalaxyRestControllerTest extends AbstractWebMvcTest {
     @Test
     void testAddGalaxy() throws Exception {
         // given
-        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForAdd();
-        Galaxy entity = mapper.toEntity(inputDto);
-        GalaxyDto resultDto = mapper.toDto(entity);
+        AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
+        Galaxy entity = mapper.toEntity(input);
+        GalaxyDto dto = mapper.toDto(entity);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/galaxies"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/galaxies"), input);
         // then
-        verifySuccessfulResponse(response, resultDto);
-        then(validator).should().validate(inputDto, false);
+        verifySuccessfulResponse(response, dto);
         then(service).should().add(entity);
     }
 
     @Test
     void testUpdateGalaxy() throws Exception {
         // given
-        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = mapper.toEntity(inputDto);
-        GalaxyDto resultDto = mapper.toDto(entity);
+        UpdateGalaxyInput input = TestUtils.buildUpdateGalaxyInput();
+        Galaxy entity = mapper.toEntity(input);
+        GalaxyDto dto = mapper.toDto(entity);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), input);
         // then
-        verifySuccessfulResponse(response, resultDto);
-        then(validator).should().validate(inputDto, true);
+        verifySuccessfulResponse(response, dto);
         then(service).should().update(entity);
     }
 

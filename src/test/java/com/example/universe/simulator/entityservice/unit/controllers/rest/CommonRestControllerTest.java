@@ -8,7 +8,6 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,9 +32,6 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private GalaxyService service;
-
-    @MockBean
-    private GalaxyDtoValidator validator;
 
     @MockBean
     private GalaxySpecificationBuilder specificationBuilder;

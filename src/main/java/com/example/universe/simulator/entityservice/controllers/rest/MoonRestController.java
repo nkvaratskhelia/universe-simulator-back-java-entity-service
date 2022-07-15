@@ -4,10 +4,11 @@ import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -34,7 +36,6 @@ import java.util.concurrent.Callable;
 public class MoonRestController {
 
     private final MoonService service;
-    private final MoonDtoValidator validator;
     private final MoonSpecificationBuilder specificationBuilder;
     private final MoonMapper mapper;
 
@@ -65,11 +66,10 @@ public class MoonRestController {
     }
 
     @PostMapping
-    public MoonDto addMoon(@RequestBody MoonDto dto) throws AppException {
-        log.info("calling add with {}", dto);
-        validator.validate(dto, false);
+    public MoonDto addMoon(@RequestBody @Valid AddMoonInput input) throws AppException {
+        log.info("calling add with {}", input);
 
-        Moon entity = mapper.toEntity(dto);
+        Moon entity = mapper.toEntity(input);
         MoonDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
@@ -77,11 +77,10 @@ public class MoonRestController {
     }
 
     @PutMapping
-    public MoonDto updateMoon(@RequestBody MoonDto dto) throws AppException {
-        log.info("calling update with {}", dto);
-        validator.validate(dto, true);
+    public MoonDto updateMoon(@RequestBody @Valid UpdateMoonInput input) throws AppException {
+        log.info("calling update with {}", input);
 
-        Moon entity = mapper.toEntity(dto);
+        Moon entity = mapper.toEntity(input);
         MoonDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 

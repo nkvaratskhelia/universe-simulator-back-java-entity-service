@@ -2,12 +2,19 @@ package com.example.universe.simulator.entityservice.mappers;
 
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
+import com.example.universe.simulator.entityservice.inputs.AddPlanetInput;
+import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(config = MappingConfig.class)
 public interface PlanetMapper {
 
-    PlanetDto toDto(Planet entity);
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Planet toEntity(AddPlanetInput input);
 
-    Planet toEntity(PlanetDto dto);
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Planet toEntity(UpdatePlanetInput input);
+
+    PlanetDto toDto(Planet entity);
 }

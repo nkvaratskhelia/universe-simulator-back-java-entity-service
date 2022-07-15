@@ -6,11 +6,12 @@ import com.example.universe.simulator.entityservice.controllers.rest.MoonRestCon
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.mappers.MoonMapperImpl;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,9 +39,6 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private MoonService service;
-
-    @MockBean
-    private MoonDtoValidator validator;
 
     @MockBean
     private MoonSpecificationBuilder specificationBuilder;
@@ -88,30 +86,28 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
     @Test
     void testAddMoon() throws Exception {
         // given
-        MoonDto inputDto = TestUtils.buildMoonDtoForAdd();
-        Moon entity = mapper.toEntity(inputDto);
-        MoonDto resultDto = mapper.toDto(entity);
+        AddMoonInput input = TestUtils.buildAddMoonInput();
+        Moon entity = mapper.toEntity(input);
+        MoonDto dto = mapper.toDto(entity);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/moons"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/moons"), input);
         // then
-        verifySuccessfulResponse(response, resultDto);
-        then(validator).should().validate(inputDto, false);
+        verifySuccessfulResponse(response, dto);
         then(service).should().add(entity);
     }
 
     @Test
     void testUpdateMoon() throws Exception {
         // given
-        MoonDto inputDto = TestUtils.buildMoonDtoForUpdate();
-        Moon entity = mapper.toEntity(inputDto);
-        MoonDto resultDto = mapper.toDto(entity);
+        UpdateMoonInput input = TestUtils.buildUpdateMoonInput();
+        Moon entity = mapper.toEntity(input);
+        MoonDto dto = mapper.toDto(entity);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/moons"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/moons"), input);
         // then
-        verifySuccessfulResponse(response, resultDto);
-        then(validator).should().validate(inputDto, true);
+        verifySuccessfulResponse(response, dto);
         then(service).should().update(entity);
     }
 

@@ -6,6 +6,8 @@ import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.entities.Star;
+import com.example.universe.simulator.entityservice.inputs.AddPlanetInput;
+import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.PlanetRepository;
@@ -110,9 +112,8 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
             .starId(star.getId())
             .build();
 
-        MockHttpServletResponse response = performRequestWithBody(
-            post("/planets"),
-            planetDto3
+        MockHttpServletResponse response = performRequestWithBody(post("/planets"),
+            new AddPlanetInput("name3", star.getId())
         );
         PlanetDto planet3 = readResponse(response, PlanetDto.class);
 
@@ -133,9 +134,10 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testUpdatePlanet() throws Exception {
         // given
-        planet1.setName(planet1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/planets"), planet1);
-        planet1 = readResponse(response, PlanetDto.class);
+        MockHttpServletResponse response = performRequestWithBody(put("/planets"),
+            new UpdatePlanetInput(planet1.getId(), planet1.getVersion(), planet1.getName() + "Update", planet1.getStarId())
+        );
+        PlanetDto dto = readResponse(response, PlanetDto.class);
 
         // when
         response = performRequest(get("/planets"));
@@ -144,7 +146,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(2)
-            .hasSameElementsAs(List.of(planet1, planet2));
+            .hasSameElementsAs(List.of(dto, planet2));
 
         verifyEventsByType(Map.ofEntries(
             Map.entry(EventType.PLANET_UPDATE.toString(), 1L)
@@ -189,7 +191,9 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testCaching_update_keyNotInCache() throws Exception {
         // when
-        performRequestWithBody(put("/planets"), planet1);
+        performRequestWithBody(put("/planets"),
+            new UpdatePlanetInput(planet1.getId(), planet1.getVersion(), planet1.getName() + "Update", planet1.getStarId())
+        );
 
         // then
         Optional<Planet> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
@@ -205,16 +209,16 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         performRequest(get("/planets/{id}", planet1.getId()));
 
         // when
-        planet1.setName(planet1.getName() + "Update");
-        MockHttpServletResponse response = performRequestWithBody(put("/planets"), planet1);
-        planet1 = readResponse(response, PlanetDto.class);
+        MockHttpServletResponse response = performRequestWithBody(put("/planets"),
+            new UpdatePlanetInput(planet1.getId(), planet1.getVersion(), planet1.getName() + "Update", planet1.getStarId())
+        );
+        PlanetDto dto = readResponse(response, PlanetDto.class);
 
         // then
         Optional<PlanetDto> cache = Optional.ofNullable(cacheManager.getCache(CACHE_NAME))
             .map(item -> item.get(planet1.getId(), Planet.class))
             .map(mapper::toDto);
-        assertThat(cache)
-            .hasValue(planet1);
+        assertThat(cache).hasValue(dto);
     }
 
     @Test

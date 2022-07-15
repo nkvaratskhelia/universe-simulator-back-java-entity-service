@@ -6,11 +6,12 @@ import com.example.universe.simulator.entityservice.controllers.rest.PlanetRestC
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.inputs.AddPlanetInput;
+import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapperImpl;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,9 +39,6 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
 
     @MockBean
     private PlanetService service;
-
-    @MockBean
-    private PlanetDtoValidator validator;
 
     @MockBean
     private PlanetSpecificationBuilder specificationBuilder;
@@ -88,30 +86,28 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     @Test
     void testAddPlanet() throws Exception {
         // given
-        PlanetDto inputDto = TestUtils.buildPlanetDtoForAdd();
-        Planet entity = mapper.toEntity(inputDto);
-        PlanetDto resultDto = mapper.toDto(entity);
+        AddPlanetInput input = TestUtils.buildAddPlanetInput();
+        Planet entity = mapper.toEntity(input);
+        PlanetDto dto = mapper.toDto(entity);
         given(service.add(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(post("/planets"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(post("/planets"), input);
         // then
-        verifySuccessfulResponse(response, resultDto);
-        then(validator).should().validate(inputDto, false);
+        verifySuccessfulResponse(response, dto);
         then(service).should().add(entity);
     }
 
     @Test
     void testUpdatePlanet() throws Exception {
         // given
-        PlanetDto inputDto = TestUtils.buildPlanetDtoForUpdate();
-        Planet entity = mapper.toEntity(inputDto);
-        PlanetDto resultDto = mapper.toDto(entity);
+        UpdatePlanetInput input = TestUtils.buildUpdatePlanetInput();
+        Planet entity = mapper.toEntity(input);
+        PlanetDto dto = mapper.toDto(entity);
         given(service.update(any())).willReturn(entity);
         // when
-        MockHttpServletResponse response = performRequestWithBody(put("/planets"), inputDto);
+        MockHttpServletResponse response = performRequestWithBody(put("/planets"), input);
         // then
-        verifySuccessfulResponse(response, resultDto);
-        then(validator).should().validate(inputDto, true);
+        verifySuccessfulResponse(response, dto);
         then(service).should().update(entity);
     }
 

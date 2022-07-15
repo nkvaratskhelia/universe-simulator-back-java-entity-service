@@ -4,10 +4,11 @@ import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.inputs.AddPlanetInput;
+import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -34,7 +36,6 @@ import java.util.concurrent.Callable;
 public class PlanetRestController {
 
     private final PlanetService service;
-    private final PlanetDtoValidator validator;
     private final PlanetSpecificationBuilder specificationBuilder;
     private final PlanetMapper mapper;
 
@@ -65,11 +66,10 @@ public class PlanetRestController {
     }
 
     @PostMapping
-    public PlanetDto addPlanet(@RequestBody PlanetDto dto) throws AppException {
-        log.info("calling add with {}", dto);
-        validator.validate(dto, false);
+    public PlanetDto addPlanet(@RequestBody @Valid AddPlanetInput input) throws AppException {
+        log.info("calling add with {}", input);
 
-        Planet entity = mapper.toEntity(dto);
+        Planet entity = mapper.toEntity(input);
         PlanetDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
@@ -77,11 +77,10 @@ public class PlanetRestController {
     }
 
     @PutMapping
-    public PlanetDto updatePlanet(@RequestBody PlanetDto dto) throws AppException {
-        log.info("calling update with {}", dto);
-        validator.validate(dto, true);
+    public PlanetDto updatePlanet(@RequestBody @Valid UpdatePlanetInput input) throws AppException {
+        log.info("calling update with {}", input);
 
-        Planet entity = mapper.toEntity(dto);
+        Planet entity = mapper.toEntity(input);
         PlanetDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 

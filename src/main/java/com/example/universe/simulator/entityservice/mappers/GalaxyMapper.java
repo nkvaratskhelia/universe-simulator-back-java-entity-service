@@ -2,12 +2,19 @@ package com.example.universe.simulator.entityservice.mappers;
 
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(config = MappingConfig.class)
 public interface GalaxyMapper {
 
-    GalaxyDto toDto(Galaxy entity);
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Galaxy toEntity(AddGalaxyInput input);
 
-    Galaxy toEntity(GalaxyDto dto);
+    @Mapping(target = "name", expression = "java(input.name().strip())")
+    Galaxy toEntity(UpdateGalaxyInput input);
+
+    GalaxyDto toDto(Galaxy entity);
 }
