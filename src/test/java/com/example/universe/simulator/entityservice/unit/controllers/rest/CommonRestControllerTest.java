@@ -44,7 +44,7 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
     private GalaxyMapperImpl mapper;
 
     @Test
-    void testGetList_defaultPageable() throws Exception {
+    void testGetGalaxies_defaultPageable() throws Exception {
         // given
         List<Galaxy> entityList = List.of(
             TestUtils.buildGalaxy()
@@ -63,7 +63,7 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testGetList_customPageable() throws Exception {
+    void testGetGalaxies_customPageable() throws Exception {
         // given
         List<Galaxy> entityList = List.of(
             TestUtils.buildGalaxy()

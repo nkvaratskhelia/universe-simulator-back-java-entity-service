@@ -62,7 +62,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testGetList() throws Exception {
+    void testGetStars() throws Exception {
         // given
         var nameFilter = "E1";
 
@@ -79,7 +79,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testGet() throws Exception {
+    void testGetStar() throws Exception {
         // given
         UUID id = star1.getId();
 
@@ -92,7 +92,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAddStar() throws Exception {
         // given
         StarDto starDto3 = StarDto.builder()
             .name("name3")
@@ -120,7 +120,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdateStar() throws Exception {
         // given
         star1.setName(star1.getName() + "Update");
         MockHttpServletResponse response = performRequestWithBody(put("/stars"), star1);
@@ -141,7 +141,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testDelete() throws Exception {
+    void testDeleteStar() throws Exception {
         // given
         performRequest(delete("/stars/{id}", star1.getId()));
 

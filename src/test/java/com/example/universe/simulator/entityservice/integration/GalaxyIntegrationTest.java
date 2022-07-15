@@ -52,7 +52,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testGetList() throws Exception {
+    void testGetGalaxies() throws Exception {
         // given
         var nameFilter = "E1";
 
@@ -69,7 +69,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testGet() throws Exception {
+    void testGetGalaxy() throws Exception {
         // given
         UUID id = galaxy1.getId();
 
@@ -82,7 +82,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAddGalaxy() throws Exception {
         // given
         MockHttpServletResponse response = performRequestWithBody(
             post("/galaxies"),
@@ -105,7 +105,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdateGalaxy() throws Exception {
         // given
         galaxy1.setName(galaxy1.getName() + "Update");
         MockHttpServletResponse response = performRequestWithBody(put("/galaxies"), galaxy1);
@@ -126,7 +126,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testDelete() throws Exception {
+    void testDeleteGalaxy() throws Exception {
         // given
         performRequest(delete("/galaxies/{id}", galaxy1.getId()));
 

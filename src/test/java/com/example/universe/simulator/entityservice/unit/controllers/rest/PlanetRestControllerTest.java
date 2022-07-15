@@ -49,7 +49,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     private PlanetMapper mapper;
 
     @Test
-    void testGetList() throws Exception {
+    void testGetPlanets() throws Exception {
         // given
         List<Planet> entityList = List.of(
             TestUtils.buildPlanet()
@@ -72,7 +72,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testGet() throws Exception {
+    void testGetPlanet() throws Exception {
         // given
         UUID id = UUID.randomUUID();
         Planet entity = TestUtils.buildPlanet();
@@ -86,7 +86,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testAddPlanet() throws Exception {
         // given
         PlanetDto inputDto = TestUtils.buildPlanetDtoForAdd();
         Planet entity = mapper.toEntity(inputDto);
@@ -101,7 +101,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testUpdate() throws Exception {
+    void testUpdatePlanet() throws Exception {
         // given
         PlanetDto inputDto = TestUtils.buildPlanetDtoForUpdate();
         Planet entity = mapper.toEntity(inputDto);
@@ -116,7 +116,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testDelete() throws Exception {
+    void testDeletePlanet() throws Exception {
         // given
         UUID id = UUID.randomUUID();
         // when
