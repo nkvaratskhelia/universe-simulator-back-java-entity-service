@@ -69,9 +69,8 @@ public class StarRestController {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        StarDto result = mapper.toDto(
-            service.add(mapper.toEntity(dto))
-        );
+        Star entity = mapper.toEntity(dto);
+        StarDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
         return result;
@@ -82,9 +81,8 @@ public class StarRestController {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        StarDto result = mapper.toDto(
-            service.update(mapper.toEntity(dto))
-        );
+        Star entity = mapper.toEntity(dto);
+        StarDto result = mapper.toDto(service.add(entity));
         log.info("updated [{}]", result.getId());
 
         return result;

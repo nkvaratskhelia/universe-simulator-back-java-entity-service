@@ -69,9 +69,8 @@ public class MoonRestController {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        MoonDto result = mapper.toDto(
-            service.add(mapper.toEntity(dto))
-        );
+        Moon entity = mapper.toEntity(dto);
+        MoonDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
         return result;
@@ -82,9 +81,8 @@ public class MoonRestController {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        MoonDto result = mapper.toDto(
-            service.update(mapper.toEntity(dto))
-        );
+        Moon entity = mapper.toEntity(dto);
+        MoonDto result = mapper.toDto(service.add(entity));
         log.info("updated [{}]", result.getId());
 
         return result;

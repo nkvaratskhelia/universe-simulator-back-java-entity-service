@@ -69,9 +69,8 @@ public class PlanetRestController {
         log.info("calling add with {}", dto);
         validator.validate(dto, false);
 
-        PlanetDto result = mapper.toDto(
-            service.add(mapper.toEntity(dto))
-        );
+        Planet entity = mapper.toEntity(dto);
+        PlanetDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
         return result;
@@ -82,9 +81,8 @@ public class PlanetRestController {
         log.info("calling update with {}", dto);
         validator.validate(dto, true);
 
-        PlanetDto result = mapper.toDto(
-            service.update(mapper.toEntity(dto))
-        );
+        Planet entity = mapper.toEntity(dto);
+        PlanetDto result = mapper.toDto(service.add(entity));
         log.info("updated [{}]", result.getId());
 
         return result;
