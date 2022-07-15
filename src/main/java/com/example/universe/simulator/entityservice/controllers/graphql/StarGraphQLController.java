@@ -4,10 +4,11 @@ import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
+import com.example.universe.simulator.entityservice.inputs.AddStarInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
 import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @Controller
@@ -26,7 +28,6 @@ import java.util.UUID;
 public class StarGraphQLController extends AbstractGraphQLController {
 
     private final StarService service;
-    private final StarDtoValidator validator;
     private final StarSpecificationBuilder specificationBuilder;
     private final StarMapper mapper;
 
@@ -56,12 +57,10 @@ public class StarGraphQLController extends AbstractGraphQLController {
     }
 
     @MutationMapping
-    public StarDto addStar(@Argument AddStarInput input) throws AppException {
+    public StarDto addStar(@Argument @Valid AddStarInput input) throws AppException {
         log.info("calling add with {}", input);
-        StarDto dto = mapper.toDto(input);
-        validator.validate(dto, false);
 
-        Star entity = mapper.toEntity(dto);
+        Star entity = mapper.toEntity(input);
         StarDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
@@ -69,12 +68,10 @@ public class StarGraphQLController extends AbstractGraphQLController {
     }
 
     @MutationMapping
-    public StarDto updateStar(@Argument UpdateStarInput input) throws AppException {
+    public StarDto updateStar(@Argument @Valid UpdateStarInput input) throws AppException {
         log.info("calling update with {}", input);
-        StarDto dto = mapper.toDto(input);
-        validator.validate(dto, true);
 
-        Star entity = mapper.toEntity(dto);
+        Star entity = mapper.toEntity(input);
         StarDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
@@ -89,8 +86,4 @@ public class StarGraphQLController extends AbstractGraphQLController {
 
         return id;
     }
-
-    public record AddStarInput(String name, UUID galaxyId) {}
-
-    public record UpdateStarInput(UUID id, String name, Long version, UUID galaxyId) {}
 }

@@ -7,11 +7,12 @@ import com.example.universe.simulator.entityservice.controllers.graphql.PlanetGr
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
 import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
+import com.example.universe.simulator.entityservice.inputs.AddPlanetInput;
+import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapperImpl;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.PlanetDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,9 +35,6 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
 
     @MockBean
     private PlanetService service;
-
-    @MockBean
-    private PlanetDtoValidator validator;
 
     @MockBean
     private PlanetSpecificationBuilder specificationBuilder;
@@ -109,7 +107,7 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
     @Test
     void testAddPlanet() throws Exception {
         // given
-        PlanetDto inputDto = TestUtils.buildPlanetDtoForAdd();
+        AddPlanetInput input = TestUtils.buildAddPlanetInput();
         Planet entity = TestUtils.buildPlanet();
         PlanetDto resultDto = mapper.toDto(entity);
 
@@ -127,21 +125,20 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForPlanetAdd(inputDto))
+            .variable("input", TestUtils.buildInputMapForPlanetAdd(input))
             .execute()
             .path("addPlanet")
             .entity(PlanetDto.class)
             .isEqualTo(resultDto);
 
-        then(validator).should().validate(inputDto, false);
-        then(service).should().add(mapper.toEntity(inputDto));
+        then(service).should().add(mapper.toEntity(input));
     }
 
     @Test
     void testUpdatePlanet() throws Exception {
         // given
-        PlanetDto inputDto = TestUtils.buildPlanetDtoForUpdate();
-        Planet entity = mapper.toEntity(inputDto);
+        UpdatePlanetInput input = TestUtils.buildUpdatePlanetInput();
+        Planet entity = mapper.toEntity(input);
         PlanetDto resultDto = mapper.toDto(entity);
 
         // language=GraphQL
@@ -158,13 +155,12 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForPlanetUpdate(inputDto))
+            .variable("input", TestUtils.buildInputMapForPlanetUpdate(input))
             .execute()
             .path("updatePlanet")
             .entity(PlanetDto.class)
             .isEqualTo(resultDto);
 
-        then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
     }
 

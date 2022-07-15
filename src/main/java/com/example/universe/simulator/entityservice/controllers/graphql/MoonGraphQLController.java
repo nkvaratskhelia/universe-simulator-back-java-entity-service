@@ -4,10 +4,11 @@ import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @Controller
@@ -26,7 +28,6 @@ import java.util.UUID;
 public class MoonGraphQLController extends AbstractGraphQLController {
 
     private final MoonService service;
-    private final MoonDtoValidator validator;
     private final MoonSpecificationBuilder specificationBuilder;
     private final MoonMapper mapper;
 
@@ -56,12 +57,10 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     }
 
     @MutationMapping
-    public MoonDto addMoon(@Argument AddMoonInput input) throws AppException {
+    public MoonDto addMoon(@Argument @Valid AddMoonInput input) throws AppException {
         log.info("calling add with {}", input);
-        MoonDto dto = mapper.toDto(input);
-        validator.validate(dto, false);
 
-        Moon entity = mapper.toEntity(dto);
+        Moon entity = mapper.toEntity(input);
         MoonDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
@@ -69,12 +68,10 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     }
 
     @MutationMapping
-    public MoonDto updateMoon(@Argument UpdateMoonInput input) throws AppException {
+    public MoonDto updateMoon(@Argument @Valid UpdateMoonInput input) throws AppException {
         log.info("calling update with {}", input);
-        MoonDto dto = mapper.toDto(input);
-        validator.validate(dto, true);
 
-        Moon entity = mapper.toEntity(dto);
+        Moon entity = mapper.toEntity(input);
         MoonDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
@@ -89,8 +86,4 @@ public class MoonGraphQLController extends AbstractGraphQLController {
 
         return id;
     }
-
-    public record AddMoonInput(String name, UUID planetId) {}
-
-    public record UpdateMoonInput(UUID id, String name, Long version, UUID planetId) {}
 }

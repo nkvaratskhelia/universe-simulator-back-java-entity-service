@@ -4,10 +4,11 @@ import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @Controller
@@ -26,7 +28,6 @@ import java.util.UUID;
 public class GalaxyGraphQLController extends AbstractGraphQLController {
 
     private final GalaxyService service;
-    private final GalaxyDtoValidator validator;
     private final GalaxySpecificationBuilder specificationBuilder;
     private final GalaxyMapper mapper;
 
@@ -56,12 +57,10 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     }
 
     @MutationMapping
-    public GalaxyDto addGalaxy(@Argument AddGalaxyInput input) throws AppException {
+    public GalaxyDto addGalaxy(@Argument @Valid AddGalaxyInput input) throws AppException {
         log.info("calling add with {}", input);
-        GalaxyDto dto = mapper.toDto(input);
-        validator.validate(dto, false);
 
-        Galaxy entity = mapper.toEntity(dto);
+        Galaxy entity = mapper.toEntity(input);
         GalaxyDto result = mapper.toDto(service.add(entity));
         log.info("added [{}]", result.getId());
 
@@ -69,12 +68,10 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     }
 
     @MutationMapping
-    public GalaxyDto updateGalaxy(@Argument UpdateGalaxyInput input) throws AppException {
+    public GalaxyDto updateGalaxy(@Argument @Valid UpdateGalaxyInput input) throws AppException {
         log.info("calling update with {}", input);
-        GalaxyDto dto = mapper.toDto(input);
-        validator.validate(dto, true);
 
-        Galaxy entity = mapper.toEntity(dto);
+        Galaxy entity = mapper.toEntity(input);
         GalaxyDto result = mapper.toDto(service.update(entity));
         log.info("updated [{}]", result.getId());
 
@@ -89,8 +86,4 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
 
         return id;
     }
-
-    public record AddGalaxyInput(String name) {}
-
-    public record UpdateGalaxyInput(UUID id, String name, Long version) {}
 }

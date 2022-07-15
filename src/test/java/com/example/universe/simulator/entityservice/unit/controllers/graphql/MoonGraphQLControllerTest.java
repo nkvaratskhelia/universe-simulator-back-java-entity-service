@@ -7,11 +7,12 @@ import com.example.universe.simulator.entityservice.controllers.graphql.MoonGrap
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
+import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.mappers.MoonMapperImpl;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.MoonDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,9 +35,6 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
     @MockBean
     private MoonService service;
-
-    @MockBean
-    private MoonDtoValidator validator;
 
     @MockBean
     private MoonSpecificationBuilder specificationBuilder;
@@ -109,7 +107,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
     @Test
     void testAddMoon() throws Exception {
         // given
-        MoonDto inputDto = TestUtils.buildMoonDtoForAdd();
+        AddMoonInput input = TestUtils.buildAddMoonInput();
         Moon entity = TestUtils.buildMoon();
         MoonDto resultDto = mapper.toDto(entity);
 
@@ -127,21 +125,20 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForMoonAdd(inputDto))
+            .variable("input", TestUtils.buildInputMapForMoonAdd(input))
             .execute()
             .path("addMoon")
             .entity(MoonDto.class)
             .isEqualTo(resultDto);
 
-        then(validator).should().validate(inputDto, false);
-        then(service).should().add(mapper.toEntity(inputDto));
+        then(service).should().add(mapper.toEntity(input));
     }
 
     @Test
     void testUpdateMoon() throws Exception {
         // given
-        MoonDto inputDto = TestUtils.buildMoonDtoForUpdate();
-        Moon entity = mapper.toEntity(inputDto);
+        UpdateMoonInput input = TestUtils.buildUpdateMoonInput();
+        Moon entity = mapper.toEntity(input);
         MoonDto resultDto = mapper.toDto(entity);
 
         // language=GraphQL
@@ -158,13 +155,12 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForMoonUpdate(inputDto))
+            .variable("input", TestUtils.buildInputMapForMoonUpdate(input))
             .execute()
             .path("updateMoon")
             .entity(MoonDto.class)
             .isEqualTo(resultDto);
 
-        then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
     }
 

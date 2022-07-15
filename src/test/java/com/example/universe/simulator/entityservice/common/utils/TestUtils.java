@@ -171,57 +171,57 @@ public final class TestUtils {
             .build();
     }
 
-    public static Map<String, Object> buildInputMapForGalaxyAdd(GalaxyDto dto) {
-        return Map.of("name", dto.getName());
+    public static Map<String, Object> buildInputMapForGalaxyAdd(AddGalaxyInput input) {
+        return Map.of("name", input.name());
     }
 
-    public static Map<String, Object> buildInputMapForGalaxyUpdate(GalaxyDto dto) {
+    public static Map<String, Object> buildInputMapForGalaxyUpdate(UpdateGalaxyInput input) {
         return Map.of(
-            "id", dto.getId(),
-            "name", dto.getName(),
-            "version", dto.getVersion());
+            "id", input.id(),
+            "name", input.name(),
+            "version", input.version());
     }
 
-    public static Map<String, Object> buildInputMapForStarAdd(StarDto dto) {
+    public static Map<String, Object> buildInputMapForStarAdd(AddStarInput input) {
         return Map.of(
-            "name", dto.getName(),
-            "galaxyId", dto.getGalaxyId());
+            "name", input.name(),
+            "galaxyId", input.galaxyId());
     }
 
-    public static Map<String, Object> buildInputMapForStarUpdate(StarDto dto) {
+    public static Map<String, Object> buildInputMapForStarUpdate(UpdateStarInput input) {
         return Map.of(
-            "id", dto.getId(),
-            "name", dto.getName(),
-            "version", dto.getVersion(),
-            "galaxyId", dto.getGalaxyId());
+            "id", input.id(),
+            "name", input.name(),
+            "version", input.version(),
+            "galaxyId", input.galaxyId());
     }
 
-    public static Map<String, Object> buildInputMapForPlanetAdd(PlanetDto dto) {
+    public static Map<String, Object> buildInputMapForPlanetAdd(AddPlanetInput input) {
         return Map.of(
-            "name", dto.getName(),
-            "starId", dto.getStarId());
+            "name", input.name(),
+            "starId", input.starId());
     }
 
-    public static Map<String, Object> buildInputMapForPlanetUpdate(PlanetDto dto) {
+    public static Map<String, Object> buildInputMapForPlanetUpdate(UpdatePlanetInput input) {
         return Map.of(
-            "id", dto.getId(),
-            "name", dto.getName(),
-            "version", dto.getVersion(),
-            "starId", dto.getStarId());
+            "id", input.id(),
+            "name", input.name(),
+            "version", input.version(),
+            "starId", input.starId());
     }
 
-    public static Map<String, Object> buildInputMapForMoonAdd(MoonDto dto) {
+    public static Map<String, Object> buildInputMapForMoonAdd(AddMoonInput input) {
         return Map.of(
-            "name", dto.getName(),
-            "planetId", dto.getPlanetId());
+            "name", input.name(),
+            "planetId", input.planetId());
     }
 
-    public static Map<String, Object> buildInputMapForMoonUpdate(MoonDto dto) {
+    public static Map<String, Object> buildInputMapForMoonUpdate(UpdateMoonInput input) {
         return Map.of(
-            "id", dto.getId(),
-            "name", dto.getName(),
-            "version", dto.getVersion(),
-            "planetId", dto.getPlanetId());
+            "id", input.id(),
+            "name", input.name(),
+            "version", input.version(),
+            "planetId", input.planetId());
     }
 
     public static Map<String, Object> buildInputMapForPagingAndSorting(Pageable pageable) {

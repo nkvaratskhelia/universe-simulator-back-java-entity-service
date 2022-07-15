@@ -7,11 +7,12 @@ import com.example.universe.simulator.entityservice.controllers.graphql.GalaxyGr
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
+import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.GalaxyDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,9 +35,6 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
 
     @MockBean
     private GalaxyService service;
-
-    @MockBean
-    private GalaxyDtoValidator validator;
 
     @MockBean
     private GalaxySpecificationBuilder specificationBuilder;
@@ -109,7 +107,7 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
     @Test
     void testAddGalaxy() throws Exception {
         // given
-        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForAdd();
+        AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
         Galaxy entity = TestUtils.buildGalaxy();
         GalaxyDto resultDto = mapper.toDto(entity);
 
@@ -127,21 +125,20 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForGalaxyAdd(inputDto))
+            .variable("input", TestUtils.buildInputMapForGalaxyAdd(input))
             .execute()
             .path("addGalaxy")
             .entity(GalaxyDto.class)
             .isEqualTo(resultDto);
 
-        then(validator).should().validate(inputDto, false);
-        then(service).should().add(mapper.toEntity(inputDto));
+        then(service).should().add(mapper.toEntity(input));
     }
 
     @Test
     void testUpdateGalaxy() throws Exception {
         // given
-        GalaxyDto inputDto = TestUtils.buildGalaxyDtoForUpdate();
-        Galaxy entity = mapper.toEntity(inputDto);
+        UpdateGalaxyInput input = TestUtils.buildUpdateGalaxyInput();
+        Galaxy entity = mapper.toEntity(input);
         GalaxyDto resultDto = mapper.toDto(entity);
 
         // language=GraphQL
@@ -158,13 +155,12 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForGalaxyUpdate(inputDto))
+            .variable("input", TestUtils.buildInputMapForGalaxyUpdate(input))
             .execute()
             .path("updateGalaxy")
             .entity(GalaxyDto.class)
             .isEqualTo(resultDto);
 
-        then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
     }
 

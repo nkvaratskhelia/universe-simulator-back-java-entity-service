@@ -7,11 +7,12 @@ import com.example.universe.simulator.entityservice.controllers.graphql.StarGrap
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
+import com.example.universe.simulator.entityservice.inputs.AddStarInput;
+import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
 import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.mappers.StarMapperImpl;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
-import com.example.universe.simulator.entityservice.validators.StarDtoValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,9 +35,6 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
     @MockBean
     private StarService service;
-
-    @MockBean
-    private StarDtoValidator validator;
 
     @MockBean
     private StarSpecificationBuilder specificationBuilder;
@@ -109,7 +107,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
     @Test
     void testAddStar() throws Exception {
         // given
-        StarDto inputDto = TestUtils.buildStarDtoForAdd();
+        AddStarInput input = TestUtils.buildAddStarInput();
         Star entity = TestUtils.buildStar();
         StarDto resultDto = mapper.toDto(entity);
 
@@ -127,21 +125,20 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForStarAdd(inputDto))
+            .variable("input", TestUtils.buildInputMapForStarAdd(input))
             .execute()
             .path("addStar")
             .entity(StarDto.class)
             .isEqualTo(resultDto);
 
-        then(validator).should().validate(inputDto, false);
-        then(service).should().add(mapper.toEntity(inputDto));
+        then(service).should().add(mapper.toEntity(input));
     }
 
     @Test
     void testUpdateStar() throws Exception {
         // given
-        StarDto inputDto = TestUtils.buildStarDtoForUpdate();
-        Star entity = mapper.toEntity(inputDto);
+        UpdateStarInput input = TestUtils.buildUpdateStarInput();
+        Star entity = mapper.toEntity(input);
         StarDto resultDto = mapper.toDto(entity);
 
         // language=GraphQL
@@ -158,13 +155,12 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
         // when
         // then
         graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForStarUpdate(inputDto))
+            .variable("input", TestUtils.buildInputMapForStarUpdate(input))
             .execute()
             .path("updateStar")
             .entity(StarDto.class)
             .isEqualTo(resultDto);
 
-        then(validator).should().validate(inputDto, true);
         then(service).should().update(entity);
     }
 
