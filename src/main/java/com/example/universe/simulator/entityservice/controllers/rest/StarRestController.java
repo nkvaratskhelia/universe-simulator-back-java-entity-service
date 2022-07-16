@@ -44,7 +44,7 @@ public class StarRestController {
         var filter = StarFilter.builder()
             .name(name)
             .build();
-        log.info("calling getList with filter {} and {}", filter, pageable);
+        log.info("calling getStars with {} and {}", filter, pageable);
         Specification<Star> specification = specificationBuilder.build(filter);
 
         return () -> {
@@ -58,7 +58,7 @@ public class StarRestController {
 
     @GetMapping("{id}")
     public StarDto getStar(@PathVariable UUID id) throws AppException {
-        log.info("calling get with id [{}]", id);
+        log.info("calling getStar with id [{}]", id);
         StarDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
@@ -67,10 +67,10 @@ public class StarRestController {
 
     @PostMapping
     public StarDto addStar(@RequestBody @Valid AddStarInput input) throws AppException {
-        log.info("calling add with {}", input);
+        log.info("calling addStar with {}", input);
 
-        Star entity = mapper.toEntity(input);
-        StarDto result = mapper.toDto(service.add(entity));
+        Star entity = service.add(mapper.toEntity(input));
+        StarDto result = mapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -78,10 +78,10 @@ public class StarRestController {
 
     @PutMapping
     public StarDto updateStar(@RequestBody @Valid UpdateStarInput input) throws AppException {
-        log.info("calling update with {}", input);
+        log.info("calling updateStar with {}", input);
 
-        Star entity = mapper.toEntity(input);
-        StarDto result = mapper.toDto(service.update(entity));
+        Star entity = service.update(mapper.toEntity(input));
+        StarDto result = mapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;
@@ -89,7 +89,7 @@ public class StarRestController {
 
     @DeleteMapping("{id}")
     public void deleteStar(@PathVariable UUID id) throws AppException {
-        log.info("calling delete with id [{}]", id);
+        log.info("calling deleteStar with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);
     }

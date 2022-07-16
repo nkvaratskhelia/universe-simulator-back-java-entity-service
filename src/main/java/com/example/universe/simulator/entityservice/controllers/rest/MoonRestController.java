@@ -44,7 +44,7 @@ public class MoonRestController {
         var filter = MoonFilter.builder()
             .name(name)
             .build();
-        log.info("calling getList with filter {} and {}", filter, pageable);
+        log.info("calling getMoons with {} and {}", filter, pageable);
         Specification<Moon> specification = specificationBuilder.build(filter);
 
         return () -> {
@@ -58,7 +58,7 @@ public class MoonRestController {
 
     @GetMapping("{id}")
     public MoonDto getMoon(@PathVariable UUID id) throws AppException {
-        log.info("calling get with id [{}]", id);
+        log.info("calling getMoon with id [{}]", id);
         MoonDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
@@ -67,10 +67,10 @@ public class MoonRestController {
 
     @PostMapping
     public MoonDto addMoon(@RequestBody @Valid AddMoonInput input) throws AppException {
-        log.info("calling add with {}", input);
+        log.info("calling addMoon with {}", input);
 
-        Moon entity = mapper.toEntity(input);
-        MoonDto result = mapper.toDto(service.add(entity));
+        Moon entity = service.add(mapper.toEntity(input));
+        MoonDto result = mapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -78,10 +78,10 @@ public class MoonRestController {
 
     @PutMapping
     public MoonDto updateMoon(@RequestBody @Valid UpdateMoonInput input) throws AppException {
-        log.info("calling update with {}", input);
+        log.info("calling updateMoon with {}", input);
 
-        Moon entity = mapper.toEntity(input);
-        MoonDto result = mapper.toDto(service.update(entity));
+        Moon entity = service.update(mapper.toEntity(input));
+        MoonDto result = mapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;
@@ -89,7 +89,7 @@ public class MoonRestController {
 
     @DeleteMapping("{id}")
     public void deleteMoon(@PathVariable UUID id) {
-        log.info("calling delete with id [{}]", id);
+        log.info("calling deleteMoon with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);
     }

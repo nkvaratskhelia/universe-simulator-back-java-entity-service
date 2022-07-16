@@ -44,7 +44,7 @@ public class GalaxyRestController {
         var filter = GalaxyFilter.builder()
             .name(name)
             .build();
-        log.info("calling getList with filter {} and {}", filter, pageable);
+        log.info("calling getGalaxies with {} and {}", filter, pageable);
         Specification<Galaxy> specification = specificationBuilder.build(filter);
 
         return () -> {
@@ -58,7 +58,7 @@ public class GalaxyRestController {
 
     @GetMapping("{id}")
     public GalaxyDto getGalaxy(@PathVariable UUID id) throws AppException {
-        log.info("calling get with id [{}]", id);
+        log.info("calling getGalaxy with id [{}]", id);
         GalaxyDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
@@ -67,10 +67,10 @@ public class GalaxyRestController {
 
     @PostMapping
     public GalaxyDto addGalaxy(@RequestBody @Valid AddGalaxyInput input) throws AppException {
-        log.info("calling add with {}", input);
+        log.info("calling addGalaxy with {}", input);
 
-        Galaxy entity = mapper.toEntity(input);
-        GalaxyDto result = mapper.toDto(service.add(entity));
+        Galaxy entity = service.add(mapper.toEntity(input));
+        GalaxyDto result = mapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -78,10 +78,10 @@ public class GalaxyRestController {
 
     @PutMapping
     public GalaxyDto updateGalaxy(@RequestBody @Valid UpdateGalaxyInput input) throws AppException {
-        log.info("calling update with {}", input);
+        log.info("calling updateGalaxy with {}", input);
 
-        Galaxy entity = mapper.toEntity(input);
-        GalaxyDto result = mapper.toDto(service.update(entity));
+        Galaxy entity = service.update(mapper.toEntity(input));
+        GalaxyDto result = mapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;
@@ -89,7 +89,7 @@ public class GalaxyRestController {
 
     @DeleteMapping("{id}")
     public void deleteGalaxy(@PathVariable UUID id) throws AppException {
-        log.info("calling delete with id [{}]", id);
+        log.info("calling deleteGalaxy with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);
     }
