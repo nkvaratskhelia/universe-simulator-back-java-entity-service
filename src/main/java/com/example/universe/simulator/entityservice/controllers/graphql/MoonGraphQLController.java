@@ -12,7 +12,7 @@ import com.example.universe.simulator.entityservice.specifications.MoonSpecifica
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -36,11 +36,11 @@ public class MoonGraphQLController extends AbstractGraphQLController {
         var filter = MoonFilter.builder()
             .name(name)
             .build();
-        PageRequest pageRequest = assemblePageRequest(pageInput);
-        log.info("calling getList with filter {} and page {}", filter, pageRequest);
+        Pageable pageable = assemblePageRequest(pageInput);
+        log.info("calling getMoons with {} and {}", filter, pageable);
         Specification<Moon> specification = specificationBuilder.build(filter);
 
-        Page<MoonDto> result = service.getList(specification, pageRequest)
+        Page<MoonDto> result = service.getList(specification, pageable)
             .map(mapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
@@ -49,7 +49,7 @@ public class MoonGraphQLController extends AbstractGraphQLController {
 
     @QueryMapping
     public MoonDto getMoon(@Argument UUID id) throws AppException {
-        log.info("calling get with id [{}]", id);
+        log.info("calling getMoon with id [{}]", id);
         MoonDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
@@ -58,10 +58,10 @@ public class MoonGraphQLController extends AbstractGraphQLController {
 
     @MutationMapping
     public MoonDto addMoon(@Argument @Valid AddMoonInput input) throws AppException {
-        log.info("calling add with {}", input);
+        log.info("calling addMoon with {}", input);
 
-        Moon entity = mapper.toEntity(input);
-        MoonDto result = mapper.toDto(service.add(entity));
+        Moon entity = service.add(mapper.toEntity(input));
+        MoonDto result = mapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -69,10 +69,10 @@ public class MoonGraphQLController extends AbstractGraphQLController {
 
     @MutationMapping
     public MoonDto updateMoon(@Argument @Valid UpdateMoonInput input) throws AppException {
-        log.info("calling update with {}", input);
+        log.info("calling updateMoon with {}", input);
 
-        Moon entity = mapper.toEntity(input);
-        MoonDto result = mapper.toDto(service.update(entity));
+        Moon entity = service.update(mapper.toEntity(input));
+        MoonDto result = mapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;
@@ -80,7 +80,7 @@ public class MoonGraphQLController extends AbstractGraphQLController {
 
     @MutationMapping
     public UUID deleteMoon(@Argument UUID id) {
-        log.info("calling delete with id [{}]", id);
+        log.info("calling deleteMoon with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);
 

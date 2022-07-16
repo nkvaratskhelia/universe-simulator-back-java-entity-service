@@ -1,6 +1,7 @@
 package com.example.universe.simulator.entityservice.controllers.graphql;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
@@ -11,7 +12,7 @@ public abstract class AbstractGraphQLController {
     public static final int DEFAULT_PAGE_NUMBER = 0;
     public static final int DEFAULT_PAGE_SIZE = 20;
 
-    public static PageRequest assemblePageRequest(PageInput pageInput) {
+    public static Pageable assemblePageRequest(PageInput pageInput) {
         return pageInput != null ? PageRequest.of(pageInput.page(), pageInput.size(), Sort.by(assembleSortOrders(pageInput)))
                                  : PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.unsorted());
     }
@@ -24,10 +25,7 @@ public abstract class AbstractGraphQLController {
                                               : Collections.emptyList();
     }
 
-    record SortOrder(String property, Sort.Direction direction) {
-    }
+    record SortOrder(String property, Sort.Direction direction) {}
 
-    record PageInput(Integer page, Integer size, List<SortOrder> sortOrders) {
-    }
-
+    record PageInput(Integer page, Integer size, List<SortOrder> sortOrders) {}
 }
