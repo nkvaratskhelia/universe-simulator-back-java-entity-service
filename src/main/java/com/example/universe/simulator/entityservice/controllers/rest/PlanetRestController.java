@@ -44,7 +44,7 @@ public class PlanetRestController {
         var filter = PlanetFilter.builder()
             .name(name)
             .build();
-        log.info("calling getList with filter {} and {}", filter, pageable);
+        log.info("calling getPlanets with {} and {}", filter, pageable);
         Specification<Planet> specification = specificationBuilder.build(filter);
 
         return () -> {
@@ -58,7 +58,7 @@ public class PlanetRestController {
 
     @GetMapping("{id}")
     public PlanetDto getPlanet(@PathVariable UUID id) throws AppException {
-        log.info("calling get with id [{}]", id);
+        log.info("calling getPlanet with id [{}]", id);
         PlanetDto result = mapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
@@ -67,10 +67,10 @@ public class PlanetRestController {
 
     @PostMapping
     public PlanetDto addPlanet(@RequestBody @Valid AddPlanetInput input) throws AppException {
-        log.info("calling add with {}", input);
+        log.info("calling addPlanet with {}", input);
 
-        Planet entity = mapper.toEntity(input);
-        PlanetDto result = mapper.toDto(service.add(entity));
+        Planet entity = service.add(mapper.toEntity(input));
+        PlanetDto result = mapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -78,10 +78,10 @@ public class PlanetRestController {
 
     @PutMapping
     public PlanetDto updatePlanet(@RequestBody @Valid UpdatePlanetInput input) throws AppException {
-        log.info("calling update with {}", input);
+        log.info("calling updatePlanet with {}", input);
 
-        Planet entity = mapper.toEntity(input);
-        PlanetDto result = mapper.toDto(service.update(entity));
+        Planet entity = service.update(mapper.toEntity(input));
+        PlanetDto result = mapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;
@@ -89,7 +89,7 @@ public class PlanetRestController {
 
     @DeleteMapping("{id}")
     public void deletePlanet(@PathVariable UUID id) throws AppException {
-        log.info("calling delete with id [{}]", id);
+        log.info("calling deletePlanet with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);
     }
