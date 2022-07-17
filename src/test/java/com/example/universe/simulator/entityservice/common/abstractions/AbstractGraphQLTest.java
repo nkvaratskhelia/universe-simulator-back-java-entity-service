@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.graphql.test.tester.GraphQlTester;
 
 @AbstractTest
-@Import({PageInputMapperImpl.class})
+@Import(PageInputMapperImpl.class)
 public abstract class AbstractGraphQLTest {
 
     @Autowired
@@ -17,5 +17,4 @@ public abstract class AbstractGraphQLTest {
 
     @SpyBean
     protected PageInputMapper pageInputMapper;
-
 }

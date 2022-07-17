@@ -183,5 +183,4 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
             .executeAndVerify();
         then(service).should().delete(id);
     }
-
 }
