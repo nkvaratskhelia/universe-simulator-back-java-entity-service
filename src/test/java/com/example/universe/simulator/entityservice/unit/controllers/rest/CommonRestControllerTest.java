@@ -25,7 +25,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-// Common controller cases are tested using GalaxyController.
+// Common rest controller cases are tested using GalaxyRestController.
 @WebMvcTest(GalaxyRestController.class)
 @Import(GalaxyMapperImpl.class)
 class CommonRestControllerTest extends AbstractWebMvcTest {

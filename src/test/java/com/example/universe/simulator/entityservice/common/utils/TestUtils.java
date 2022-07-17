@@ -18,6 +18,7 @@ import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
 import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
 import com.example.universe.simulator.entityservice.types.EventType;
+import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,15 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public final class TestUtils {
+@UtilityClass
+public class TestUtils {
 
-    private TestUtils() {}
-
-    public static Pageable getDefaultPageable() {
+    public Pageable getDefaultPageable() {
         return PageRequest.of(0, 20, Sort.unsorted());
     }
 
-    public static Pageable getSpaceEntityPageable() {
+    public Pageable getSpaceEntityPageable() {
         Sort sort = Sort.by(
             Sort.Order.desc("version"),
             Sort.Order.asc("name")
@@ -44,11 +44,11 @@ public final class TestUtils {
         return PageRequest.of(1, 2, sort);
     }
 
-    public static Pageable getSpaceEntityPageableWithoutSorting() {
+    public Pageable getSpaceEntityPageableWithoutSorting() {
         return PageRequest.of(1, 2, Sort.unsorted());
     }
 
-    public static EventDto buildEventDto(Clock clock) {
+    public EventDto buildEventDto(Clock clock) {
         return new EventDto(
             EventType.SPACE_ENTITY_STATISTICS.toString(),
             "data",
@@ -56,55 +56,55 @@ public final class TestUtils {
         );
     }
 
-    public static AddGalaxyInput buildAddGalaxyInput() {
+    public AddGalaxyInput buildAddGalaxyInput() {
         return new AddGalaxyInput("name");
     }
 
-    public static UpdateGalaxyInput buildUpdateGalaxyInput() {
+    public UpdateGalaxyInput buildUpdateGalaxyInput() {
         return new UpdateGalaxyInput(UUID.randomUUID(), 0L, "name");
     }
 
-    public static GalaxyFilter buildGalaxyFilter() {
+    public GalaxyFilter buildGalaxyFilter() {
         return GalaxyFilter.builder()
             .name("name")
             .build();
     }
 
-    public static Galaxy buildGalaxyWithName(String name) {
+    public Galaxy buildGalaxyWithName(String name) {
         return Galaxy.builder()
             .id(UUID.randomUUID())
             .name(name)
             .build();
     }
 
-    public static Galaxy buildGalaxy() {
+    public Galaxy buildGalaxy() {
         return Galaxy.builder()
             .id(UUID.randomUUID())
             .name("name")
             .build();
     }
 
-    public static Galaxy buildGalaxyForAdd() {
+    public Galaxy buildGalaxyForAdd() {
         return Galaxy.builder()
             .name("name")
             .build();
     }
 
-    public static AddStarInput buildAddStarInput() {
+    public AddStarInput buildAddStarInput() {
         return new AddStarInput("name", UUID.randomUUID());
     }
 
-    public static UpdateStarInput buildUpdateStarInput() {
+    public UpdateStarInput buildUpdateStarInput() {
         return new UpdateStarInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
     }
 
-    public static StarFilter buildStarFilter() {
+    public StarFilter buildStarFilter() {
         return StarFilter.builder()
             .name("name")
             .build();
     }
 
-    public static Star buildStar() {
+    public Star buildStar() {
         return Star.builder()
             .id(UUID.randomUUID())
             .name("name")
@@ -112,28 +112,28 @@ public final class TestUtils {
             .build();
     }
 
-    public static Star buildStarForAdd() {
+    public Star buildStarForAdd() {
         return Star.builder()
             .name("name")
             .galaxyId(UUID.randomUUID())
             .build();
     }
 
-    public static AddPlanetInput buildAddPlanetInput() {
+    public AddPlanetInput buildAddPlanetInput() {
         return new AddPlanetInput("name", UUID.randomUUID());
     }
 
-    public static UpdatePlanetInput buildUpdatePlanetInput() {
+    public UpdatePlanetInput buildUpdatePlanetInput() {
         return new UpdatePlanetInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
     }
 
-    public static PlanetFilter buildPlanetFilter() {
+    public PlanetFilter buildPlanetFilter() {
         return PlanetFilter.builder()
             .name("name")
             .build();
     }
 
-    public static Planet buildPlanet() {
+    public Planet buildPlanet() {
         return Planet.builder()
             .id(UUID.randomUUID())
             .name("name")
@@ -141,28 +141,28 @@ public final class TestUtils {
             .build();
     }
 
-    public static Planet buildPlanetForAdd() {
+    public Planet buildPlanetForAdd() {
         return Planet.builder()
             .name("name")
             .starId(UUID.randomUUID())
             .build();
     }
 
-    public static AddMoonInput buildAddMoonInput() {
+    public AddMoonInput buildAddMoonInput() {
         return new AddMoonInput("name", UUID.randomUUID());
     }
 
-    public static UpdateMoonInput buildUpdateMoonInput() {
+    public UpdateMoonInput buildUpdateMoonInput() {
         return new UpdateMoonInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
     }
 
-    public static MoonFilter buildMoonFilter() {
+    public MoonFilter buildMoonFilter() {
         return MoonFilter.builder()
             .name("name")
             .build();
     }
 
-    public static Moon buildMoon() {
+    public Moon buildMoon() {
         return Moon.builder()
             .id(UUID.randomUUID())
             .name("name")

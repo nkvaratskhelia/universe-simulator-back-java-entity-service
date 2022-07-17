@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-// Exception handling is tested using GalaxyController.
+// Rest exception handling is tested using GalaxyRestController.
 @WebMvcTest(GalaxyRestController.class)
 @Import(GalaxyMapperImpl.class)
 class RestExceptionHandlerTest extends AbstractWebMvcTest {
