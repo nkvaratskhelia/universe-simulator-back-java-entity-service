@@ -133,6 +133,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:rabbitmq'
+    testCompileOnly 'org.projectlombok:lombok'
     // needed for smoke tests
     testRuntimeOnly 'com.h2database:h2'
     // adds ability to mock/verify final methods
@@ -141,4 +142,5 @@ dependencies {
     annotationProcessor 'org.hibernate:hibernate-jpamodelgen'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
