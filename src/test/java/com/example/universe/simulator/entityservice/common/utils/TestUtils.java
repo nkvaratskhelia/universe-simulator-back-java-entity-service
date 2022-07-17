@@ -30,8 +30,7 @@ import java.util.UUID;
 
 public final class TestUtils {
 
-    private TestUtils() {
-    }
+    private TestUtils() {}
 
     public static Pageable getDefaultPageable() {
         return PageRequest.of(0, 20, Sort.unsorted());

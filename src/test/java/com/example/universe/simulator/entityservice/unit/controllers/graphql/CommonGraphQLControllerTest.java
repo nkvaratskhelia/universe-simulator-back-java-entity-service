@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-// Exception handling is tested using GalaxyGraphQLController.
+// Common graphql controller cases are tested using GalaxyGraphQLController.
 @GraphQlTest(GalaxyGraphQLController.class)
 @Import({GraphQLConfig.class, GalaxyMapperImpl.class})
 class CommonGraphQLControllerTest extends AbstractGraphQLTest {
