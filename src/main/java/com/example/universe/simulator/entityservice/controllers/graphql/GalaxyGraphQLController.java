@@ -5,8 +5,10 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.GalaxyFilter;
 import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
+import com.example.universe.simulator.entityservice.inputs.PageInput;
 import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
+import com.example.universe.simulator.entityservice.mappers.PageInputMapper;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import lombok.RequiredArgsConstructor;
@@ -25,23 +27,24 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class GalaxyGraphQLController extends AbstractGraphQLController {
+public class GalaxyGraphQLController {
 
     private final GalaxyService service;
     private final GalaxySpecificationBuilder specificationBuilder;
-    private final GalaxyMapper mapper;
+    private final GalaxyMapper galaxyMapper;
+    private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<GalaxyDto> getGalaxies(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
+    public Page<GalaxyDto> getGalaxies(@Argument String name, @Argument PageInput pageInput) {
         var filter = GalaxyFilter.builder()
             .name(name)
             .build();
-        Pageable pageable = assemblePageRequest(pageInput);
+        Pageable pageable = pageInputMapper.toPageable(pageInput);
         log.info("calling getGalaxies with {} and {}", filter, pageable);
         Specification<Galaxy> specification = specificationBuilder.build(filter);
 
         Page<GalaxyDto> result = service.getList(specification, pageable)
-            .map(mapper::toDto);
+            .map(galaxyMapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
@@ -50,7 +53,7 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     @QueryMapping
     public GalaxyDto getGalaxy(@Argument UUID id) throws AppException {
         log.info("calling getGalaxy with id [{}]", id);
-        GalaxyDto result = mapper.toDto(service.get(id));
+        GalaxyDto result = galaxyMapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
         return result;
@@ -60,8 +63,8 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     public GalaxyDto addGalaxy(@Argument @Valid AddGalaxyInput input) throws AppException {
         log.info("calling addGalaxy with {}", input);
 
-        Galaxy entity = service.add(mapper.toEntity(input));
-        GalaxyDto result = mapper.toDto(entity);
+        Galaxy entity = service.add(galaxyMapper.toEntity(input));
+        GalaxyDto result = galaxyMapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -71,8 +74,8 @@ public class GalaxyGraphQLController extends AbstractGraphQLController {
     public GalaxyDto updateGalaxy(@Argument @Valid UpdateGalaxyInput input) throws AppException {
         log.info("calling updateGalaxy with {}", input);
 
-        Galaxy entity = service.update(mapper.toEntity(input));
-        GalaxyDto result = mapper.toDto(entity);
+        Galaxy entity = service.update(galaxyMapper.toEntity(input));
+        GalaxyDto result = galaxyMapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;

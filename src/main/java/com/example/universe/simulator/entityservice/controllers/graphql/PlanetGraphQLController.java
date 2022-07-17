@@ -5,7 +5,9 @@ import com.example.universe.simulator.entityservice.entities.Planet;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.PlanetFilter;
 import com.example.universe.simulator.entityservice.inputs.AddPlanetInput;
+import com.example.universe.simulator.entityservice.inputs.PageInput;
 import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
+import com.example.universe.simulator.entityservice.mappers.PageInputMapper;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
@@ -25,23 +27,24 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class PlanetGraphQLController extends AbstractGraphQLController {
+public class PlanetGraphQLController {
 
     private final PlanetService service;
     private final PlanetSpecificationBuilder specificationBuilder;
-    private final PlanetMapper mapper;
+    private final PlanetMapper planetMapper;
+    private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<PlanetDto> getPlanets(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
+    public Page<PlanetDto> getPlanets(@Argument String name, @Argument PageInput pageInput) {
         var filter = PlanetFilter.builder()
             .name(name)
             .build();
-        Pageable pageable = assemblePageRequest(pageInput);
+        Pageable pageable = pageInputMapper.toPageable(pageInput);
         log.info("calling getPlanets with {} and {}", filter, pageable);
         Specification<Planet> specification = specificationBuilder.build(filter);
 
         Page<PlanetDto> result = service.getList(specification, pageable)
-            .map(mapper::toDto);
+            .map(planetMapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
@@ -50,7 +53,7 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
     @QueryMapping
     public PlanetDto getPlanet(@Argument UUID id) throws AppException {
         log.info("calling getPlanet with id [{}]", id);
-        PlanetDto result = mapper.toDto(service.get(id));
+        PlanetDto result = planetMapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
         return result;
@@ -60,8 +63,8 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
     public PlanetDto addPlanet(@Argument @Valid AddPlanetInput input) throws AppException {
         log.info("calling addPlanet with {}", input);
 
-        Planet entity = service.add(mapper.toEntity(input));
-        PlanetDto result = mapper.toDto(entity);
+        Planet entity = service.add(planetMapper.toEntity(input));
+        PlanetDto result = planetMapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -71,8 +74,8 @@ public class PlanetGraphQLController extends AbstractGraphQLController {
     public PlanetDto updatePlanet(@Argument @Valid UpdatePlanetInput input) throws AppException {
         log.info("calling updatePlanet with {}", input);
 
-        Planet entity = service.update(mapper.toEntity(input));
-        PlanetDto result = mapper.toDto(entity);
+        Planet entity = service.update(planetMapper.toEntity(input));
+        PlanetDto result = planetMapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;

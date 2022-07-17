@@ -236,7 +236,7 @@ public final class TestUtils {
         return Map.of(
             "page", pageable.getPageNumber(),
             "size", pageable.getPageSize(),
-            "sortOrders", List.of(sortVersionMap, sortNameMap));
+            "sort", List.of(sortVersionMap, sortNameMap));
     }
 
     public static Map<String, Object> buildInputMapForOnlyPaging(Pageable pageable) {

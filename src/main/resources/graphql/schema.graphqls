@@ -1,16 +1,16 @@
 scalar Long
 
 type Query {
-    getGalaxies(name: String, pageInput: PageInput): [GalaxyDto]
+    getGalaxies(name: String, pageInput: PageInput = {}): [GalaxyDto]
     getGalaxy(id: ID!): GalaxyDto
 
-    getStars(name: String, pageInput: PageInput): [StarDto]
+    getStars(name: String, pageInput: PageInput = {}): [StarDto]
     getStar(id: ID!): StarDto
 
-    getPlanets(name: String, pageInput: PageInput): [PlanetDto]
+    getPlanets(name: String, pageInput: PageInput = {}): [PlanetDto]
     getPlanet(id: ID!): PlanetDto
 
-    getMoons(name: String, pageInput: PageInput): [MoonDto]
+    getMoons(name: String, pageInput: PageInput = {}): [MoonDto]
     getMoon(id: ID!): MoonDto
 }
 
@@ -33,14 +33,14 @@ type Mutation {
 }
 
 input PageInput {
-    page: Int!
-    size: Int!
-    sortOrders: [SortOrder]
+    page: Int = 0
+    size: Int = 20
+    sort: [SortOrder] = []
 }
 
 input SortOrder {
     property: String!
-    direction: Direction
+    direction: Direction = ASC
 }
 
 enum Direction {
@@ -49,27 +49,27 @@ enum Direction {
 }
 
 type GalaxyDto {
-    id: ID!
+    id: ID
     version: Long
     name: String
 }
 
 type StarDto {
-    id: ID!
+    id: ID
     version: Long
     name: String
     galaxyId: ID
 }
 
 type PlanetDto {
-    id: ID!
+    id: ID
     version: Long
     name: String
     starId: ID
 }
 
 type MoonDto {
-    id: ID!
+    id: ID
     version: Long
     name: String
     planetId: ID

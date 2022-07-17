@@ -5,7 +5,9 @@ import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.StarFilter;
 import com.example.universe.simulator.entityservice.inputs.AddStarInput;
+import com.example.universe.simulator.entityservice.inputs.PageInput;
 import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
+import com.example.universe.simulator.entityservice.mappers.PageInputMapper;
 import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
@@ -25,23 +27,24 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class StarGraphQLController extends AbstractGraphQLController {
+public class StarGraphQLController {
 
     private final StarService service;
     private final StarSpecificationBuilder specificationBuilder;
-    private final StarMapper mapper;
+    private final StarMapper starMapper;
+    private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<StarDto> getStars(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
+    public Page<StarDto> getStars(@Argument String name, @Argument PageInput pageInput) {
         var filter = StarFilter.builder()
             .name(name)
             .build();
-        Pageable pageable = assemblePageRequest(pageInput);
+        Pageable pageable = pageInputMapper.toPageable(pageInput);
         log.info("calling getStars with {} and {}", filter, pageable);
         Specification<Star> specification = specificationBuilder.build(filter);
 
         Page<StarDto> result = service.getList(specification, pageable)
-            .map(mapper::toDto);
+            .map(starMapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
@@ -50,7 +53,7 @@ public class StarGraphQLController extends AbstractGraphQLController {
     @QueryMapping
     public StarDto getStar(@Argument UUID id) throws AppException {
         log.info("calling getStar with id [{}]", id);
-        StarDto result = mapper.toDto(service.get(id));
+        StarDto result = starMapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
         return result;
@@ -60,8 +63,8 @@ public class StarGraphQLController extends AbstractGraphQLController {
     public StarDto addStar(@Argument @Valid AddStarInput input) throws AppException {
         log.info("calling addStar with {}", input);
 
-        Star entity = service.add(mapper.toEntity(input));
-        StarDto result = mapper.toDto(entity);
+        Star entity = service.add(starMapper.toEntity(input));
+        StarDto result = starMapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -71,8 +74,8 @@ public class StarGraphQLController extends AbstractGraphQLController {
     public StarDto updateStar(@Argument @Valid UpdateStarInput input) throws AppException {
         log.info("calling updateStar with {}", input);
 
-        Star entity = service.update(mapper.toEntity(input));
-        StarDto result = mapper.toDto(entity);
+        Star entity = service.update(starMapper.toEntity(input));
+        StarDto result = starMapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;

@@ -5,8 +5,10 @@ import com.example.universe.simulator.entityservice.entities.Moon;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.filters.MoonFilter;
 import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
+import com.example.universe.simulator.entityservice.inputs.PageInput;
 import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import com.example.universe.simulator.entityservice.mappers.MoonMapper;
+import com.example.universe.simulator.entityservice.mappers.PageInputMapper;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
@@ -25,23 +27,24 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class MoonGraphQLController extends AbstractGraphQLController {
+public class MoonGraphQLController {
 
     private final MoonService service;
     private final MoonSpecificationBuilder specificationBuilder;
-    private final MoonMapper mapper;
+    private final MoonMapper moonMapper;
+    private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<MoonDto> getMoons(@Argument String name, @Argument AbstractGraphQLController.PageInput pageInput) {
+    public Page<MoonDto> getMoons(@Argument String name, @Argument PageInput pageInput) {
         var filter = MoonFilter.builder()
             .name(name)
             .build();
-        Pageable pageable = assemblePageRequest(pageInput);
+        Pageable pageable = pageInputMapper.toPageable(pageInput);
         log.info("calling getMoons with {} and {}", filter, pageable);
         Specification<Moon> specification = specificationBuilder.build(filter);
 
         Page<MoonDto> result = service.getList(specification, pageable)
-            .map(mapper::toDto);
+            .map(moonMapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 
         return result;
@@ -50,7 +53,7 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     @QueryMapping
     public MoonDto getMoon(@Argument UUID id) throws AppException {
         log.info("calling getMoon with id [{}]", id);
-        MoonDto result = mapper.toDto(service.get(id));
+        MoonDto result = moonMapper.toDto(service.get(id));
         log.info("fetched [{}]", result.getId());
 
         return result;
@@ -60,8 +63,8 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     public MoonDto addMoon(@Argument @Valid AddMoonInput input) throws AppException {
         log.info("calling addMoon with {}", input);
 
-        Moon entity = service.add(mapper.toEntity(input));
-        MoonDto result = mapper.toDto(entity);
+        Moon entity = service.add(moonMapper.toEntity(input));
+        MoonDto result = moonMapper.toDto(entity);
         log.info("added [{}]", result.getId());
 
         return result;
@@ -71,8 +74,8 @@ public class MoonGraphQLController extends AbstractGraphQLController {
     public MoonDto updateMoon(@Argument @Valid UpdateMoonInput input) throws AppException {
         log.info("calling updateMoon with {}", input);
 
-        Moon entity = service.update(mapper.toEntity(input));
-        MoonDto result = mapper.toDto(entity);
+        Moon entity = service.update(moonMapper.toEntity(input));
+        MoonDto result = moonMapper.toDto(entity);
         log.info("updated [{}]", result.getId());
 
         return result;
