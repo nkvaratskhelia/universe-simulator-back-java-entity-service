@@ -46,7 +46,7 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
             TestUtils.buildGalaxy()
         );
 
-        Pageable pageable = TestUtils.getDefaultPageable();
+        Pageable pageable = TestUtils.buildDefaultPageable();
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<GalaxyDto> dtoPage = entityPage.map(mapper::toDto);
 
@@ -65,7 +65,7 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
             TestUtils.buildGalaxy()
         );
 
-        Pageable pageable = TestUtils.getSpaceEntityPageable();
+        Pageable pageable = TestUtils.buildSpaceEntityPageable();
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<GalaxyDto> dtoPage = entityPage.map(mapper::toDto);
 

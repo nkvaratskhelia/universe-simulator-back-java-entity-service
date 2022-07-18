@@ -54,7 +54,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
         );
 
         MoonFilter filter = TestUtils.buildMoonFilter();
-        Pageable pageable = TestUtils.getDefaultPageable();
+        Pageable pageable = TestUtils.buildDefaultPageable();
         Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<MoonDto> dtoPage = entityPage.map(mapper::toDto);
 
