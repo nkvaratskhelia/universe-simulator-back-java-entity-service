@@ -40,7 +40,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
     private MoonSpecificationBuilder specificationBuilder;
 
     @SpyBean
-    private MoonMapper mapper;
+    private MoonMapper moonMapper;
 
     @Test
     void testGetMoons() {
@@ -70,7 +70,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
             .execute()
             .path("getMoons")
             .entityList(MoonDto.class)
-            .containsExactly(mapper.toDto(entity));
+            .containsExactly(moonMapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -80,7 +80,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
         // given
         UUID id = UUID.randomUUID();
         Moon entity = TestUtils.buildMoon();
-        MoonDto dto = mapper.toDto(entity);
+        MoonDto dto = moonMapper.toDto(entity);
 
         // language=GraphQL
         String document = """
@@ -109,7 +109,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
         // given
         AddMoonInput input = TestUtils.buildAddMoonInput();
         Moon entity = TestUtils.buildMoon();
-        MoonDto resultDto = mapper.toDto(entity);
+        MoonDto resultDto = moonMapper.toDto(entity);
 
         // language=GraphQL
         String document = """
@@ -131,15 +131,15 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
             .entity(MoonDto.class)
             .isEqualTo(resultDto);
 
-        then(service).should().add(mapper.toEntity(input));
+        then(service).should().add(moonMapper.toEntity(input));
     }
 
     @Test
     void testUpdateMoon() throws Exception {
         // given
         UpdateMoonInput input = TestUtils.buildUpdateMoonInput();
-        Moon entity = mapper.toEntity(input);
-        MoonDto resultDto = mapper.toDto(entity);
+        Moon entity = moonMapper.toEntity(input);
+        MoonDto resultDto = moonMapper.toDto(entity);
 
         // language=GraphQL
         String document = """

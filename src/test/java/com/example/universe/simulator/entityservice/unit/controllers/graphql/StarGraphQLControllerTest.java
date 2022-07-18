@@ -40,7 +40,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
     private StarSpecificationBuilder specificationBuilder;
 
     @SpyBean
-    private StarMapper mapper;
+    private StarMapper starMapper;
 
     @Test
     void testGetStars() {
@@ -70,7 +70,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
             .execute()
             .path("getStars")
             .entityList(StarDto.class)
-            .containsExactly(mapper.toDto(entity));
+            .containsExactly(starMapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -80,7 +80,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
         // given
         UUID id = UUID.randomUUID();
         Star entity = TestUtils.buildStar();
-        StarDto dto = mapper.toDto(entity);
+        StarDto dto = starMapper.toDto(entity);
 
         // language=GraphQL
         String document = """
@@ -109,7 +109,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
         // given
         AddStarInput input = TestUtils.buildAddStarInput();
         Star entity = TestUtils.buildStar();
-        StarDto resultDto = mapper.toDto(entity);
+        StarDto resultDto = starMapper.toDto(entity);
 
         // language=GraphQL
         String document = """
@@ -131,15 +131,15 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
             .entity(StarDto.class)
             .isEqualTo(resultDto);
 
-        then(service).should().add(mapper.toEntity(input));
+        then(service).should().add(starMapper.toEntity(input));
     }
 
     @Test
     void testUpdateStar() throws Exception {
         // given
         UpdateStarInput input = TestUtils.buildUpdateStarInput();
-        Star entity = mapper.toEntity(input);
-        StarDto resultDto = mapper.toDto(entity);
+        Star entity = starMapper.toEntity(input);
+        StarDto resultDto = starMapper.toDto(entity);
 
         // language=GraphQL
         String document = """

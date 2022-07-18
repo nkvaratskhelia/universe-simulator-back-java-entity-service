@@ -40,7 +40,7 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
     private GalaxySpecificationBuilder specificationBuilder;
 
     @SpyBean
-    private GalaxyMapper mapper;
+    private GalaxyMapper galaxyMapper;
 
     @Test
     void testGetGalaxies() {
@@ -70,7 +70,7 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
             .execute()
             .path("getGalaxies")
             .entityList(GalaxyDto.class)
-            .containsExactly(mapper.toDto(entity));
+            .containsExactly(galaxyMapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -80,7 +80,7 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         // given
         UUID id = UUID.randomUUID();
         Galaxy entity = TestUtils.buildGalaxy();
-        GalaxyDto dto = mapper.toDto(entity);
+        GalaxyDto dto = galaxyMapper.toDto(entity);
 
         // language=GraphQL
         String document = """
@@ -109,7 +109,7 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         // given
         AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
         Galaxy entity = TestUtils.buildGalaxy();
-        GalaxyDto resultDto = mapper.toDto(entity);
+        GalaxyDto resultDto = galaxyMapper.toDto(entity);
 
         // language=GraphQL
         String document = """
@@ -131,15 +131,15 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
             .entity(GalaxyDto.class)
             .isEqualTo(resultDto);
 
-        then(service).should().add(mapper.toEntity(input));
+        then(service).should().add(galaxyMapper.toEntity(input));
     }
 
     @Test
     void testUpdateGalaxy() throws Exception {
         // given
         UpdateGalaxyInput input = TestUtils.buildUpdateGalaxyInput();
-        Galaxy entity = mapper.toEntity(input);
-        GalaxyDto resultDto = mapper.toDto(entity);
+        Galaxy entity = galaxyMapper.toEntity(input);
+        GalaxyDto resultDto = galaxyMapper.toDto(entity);
 
         // language=GraphQL
         String document = """

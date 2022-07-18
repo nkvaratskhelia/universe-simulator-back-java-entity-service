@@ -37,7 +37,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
     private GalaxySpecificationBuilder specificationBuilder;
 
     @SpyBean
-    private GalaxyMapper mapper;
+    private GalaxyMapper galaxyMapper;
 
     @Test
     void testGetGalaxies_customPageable_withoutSorting() {
@@ -66,7 +66,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
             .execute()
             .path("getGalaxies")
             .entityList(GalaxyDto.class)
-            .containsExactly(mapper.toDto(firstEntity), mapper.toDto(secondEntity));
+            .containsExactly(galaxyMapper.toDto(firstEntity), galaxyMapper.toDto(secondEntity));
         then(service).should().getList(null, pageable);
     }
 
@@ -97,7 +97,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
             .execute()
             .path("getGalaxies")
             .entityList(GalaxyDto.class)
-            .containsExactly(mapper.toDto(firstEntity), mapper.toDto(secondEntity));
+            .containsExactly(galaxyMapper.toDto(firstEntity), galaxyMapper.toDto(secondEntity));
         then(service).should().getList(null, pageable);
     }
 }
