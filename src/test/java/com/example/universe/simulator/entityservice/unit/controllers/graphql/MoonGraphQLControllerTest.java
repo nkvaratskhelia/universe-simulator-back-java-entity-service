@@ -2,7 +2,6 @@ package com.example.universe.simulator.entityservice.unit.controllers.graphql;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractGraphQLTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.config.GraphQLConfig;
 import com.example.universe.simulator.entityservice.controllers.graphql.MoonGraphQLController;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
 import com.example.universe.simulator.entityservice.entities.Moon;
@@ -30,7 +29,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @GraphQlTest(MoonGraphQLController.class)
-@Import({GraphQLConfig.class, MoonMapperImpl.class})
+@Import(MoonMapperImpl.class)
 class MoonGraphQLControllerTest extends AbstractGraphQLTest {
 
     @MockBean

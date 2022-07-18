@@ -2,7 +2,6 @@ package com.example.universe.simulator.entityservice.unit.controllers.graphql;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractGraphQLTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.config.GraphQLConfig;
 import com.example.universe.simulator.entityservice.controllers.graphql.GalaxyGraphQLController;
 import com.example.universe.simulator.entityservice.inputs.PageInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
@@ -21,7 +20,7 @@ import static org.mockito.BDDMockito.then;
 
 // Common graphql controller cases are tested using GalaxyGraphQLController.
 @GraphQlTest(GalaxyGraphQLController.class)
-@Import({GraphQLConfig.class, GalaxyMapperImpl.class})
+@Import(GalaxyMapperImpl.class)
 class CommonGraphQLControllerTest extends AbstractGraphQLTest {
 
     @MockBean

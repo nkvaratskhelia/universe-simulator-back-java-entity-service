@@ -2,7 +2,6 @@ package com.example.universe.simulator.entityservice.unit.controllers.graphql;
 
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractGraphQLTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
-import com.example.universe.simulator.entityservice.config.GraphQLConfig;
 import com.example.universe.simulator.entityservice.controllers.graphql.StarGraphQLController;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
 import com.example.universe.simulator.entityservice.entities.Star;
@@ -30,7 +29,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @GraphQlTest(StarGraphQLController.class)
-@Import({GraphQLConfig.class, StarMapperImpl.class})
+@Import(StarMapperImpl.class)
 class StarGraphQLControllerTest extends AbstractGraphQLTest {
 
     @MockBean
