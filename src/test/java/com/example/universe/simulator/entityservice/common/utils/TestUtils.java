@@ -30,9 +30,9 @@ import java.util.UUID;
 @UtilityClass
 public class TestUtils {
 
-    public static int DEFAULT_PAGE_NUMBER = 0;
-    public static int DEFAULT_PAGE_SIZE = 20;
-    public static Sort DEFAULT_SORT = Sort.unsorted();
+    public int DEFAULT_PAGE_NUMBER = 0;
+    public int DEFAULT_PAGE_SIZE = 20;
+    public Sort DEFAULT_SORT = Sort.unsorted();
 
     public Pageable buildDefaultPageable() {
         return PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, DEFAULT_SORT);
