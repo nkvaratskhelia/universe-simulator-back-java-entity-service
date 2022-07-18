@@ -54,7 +54,7 @@ class StarRestControllerTest extends AbstractWebMvcTest {
         );
 
         StarFilter filter = TestUtils.buildStarFilter();
-        Pageable pageable = TestUtils.getDefaultPageable();
+        Pageable pageable = TestUtils.buildDefaultPageable();
         Page<Star> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<StarDto> dtoPage = entityPage.map(mapper::toDto);
 

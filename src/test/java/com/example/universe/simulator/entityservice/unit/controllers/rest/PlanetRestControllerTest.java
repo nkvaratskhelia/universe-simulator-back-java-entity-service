@@ -54,7 +54,7 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
         );
 
         PlanetFilter filter = TestUtils.buildPlanetFilter();
-        Pageable pageable = TestUtils.getDefaultPageable();
+        Pageable pageable = TestUtils.buildDefaultPageable();
         Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<PlanetDto> dtoPage = entityPage.map(mapper::toDto);
 

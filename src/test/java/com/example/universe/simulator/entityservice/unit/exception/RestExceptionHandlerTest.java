@@ -153,7 +153,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         // given
         String property = "invalid";
         Sort sort = Sort.by(Sort.Order.asc(property));
-        Pageable defaultPageable = TestUtils.getDefaultPageable();
+        Pageable defaultPageable = TestUtils.buildDefaultPageable();
         Pageable pageable = PageRequest.of(defaultPageable.getPageNumber(), defaultPageable.getPageSize(), sort);
 
         // JUnit cannot construct a proper instance of PropertyReferenceException, so we need to create it ourselves

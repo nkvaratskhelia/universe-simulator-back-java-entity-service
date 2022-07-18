@@ -32,11 +32,11 @@ import java.util.UUID;
 @UtilityClass
 public class TestUtils {
 
-    public Pageable getDefaultPageable() {
+    public Pageable buildDefaultPageable() {
         return PageRequest.of(0, 20, Sort.unsorted());
     }
 
-    public Pageable getSpaceEntityPageable() {
+    public Pageable buildSpaceEntityPageable() {
         Sort sort = Sort.by(
             Sort.Order.desc("version"),
             Sort.Order.asc("name")
