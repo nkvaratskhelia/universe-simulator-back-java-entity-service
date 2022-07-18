@@ -8,7 +8,8 @@ Service that manages the data model of the distributed application.
 === Api
 The application provides both `REST` and `GraphQL` endpoints. `REST`
 endpoints are available at `/`. GraphQL endpoints are available at
-`/graphql` and the `GraphiQL` developer playground at `/graphiql`.
+`/graphql` and the `GraphiQL` developer playground at `/graphiql`. You
+can also view the complete `GraphQL` schema at `/graphql/schema`.
 
 == Data
 
