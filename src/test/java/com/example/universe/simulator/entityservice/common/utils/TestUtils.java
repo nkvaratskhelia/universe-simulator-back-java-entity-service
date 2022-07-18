@@ -67,6 +67,7 @@ public class TestUtils {
     public Galaxy buildGalaxy() {
         return Galaxy.builder()
             .id(UUID.randomUUID())
+            .version(0L)
             .name("name")
             .build();
     }
