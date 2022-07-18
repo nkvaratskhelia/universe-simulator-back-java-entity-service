@@ -49,7 +49,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
         List<Moon> entityList = List.of(entity);
 
         MoonFilter filter = TestUtils.buildMoonFilter();
-        Pageable pageable = TestUtils.getDefaultPageable();
+        Pageable pageable = TestUtils.buildDefaultPageable();
         Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
 
         // language=GraphQL

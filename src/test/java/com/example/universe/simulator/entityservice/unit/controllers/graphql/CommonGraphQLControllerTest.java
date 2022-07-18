@@ -4,22 +4,16 @@ import com.example.universe.simulator.entityservice.common.abstractions.Abstract
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.config.GraphQLConfig;
 import com.example.universe.simulator.entityservice.controllers.graphql.GalaxyGraphQLController;
-import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
-import com.example.universe.simulator.entityservice.entities.Galaxy;
-import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
+import com.example.universe.simulator.entityservice.inputs.PageInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -36,68 +30,52 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
     @MockBean
     private GalaxySpecificationBuilder specificationBuilder;
 
-    @SpyBean
-    private GalaxyMapper galaxyMapper;
-
     @Test
-    void testGetGalaxies_customPageable_withoutSorting() {
+    void testGetGalaxies_defaultPageInput() {
         // given
-        Galaxy firstEntity = TestUtils.buildGalaxyWithName("name1");
-        Galaxy secondEntity = TestUtils.buildGalaxyWithName("name2");
-        List<Galaxy> entityList = List.of(firstEntity, secondEntity);
-
-        Pageable pageable = TestUtils.getSpaceEntityPageableWithoutSorting();
-        Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-
         // language=GraphQL
         String document = """
-                query getGalaxies($name: String, $pageInput: PageInput) {
-                  getGalaxies(name: $name, pageInput: $pageInput) {
-                    id, name, version
-                  }
-                }
+            {
+              getGalaxies {
+                id
+              }
+            }
             """;
 
-        given(service.getList(any(), any())).willReturn(entityPage);
+        PageInput pageInput = TestUtils.buildDefaultPageInput();
+        Pageable pageable = TestUtils.buildDefaultPageable();
+
+        given(service.getList(any(), any())).willReturn(Page.empty());
         // when
+        graphQlTester
+            .document(document)
+            .execute();
         // then
-        graphQlTester.document(document)
-            .variable("pageInput", TestUtils.buildInputMapForOnlyPaging(pageable))
-            .execute()
-            .path("getGalaxies")
-            .entityList(GalaxyDto.class)
-            .containsExactly(galaxyMapper.toDto(firstEntity), galaxyMapper.toDto(secondEntity));
+        then(pageInputMapper).should().toPageable(pageInput);
         then(service).should().getList(null, pageable);
     }
 
     @Test
     void testGetGalaxies_customPageable_withSorting() {
         // given
-        Galaxy firstEntity = TestUtils.buildGalaxyWithName("name1");
-        Galaxy secondEntity = TestUtils.buildGalaxyWithName("name2");
-        List<Galaxy> entityList = List.of(firstEntity, secondEntity);
-
-        Pageable pageable = TestUtils.getSpaceEntityPageable();
-        Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-
         // language=GraphQL
         String document = """
-                query getGalaxies($name: String, $pageInput: PageInput) {
-                  getGalaxies(name: $name, pageInput: $pageInput) {
-                    id, name, version
-                  }
-                }
+            query getGalaxies($name: String, $pageInput: PageInput) {
+              getGalaxies(name: $name, pageInput: $pageInput) {
+                id
+              }
+            }
             """;
 
-        given(service.getList(any(), any())).willReturn(entityPage);
+        Pageable pageable = TestUtils.buildSpaceEntityPageable();
+
+        given(service.getList(any(), any())).willReturn(Page.empty());
         // when
-        // then
-        graphQlTester.document(document)
+        graphQlTester
+            .document(document)
             .variable("pageInput", TestUtils.buildInputMapForPagingAndSorting(pageable))
-            .execute()
-            .path("getGalaxies")
-            .entityList(GalaxyDto.class)
-            .containsExactly(galaxyMapper.toDto(firstEntity), galaxyMapper.toDto(secondEntity));
+            .execute();
+        // then
         then(service).should().getList(null, pageable);
     }
 }

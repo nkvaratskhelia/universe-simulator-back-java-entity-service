@@ -49,7 +49,7 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
         List<Planet> entityList = List.of(entity);
 
         PlanetFilter filter = TestUtils.buildPlanetFilter();
-        Pageable pageable = TestUtils.getDefaultPageable();
+        Pageable pageable = TestUtils.buildDefaultPageable();
         Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
 
         // language=GraphQL

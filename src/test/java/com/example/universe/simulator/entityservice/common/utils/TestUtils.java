@@ -13,6 +13,7 @@ import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
 import com.example.universe.simulator.entityservice.inputs.AddMoonInput;
 import com.example.universe.simulator.entityservice.inputs.AddPlanetInput;
 import com.example.universe.simulator.entityservice.inputs.AddStarInput;
+import com.example.universe.simulator.entityservice.inputs.PageInput;
 import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
@@ -48,16 +49,16 @@ public class TestUtils {
         return PageRequest.of(1, 2, sort);
     }
 
-    public Pageable getSpaceEntityPageableWithoutSorting() {
-        return PageRequest.of(1, 2, Sort.unsorted());
-    }
-
     public EventDto buildEventDto(Clock clock) {
         return new EventDto(
             EventType.SPACE_ENTITY_STATISTICS.toString(),
             "data",
             OffsetDateTime.now(clock)
         );
+    }
+
+    public PageInput buildDefaultPageInput() {
+        return new PageInput(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, List.of());
     }
 
     public AddGalaxyInput buildAddGalaxyInput() {
@@ -71,13 +72,6 @@ public class TestUtils {
     public GalaxyFilter buildGalaxyFilter() {
         return GalaxyFilter.builder()
             .name("name")
-            .build();
-    }
-
-    public Galaxy buildGalaxyWithName(String name) {
-        return Galaxy.builder()
-            .id(UUID.randomUUID())
-            .name(name)
             .build();
     }
 
@@ -241,11 +235,5 @@ public class TestUtils {
             "page", pageable.getPageNumber(),
             "size", pageable.getPageSize(),
             "sort", List.of(sortVersionMap, sortNameMap));
-    }
-
-    public static Map<String, Object> buildInputMapForOnlyPaging(Pageable pageable) {
-        return Map.of(
-            "page", pageable.getPageNumber(),
-            "size", pageable.getPageSize());
     }
 }

@@ -49,7 +49,7 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
         List<Galaxy> entityList = List.of(entity);
 
         GalaxyFilter filter = TestUtils.buildGalaxyFilter();
-        Pageable pageable = TestUtils.getDefaultPageable();
+        Pageable pageable = TestUtils.buildDefaultPageable();
         Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
 
         // language=GraphQL
