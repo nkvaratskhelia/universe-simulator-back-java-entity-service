@@ -169,24 +169,24 @@ public class TestUtils {
             .build();
     }
 
-    public static Map<String, Object> buildInputMapForGalaxyAdd(AddGalaxyInput input) {
+    public Map<String, Object> buildInputMapForGalaxyAdd(AddGalaxyInput input) {
         return Map.of("name", input.name());
     }
 
-    public static Map<String, Object> buildInputMapForGalaxyUpdate(UpdateGalaxyInput input) {
+    public Map<String, Object> buildInputMapForGalaxyUpdate(UpdateGalaxyInput input) {
         return Map.of(
             "id", input.id(),
             "name", input.name(),
             "version", input.version());
     }
 
-    public static Map<String, Object> buildInputMapForStarAdd(AddStarInput input) {
+    public Map<String, Object> buildInputMapForStarAdd(AddStarInput input) {
         return Map.of(
             "name", input.name(),
             "galaxyId", input.galaxyId());
     }
 
-    public static Map<String, Object> buildInputMapForStarUpdate(UpdateStarInput input) {
+    public Map<String, Object> buildInputMapForStarUpdate(UpdateStarInput input) {
         return Map.of(
             "id", input.id(),
             "name", input.name(),
@@ -194,13 +194,13 @@ public class TestUtils {
             "galaxyId", input.galaxyId());
     }
 
-    public static Map<String, Object> buildInputMapForPlanetAdd(AddPlanetInput input) {
+    public Map<String, Object> buildInputMapForPlanetAdd(AddPlanetInput input) {
         return Map.of(
             "name", input.name(),
             "starId", input.starId());
     }
 
-    public static Map<String, Object> buildInputMapForPlanetUpdate(UpdatePlanetInput input) {
+    public Map<String, Object> buildInputMapForPlanetUpdate(UpdatePlanetInput input) {
         return Map.of(
             "id", input.id(),
             "name", input.name(),
@@ -208,13 +208,13 @@ public class TestUtils {
             "starId", input.starId());
     }
 
-    public static Map<String, Object> buildInputMapForMoonAdd(AddMoonInput input) {
+    public Map<String, Object> buildInputMapForMoonAdd(AddMoonInput input) {
         return Map.of(
             "name", input.name(),
             "planetId", input.planetId());
     }
 
-    public static Map<String, Object> buildInputMapForMoonUpdate(UpdateMoonInput input) {
+    public Map<String, Object> buildInputMapForMoonUpdate(UpdateMoonInput input) {
         return Map.of(
             "id", input.id(),
             "name", input.name(),
@@ -222,7 +222,7 @@ public class TestUtils {
             "planetId", input.planetId());
     }
 
-    public static Map<String, Object> buildInputMapForPagingAndSorting(Pageable pageable) {
+    public Map<String, Object> buildInputMapForPagingAndSorting(Pageable pageable) {
         Map sortVersionMap = Map.of(
             "property", "version",
             "direction", Sort.Direction.DESC
