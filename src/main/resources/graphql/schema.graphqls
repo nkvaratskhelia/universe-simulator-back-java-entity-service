@@ -40,10 +40,10 @@ input PageInput {
 
 input SortOrder {
     property: String!
-    direction: Direction = ASC
+    direction: SortDirection = ASC
 }
 
-enum Direction {
+enum SortDirection {
     ASC
     DESC
 }
