@@ -35,7 +35,7 @@ public class StarGraphQLController {
     private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<StarDto> getStars(@Argument String name, @Argument PageInput pageInput) {
+    public Page<StarDto> getStars(@Argument String name, @Argument @Valid PageInput pageInput) {
         var filter = StarFilter.builder()
             .name(name)
             .build();

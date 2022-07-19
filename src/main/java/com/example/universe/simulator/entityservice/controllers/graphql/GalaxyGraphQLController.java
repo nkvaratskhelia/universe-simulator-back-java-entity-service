@@ -35,7 +35,7 @@ public class GalaxyGraphQLController {
     private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<GalaxyDto> getGalaxies(@Argument String name, @Argument PageInput pageInput) {
+    public Page<GalaxyDto> getGalaxies(@Argument String name, @Argument @Valid PageInput pageInput) {
         var filter = GalaxyFilter.builder()
             .name(name)
             .build();

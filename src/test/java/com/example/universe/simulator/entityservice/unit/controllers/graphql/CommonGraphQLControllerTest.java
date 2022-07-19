@@ -30,10 +30,10 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
     private GalaxySpecificationBuilder specificationBuilder;
 
     @Test
-    void testGetGalaxies_defaultPageInput() {
+    void testPaging_defaultPageInput() {
         // given
         // language=GraphQL
-        String document = """
+        var document = """
             {
               getGalaxies {
                 id
@@ -55,26 +55,54 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
     }
 
     @Test
-    void testGetGalaxies_customPageable_withSorting() {
+    void testPaging_defaultSortDirection() {
         // given
         // language=GraphQL
-        String document = """
-            query getGalaxies($name: String, $pageInput: PageInput) {
-              getGalaxies(name: $name, pageInput: $pageInput) {
+        var document = """
+            query getGalaxies($pageInput: PageInput) {
+              getGalaxies(pageInput: $pageInput) {
                 id
               }
             }
             """;
 
+        PageInput pageInput = TestUtils.buildDefaultSortDirectionPageInput();
+        Pageable pageable = TestUtils.buildDefaultSortDirectionPageable();
+
+        given(service.getList(any(), any())).willReturn(Page.empty());
+        // when
+        graphQlTester
+            .document(document)
+            .variable("pageInput", TestUtils.buildDefaultSortDirectionPageInputMap())
+            .execute();
+        // then
+        then(pageInputMapper).should().toPageable(pageInput);
+        then(service).should().getList(null, pageable);
+    }
+
+    @Test
+    void testPaging() {
+        // given
+        // language=GraphQL
+        var document = """
+            query getGalaxies($pageInput: PageInput) {
+              getGalaxies(pageInput: $pageInput) {
+                id
+              }
+            }
+            """;
+
+        PageInput pageInput = TestUtils.buildSpaceEntityPageInput();
         Pageable pageable = TestUtils.buildSpaceEntityPageable();
 
         given(service.getList(any(), any())).willReturn(Page.empty());
         // when
         graphQlTester
             .document(document)
-            .variable("pageInput", TestUtils.buildInputMapForPagingAndSorting(pageable))
+            .variable("pageInput", TestUtils.buildSpaceEntityPageInputMap())
             .execute();
         // then
+        then(pageInputMapper).should().toPageable(pageInput);
         then(service).should().getList(null, pageable);
     }
 }

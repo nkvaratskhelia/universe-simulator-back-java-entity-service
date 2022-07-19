@@ -35,7 +35,7 @@ public class PlanetGraphQLController {
     private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<PlanetDto> getPlanets(@Argument String name, @Argument PageInput pageInput) {
+    public Page<PlanetDto> getPlanets(@Argument String name, @Argument @Valid PageInput pageInput) {
         var filter = PlanetFilter.builder()
             .name(name)
             .build();

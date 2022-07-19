@@ -33,32 +33,67 @@ import java.util.UUID;
 @UtilityClass
 public class TestUtils {
 
-    public final int DEFAULT_PAGE_NUMBER = 0;
-    public final int DEFAULT_PAGE_SIZE = 20;
-    public final Sort DEFAULT_SORT = Sort.unsorted();
+    private final int DEFAULT_PAGE_NUMBER = 0;
+    private final int DEFAULT_PAGE_SIZE = 20;
 
     public Pageable buildDefaultPageable() {
-        return PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, DEFAULT_SORT);
+        return PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.unsorted());
+    }
+
+    public PageInput buildDefaultPageInput() {
+        return new PageInput(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, List.of());
+    }
+
+    public Pageable buildDefaultSortDirectionPageable() {
+        var sort = Sort.by(
+            Sort.Order.by("property").with(Sort.DEFAULT_DIRECTION)
+        );
+        return PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, sort);
+    }
+
+    public PageInput buildDefaultSortDirectionPageInput() {
+        var sort = List.of(
+            new PageInput.SortOrder("property", Sort.DEFAULT_DIRECTION)
+        );
+        return new PageInput(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, sort);
+    }
+
+    public Map<String, Object> buildDefaultSortDirectionPageInputMap() {
+        var sort = Map.<String, Object>of("property", "property");
+        return Map.of("sort", List.of(sort));
     }
 
     public Pageable buildSpaceEntityPageable() {
-        Sort sort = Sort.by(
+        var sort = Sort.by(
             Sort.Order.desc("version"),
             Sort.Order.asc("name")
         );
         return PageRequest.of(1, 2, sort);
     }
 
-    public EventDto buildEventDto(Clock clock) {
-        return new EventDto(
-            EventType.SPACE_ENTITY_STATISTICS.toString(),
-            "data",
-            OffsetDateTime.now(clock)
+    public PageInput buildSpaceEntityPageInput() {
+        var sort = List.of(
+            new PageInput.SortOrder("version", Sort.Direction.DESC),
+            new PageInput.SortOrder("name", Sort.Direction.ASC)
         );
+        return new PageInput(1, 2, sort);
     }
 
-    public PageInput buildDefaultPageInput() {
-        return new PageInput(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, List.of());
+    public Map<String, Object> buildSpaceEntityPageInputMap() {
+        var versionSort = Map.<String, Object>of(
+            "property", "version",
+            "direction", Sort.Direction.DESC
+        );
+        var nameSort = Map.<String, Object>of(
+            "property", "name",
+            "direction", Sort.Direction.ASC
+        );
+
+        return Map.of(
+            "page", 1,
+            "size", 2,
+            "sort", List.of(versionSort, nameSort)
+        );
     }
 
     public AddGalaxyInput buildAddGalaxyInput() {
@@ -222,18 +257,11 @@ public class TestUtils {
             "planetId", input.planetId());
     }
 
-    public Map<String, Object> buildInputMapForPagingAndSorting(Pageable pageable) {
-        Map sortVersionMap = Map.of(
-            "property", "version",
-            "direction", Sort.Direction.DESC
+    public EventDto buildEventDto(Clock clock) {
+        return new EventDto(
+            EventType.SPACE_ENTITY_STATISTICS.toString(),
+            "data",
+            OffsetDateTime.now(clock)
         );
-        Map sortNameMap = Map.of(
-            "property", "name",
-            "direction", Sort.Direction.ASC
-        );
-        return Map.of(
-            "page", pageable.getPageNumber(),
-            "size", pageable.getPageSize(),
-            "sort", List.of(sortVersionMap, sortNameMap));
     }
 }

@@ -35,7 +35,7 @@ public class MoonGraphQLController {
     private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<MoonDto> getMoons(@Argument String name, @Argument PageInput pageInput) {
+    public Page<MoonDto> getMoons(@Argument String name, @Argument @Valid PageInput pageInput) {
         var filter = MoonFilter.builder()
             .name(name)
             .build();
