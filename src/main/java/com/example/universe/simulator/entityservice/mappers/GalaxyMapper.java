@@ -7,6 +7,8 @@ import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(config = MappingConfig.class)
 public interface GalaxyMapper {
 
@@ -17,4 +19,6 @@ public interface GalaxyMapper {
     Galaxy toEntity(UpdateGalaxyInput input);
 
     GalaxyDto toDto(Galaxy entity);
+
+    List<GalaxyDto> toDtoList(List<Galaxy> entities);
 }

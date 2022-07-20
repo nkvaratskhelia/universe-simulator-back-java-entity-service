@@ -7,6 +7,8 @@ import com.example.universe.simulator.entityservice.inputs.UpdateMoonInput;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(config = MappingConfig.class)
 public interface MoonMapper {
 
@@ -17,4 +19,6 @@ public interface MoonMapper {
     Moon toEntity(UpdateMoonInput input);
 
     MoonDto toDto(Moon entity);
+
+    List<MoonDto> toDtoList(List<Moon> entities);
 }

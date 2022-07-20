@@ -97,6 +97,7 @@ repositories {
 
 ext {
     set('commonVersion', '1.4.6')
+    set('graphqlJavaExtendedScalarsVersion', '18.1')
     set('mapstructVersion', '1.5.2.Final')
     set('springdocOpenapiVersion', '1.6.9')
     set('logstashLogbackEncoderVersion', '7.2')
@@ -114,7 +115,9 @@ dependencies {
     implementation "com.example.universe.simulator:common:${commonVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "com.graphql-java:graphql-java-extended-scalars:${graphqlJavaExtendedScalarsVersion}"
     compileOnly 'org.projectlombok:lombok'
     compileOnly "org.mapstruct:mapstruct:${mapstructVersion}"
     compileOnly "org.springdoc:springdoc-openapi-data-rest:${springdocOpenapiVersion}"
@@ -131,6 +134,7 @@ dependencies {
     runtimeOnly "org.springdoc:springdoc-openapi-ui:${springdocOpenapiVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-data-redis'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.springframework.graphql:spring-graphql-test"
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:rabbitmq'
     testCompileOnly 'org.projectlombok:lombok'

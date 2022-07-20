@@ -3,7 +3,13 @@
 Service that manages the data model of the distributed application.
 
 == Web
-`Spring MVC`
+`Spring MVC`, `GraphQL`
+
+=== Api
+The application provides both `REST` and `GraphQL` endpoints. `REST`
+endpoints are available at `/`. GraphQL endpoints are available at
+`/graphql` and the `GraphiQL` developer playground at `/graphiql`. You
+can also view the complete `GraphQL` schema at `/graphql/schema`.
 
 == Data
 
