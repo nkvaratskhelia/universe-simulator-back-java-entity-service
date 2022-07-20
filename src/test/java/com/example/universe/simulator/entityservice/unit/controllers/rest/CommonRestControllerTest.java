@@ -5,6 +5,7 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestController;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
@@ -37,7 +38,7 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
     private GalaxySpecificationBuilder specificationBuilder;
 
     @SpyBean
-    private GalaxyMapperImpl mapper;
+    private GalaxyMapper mapper;
 
     @Test
     void testGetGalaxies_defaultPageable() throws Exception {

@@ -7,6 +7,7 @@ import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
 import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
 import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
+import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
@@ -50,7 +51,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
     private GalaxySpecificationBuilder specificationBuilder;
 
     @SpyBean
-    private GalaxyMapperImpl mapper;
+    private GalaxyMapper mapper;
 
     @Test
     void testAppException() throws Exception {
