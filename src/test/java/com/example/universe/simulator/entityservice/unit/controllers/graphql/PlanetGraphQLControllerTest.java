@@ -39,7 +39,7 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
     private PlanetSpecificationBuilder specificationBuilder;
 
     @SpyBean
-    private PlanetMapper planetMapper;
+    private PlanetMapper mapper;
 
     @Test
     void testGetPlanets() {
@@ -69,7 +69,7 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
             .execute()
             .path("getPlanets")
             .entityList(PlanetDto.class)
-            .containsExactly(planetMapper.toDto(entity));
+            .containsExactly(mapper.toDto(entity));
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -79,7 +79,7 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
         // given
         UUID id = UUID.randomUUID();
         Planet entity = TestUtils.buildPlanet();
-        PlanetDto dto = planetMapper.toDto(entity);
+        PlanetDto dto = mapper.toDto(entity);
 
         // language=GraphQL
         String document = """
@@ -108,7 +108,7 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
         // given
         AddPlanetInput input = TestUtils.buildAddPlanetInput();
         Planet entity = TestUtils.buildPlanet();
-        PlanetDto resultDto = planetMapper.toDto(entity);
+        PlanetDto resultDto = mapper.toDto(entity);
 
         // language=GraphQL
         String document = """
@@ -130,15 +130,15 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
             .entity(PlanetDto.class)
             .isEqualTo(resultDto);
 
-        then(service).should().add(planetMapper.toEntity(input));
+        then(service).should().add(mapper.toEntity(input));
     }
 
     @Test
     void testUpdatePlanet() throws Exception {
         // given
         UpdatePlanetInput input = TestUtils.buildUpdatePlanetInput();
-        Planet entity = planetMapper.toEntity(input);
-        PlanetDto resultDto = planetMapper.toDto(entity);
+        Planet entity = mapper.toEntity(input);
+        PlanetDto resultDto = mapper.toDto(entity);
 
         // language=GraphQL
         String document = """
