@@ -100,8 +100,20 @@ public class TestUtils {
         return new AddGalaxyInput("name");
     }
 
+    public Map<String, Object> buildAddGalaxyInputMap(AddGalaxyInput input) {
+        return Map.of("name", input.name());
+    }
+
     public UpdateGalaxyInput buildUpdateGalaxyInput() {
         return new UpdateGalaxyInput(UUID.randomUUID(), 0L, "name");
+    }
+
+    public Map<String, Object> buildUpdateGalaxyInputMap(UpdateGalaxyInput input) {
+        return Map.of(
+            "id", input.id(),
+            "version", input.version(),
+            "name", input.name()
+        );
     }
 
     public GalaxyFilter buildGalaxyFilter() {
@@ -128,8 +140,24 @@ public class TestUtils {
         return new AddStarInput("name", UUID.randomUUID());
     }
 
+    public Map<String, Object> buildAddStarInputMap(AddStarInput input) {
+        return Map.of(
+            "name", input.name(),
+            "galaxyId", input.galaxyId()
+        );
+    }
+
     public UpdateStarInput buildUpdateStarInput() {
         return new UpdateStarInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
+    }
+
+    public Map<String, Object> buildUpdateStarInputMap(UpdateStarInput input) {
+        return Map.of(
+            "id", input.id(),
+            "version", input.version(),
+            "name", input.name(),
+            "galaxyId", input.galaxyId()
+        );
     }
 
     public StarFilter buildStarFilter() {
@@ -141,6 +169,7 @@ public class TestUtils {
     public Star buildStar() {
         return Star.builder()
             .id(UUID.randomUUID())
+            .version(0L)
             .name("name")
             .galaxyId(UUID.randomUUID())
             .build();
@@ -157,8 +186,24 @@ public class TestUtils {
         return new AddPlanetInput("name", UUID.randomUUID());
     }
 
+    public Map<String, Object> buildAddPlanetInputMap(AddPlanetInput input) {
+        return Map.of(
+            "name", input.name(),
+            "starId", input.starId()
+        );
+    }
+
     public UpdatePlanetInput buildUpdatePlanetInput() {
         return new UpdatePlanetInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
+    }
+
+    public Map<String, Object> buildUpdatePlanetInputMap(UpdatePlanetInput input) {
+        return Map.of(
+            "id", input.id(),
+            "version", input.version(),
+            "name", input.name(),
+            "starId", input.starId()
+        );
     }
 
     public PlanetFilter buildPlanetFilter() {
@@ -170,6 +215,7 @@ public class TestUtils {
     public Planet buildPlanet() {
         return Planet.builder()
             .id(UUID.randomUUID())
+            .version(0L)
             .name("name")
             .starId(UUID.randomUUID())
             .build();
@@ -186,8 +232,24 @@ public class TestUtils {
         return new AddMoonInput("name", UUID.randomUUID());
     }
 
+    public Map<String, Object> buildAddMoonInputMap(AddMoonInput input) {
+        return Map.of(
+            "name", input.name(),
+            "planetId", input.planetId()
+        );
+    }
+
     public UpdateMoonInput buildUpdateMoonInput() {
         return new UpdateMoonInput(UUID.randomUUID(), 0L, "name", UUID.randomUUID());
+    }
+
+    public Map<String, Object> buildUpdateMoonInputMap(UpdateMoonInput input) {
+        return Map.of(
+            "id", input.id(),
+            "version", input.version(),
+            "name", input.name(),
+            "planetId", input.planetId()
+        );
     }
 
     public MoonFilter buildMoonFilter() {
@@ -199,62 +261,10 @@ public class TestUtils {
     public Moon buildMoon() {
         return Moon.builder()
             .id(UUID.randomUUID())
+            .version(0L)
             .name("name")
             .planetId(UUID.randomUUID())
             .build();
-    }
-
-    public Map<String, Object> buildInputMapForGalaxyAdd(AddGalaxyInput input) {
-        return Map.of("name", input.name());
-    }
-
-    public Map<String, Object> buildInputMapForGalaxyUpdate(UpdateGalaxyInput input) {
-        return Map.of(
-            "id", input.id(),
-            "name", input.name(),
-            "version", input.version());
-    }
-
-    public Map<String, Object> buildInputMapForStarAdd(AddStarInput input) {
-        return Map.of(
-            "name", input.name(),
-            "galaxyId", input.galaxyId());
-    }
-
-    public Map<String, Object> buildInputMapForStarUpdate(UpdateStarInput input) {
-        return Map.of(
-            "id", input.id(),
-            "name", input.name(),
-            "version", input.version(),
-            "galaxyId", input.galaxyId());
-    }
-
-    public Map<String, Object> buildInputMapForPlanetAdd(AddPlanetInput input) {
-        return Map.of(
-            "name", input.name(),
-            "starId", input.starId());
-    }
-
-    public Map<String, Object> buildInputMapForPlanetUpdate(UpdatePlanetInput input) {
-        return Map.of(
-            "id", input.id(),
-            "name", input.name(),
-            "version", input.version(),
-            "starId", input.starId());
-    }
-
-    public Map<String, Object> buildInputMapForMoonAdd(AddMoonInput input) {
-        return Map.of(
-            "name", input.name(),
-            "planetId", input.planetId());
-    }
-
-    public Map<String, Object> buildInputMapForMoonUpdate(UpdateMoonInput input) {
-        return Map.of(
-            "id", input.id(),
-            "name", input.name(),
-            "version", input.version(),
-            "planetId", input.planetId());
     }
 
     public EventDto buildEventDto(Clock clock) {

@@ -7,6 +7,8 @@ import com.example.universe.simulator.entityservice.inputs.UpdateStarInput;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(config = MappingConfig.class)
 public interface StarMapper {
 
@@ -17,4 +19,6 @@ public interface StarMapper {
     Star toEntity(UpdateStarInput input);
 
     StarDto toDto(Star entity);
+
+    List<StarDto> toDtoList(List<Star> entities);
 }

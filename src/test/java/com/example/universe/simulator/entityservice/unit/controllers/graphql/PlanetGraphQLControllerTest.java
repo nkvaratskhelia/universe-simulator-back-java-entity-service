@@ -20,8 +20,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.graphql.test.tester.GraphQlTester;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,32 +46,34 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
     @Test
     void testGetPlanets() {
         // given
-        Planet entity = TestUtils.buildPlanet();
-        List<Planet> entityList = List.of(entity);
+        // language=GraphQL
+        var document = """
+            query getPlanets($name: String) {
+              getPlanets(name: $name) {
+                id, version, name, starId
+              }
+            }
+            """;
 
         PlanetFilter filter = TestUtils.buildPlanetFilter();
         Pageable pageable = TestUtils.buildDefaultPageable();
-        Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
 
-        // language=GraphQL
-        String document = """
-                query getPlanets($name: String, $pageInput: PageInput) {
-                  getPlanets(name: $name, pageInput: $pageInput) {
-                    id, name, version, starId
-                  }
-                }
-            """;
+        List<Planet> entities = List.of(TestUtils.buildPlanet());
+        List<PlanetDto> dtos = mapper.toDtoList(entities);
 
-        given(service.getList(any(), any())).willReturn(entityPage);
-
+        Page<Planet> page = new PageImpl<>(entities, pageable, entities.size());
+        given(service.getList(any(), any())).willReturn(page);
         // when
-        // then
-        graphQlTester.document(document)
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
             .variable("name", filter.getName())
-            .execute()
+            .execute();
+        // then
+        response
             .path("getPlanets")
             .entityList(PlanetDto.class)
-            .containsExactly(mapper.toDto(entity));
+            .isEqualTo(dtos);
+
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -77,109 +81,129 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
     @Test
     void testGetPlanet() throws Exception {
         // given
-        UUID id = UUID.randomUUID();
+        // language=GraphQL
+        var document = """
+            query getPlanet($id: ID!) {
+              getPlanet(id: $id) {
+                id, version, name, starId
+              }
+            }
+            """;
+
+        var id = UUID.randomUUID();
+
         Planet entity = TestUtils.buildPlanet();
         PlanetDto dto = mapper.toDto(entity);
 
-        // language=GraphQL
-        String document = """
-                query getPlanet($id:ID!) {
-                  getPlanet(id:$id) {
-                    id, name, version, starId
-                  }
-                }
-            """;
-
         given(service.get(any())).willReturn(entity);
-
         // when
-        // then
-        graphQlTester.document(document)
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
             .variable("id", id)
-            .execute()
+            .execute();
+        // then
+        response
             .path("getPlanet")
             .entity(PlanetDto.class)
             .isEqualTo(dto);
+
         then(service).should().get(id);
     }
 
     @Test
     void testAddPlanet() throws Exception {
         // given
-        AddPlanetInput input = TestUtils.buildAddPlanetInput();
-        Planet entity = TestUtils.buildPlanet();
-        PlanetDto resultDto = mapper.toDto(entity);
-
         // language=GraphQL
-        String document = """
-                mutation addPlanet($input: AddPlanetInput!) {
-                  addPlanet(input:$input) {
-                    id, name, version, starId
-                  }
-                }
+        var document = """
+            mutation addPlanet($input: AddPlanetInput!) {
+              addPlanet(input: $input) {
+                id, version, name, starId
+              }
+            }
             """;
 
-        given(service.add(any())).willReturn(entity);
+        AddPlanetInput input = TestUtils.buildAddPlanetInput();
+        Map<String, Object> inputMap = TestUtils.buildAddPlanetInputMap(input);
+        Planet inputEntity = mapper.toEntity(input);
 
+        Planet resultEntity = mapper.toEntity(input);
+        resultEntity.setId(UUID.randomUUID());
+        resultEntity.setVersion(0L);
+
+        PlanetDto resultDto = mapper.toDto(resultEntity);
+
+        given(service.add(any())).willReturn(resultEntity);
         // when
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
+            .variable("input", inputMap)
+            .execute();
         // then
-        graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForPlanetAdd(input))
-            .execute()
+        response
             .path("addPlanet")
             .entity(PlanetDto.class)
             .isEqualTo(resultDto);
 
-        then(service).should().add(mapper.toEntity(input));
+        then(service).should().add(inputEntity);
     }
 
     @Test
     void testUpdatePlanet() throws Exception {
         // given
-        UpdatePlanetInput input = TestUtils.buildUpdatePlanetInput();
-        Planet entity = mapper.toEntity(input);
-        PlanetDto resultDto = mapper.toDto(entity);
-
         // language=GraphQL
-        String document = """
-                mutation updatePlanet($input: UpdatePlanetInput!) {
-                  updatePlanet(input:$input) {
-                    id, name, version, starId
-                  }
-                }
+        var document = """
+            mutation updatePlanet($input: UpdatePlanetInput!) {
+              updatePlanet(input: $input) {
+                id, version, name, starId
+              }
+            }
             """;
 
-        given(service.update(any())).willReturn(entity);
+        UpdatePlanetInput input = TestUtils.buildUpdatePlanetInput();
+        Map<String, Object> inputMap = TestUtils.buildUpdatePlanetInputMap(input);
+        Planet inputEntity = mapper.toEntity(input);
 
+        Planet resultEntity = mapper.toEntity(input);
+        resultEntity.setVersion(resultEntity.getVersion() + 1);
+        PlanetDto resultDto = mapper.toDto(resultEntity);
+
+        given(service.update(any())).willReturn(resultEntity);
         // when
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
+            .variable("input", inputMap)
+            .execute();
         // then
-        graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForPlanetUpdate(input))
-            .execute()
+        response
             .path("updatePlanet")
             .entity(PlanetDto.class)
             .isEqualTo(resultDto);
 
-        then(service).should().update(entity);
+        then(service).should().update(inputEntity);
     }
 
     @Test
     void testDeletePlanet() throws Exception {
         // given
-        UUID id = UUID.randomUUID();
-
         // language=GraphQL
-        String document = """
-                mutation deletePlanet($id: ID!) {
-                  deletePlanet(id:$id)
-                }
+        var document = """
+            mutation deletePlanet($id: ID!) {
+              deletePlanet(id: $id)
+            }
             """;
 
+        UUID id = UUID.randomUUID();
         // when
-        // then
-        graphQlTester.document(document)
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
             .variable("id", id)
-            .executeAndVerify();
+            .execute();
+        // then
+        response
+            .path("deletePlanet")
+            .entity(UUID.class)
+            .isEqualTo(id);
+
         then(service).should().delete(id);
     }
 }

@@ -7,6 +7,8 @@ import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(config = MappingConfig.class)
 public interface PlanetMapper {
 
@@ -17,4 +19,6 @@ public interface PlanetMapper {
     Planet toEntity(UpdatePlanetInput input);
 
     PlanetDto toDto(Planet entity);
+
+    List<PlanetDto> toDtoList(List<Planet> entities);
 }

@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Map;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -72,13 +74,15 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
             """;
 
         PageInput pageInput = TestUtils.buildDefaultSortDirectionPageInput();
+        Map<String, Object> pageInputMap = TestUtils.buildDefaultSortDirectionPageInputMap();
+
         Pageable pageable = TestUtils.buildDefaultSortDirectionPageable();
 
         given(galaxyService.getList(any(), any())).willReturn(Page.empty());
         // when
         graphQlTester
             .document(document)
-            .variable("pageInput", TestUtils.buildDefaultSortDirectionPageInputMap())
+            .variable("pageInput", pageInputMap)
             .execute();
         // then
         then(pageInputMapper).should().toPageable(pageInput);
@@ -98,13 +102,15 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
             """;
 
         PageInput pageInput = TestUtils.buildSpaceEntityPageInput();
+        Map<String, Object> pageInputMap = TestUtils.buildSpaceEntityPageInputMap();
+
         Pageable pageable = TestUtils.buildSpaceEntityPageable();
 
         given(galaxyService.getList(any(), any())).willReturn(Page.empty());
         // when
         graphQlTester
             .document(document)
-            .variable("pageInput", TestUtils.buildSpaceEntityPageInputMap())
+            .variable("pageInput", pageInputMap)
             .execute();
         // then
         then(pageInputMapper).should().toPageable(pageInput);

@@ -20,8 +20,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.graphql.test.tester.GraphQlTester;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,32 +46,34 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
     @Test
     void testGetGalaxies() {
         // given
-        Galaxy entity = TestUtils.buildGalaxy();
-        List<Galaxy> entityList = List.of(entity);
+        // language=GraphQL
+        var document = """
+            query getGalaxies($name: String) {
+              getGalaxies(name: $name) {
+                id, version, name
+              }
+            }
+            """;
 
         GalaxyFilter filter = TestUtils.buildGalaxyFilter();
         Pageable pageable = TestUtils.buildDefaultPageable();
-        Page<Galaxy> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
 
-        // language=GraphQL
-        String document = """
-                query getGalaxies($name: String, $pageInput: PageInput) {
-                  getGalaxies(name: $name, pageInput: $pageInput) {
-                    id, name, version
-                  }
-                }
-            """;
+        List<Galaxy> entities = List.of(TestUtils.buildGalaxy());
+        List<GalaxyDto> dtos = mapper.toDtoList(entities);
 
-        given(service.getList(any(), any())).willReturn(entityPage);
-
+        Page<Galaxy> page = new PageImpl<>(entities, pageable, entities.size());
+        given(service.getList(any(), any())).willReturn(page);
         // when
-        // then
-        graphQlTester.document(document)
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
             .variable("name", filter.getName())
-            .execute()
+            .execute();
+        // then
+        response
             .path("getGalaxies")
             .entityList(GalaxyDto.class)
-            .containsExactly(mapper.toDto(entity));
+            .isEqualTo(dtos);
+
         then(specificationBuilder).should().build(filter);
         then(service).should().getList(null, pageable);
     }
@@ -77,109 +81,126 @@ class GalaxyGraphQLControllerTest extends AbstractGraphQLTest {
     @Test
     void testGetGalaxy() throws Exception {
         // given
-        UUID id = UUID.randomUUID();
+        // language=GraphQL
+        var document = """
+            query getGalaxy($id: ID!) {
+              getGalaxy(id: $id) {
+                id, version, name
+              }
+            }
+            """;
+
+        var id = UUID.randomUUID();
+
         Galaxy entity = TestUtils.buildGalaxy();
         GalaxyDto dto = mapper.toDto(entity);
 
-        // language=GraphQL
-        String document = """
-                query getGalaxy($id:ID!) {
-                  getGalaxy(id:$id) {
-                    id, name, version
-                  }
-                }
-            """;
-
         given(service.get(any())).willReturn(entity);
-
         // when
-        // then
-        graphQlTester.document(document)
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
             .variable("id", id)
-            .execute()
+            .execute();
+        // then
+        response
             .path("getGalaxy")
             .entity(GalaxyDto.class)
             .isEqualTo(dto);
+
         then(service).should().get(id);
     }
 
     @Test
     void testAddGalaxy() throws Exception {
         // given
-        AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
-        Galaxy entity = TestUtils.buildGalaxy();
-        GalaxyDto resultDto = mapper.toDto(entity);
-
         // language=GraphQL
-        String document = """
-                mutation addGalaxy($input: AddGalaxyInput!) {
-                  addGalaxy(input:$input) {
-                    id, name, version
-                  }
-                }
+        var document = """
+            mutation addGalaxy($input: AddGalaxyInput!) {
+              addGalaxy(input: $input) {
+                id, version, name
+              }
+            }
             """;
 
-        given(service.add(any())).willReturn(entity);
+        AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
+        Map<String, Object> inputMap = TestUtils.buildAddGalaxyInputMap(input);
+        Galaxy inputEntity = mapper.toEntity(input);
 
+        Galaxy resultEntity = TestUtils.buildGalaxy();
+        GalaxyDto resultDto = mapper.toDto(resultEntity);
+
+        given(service.add(any())).willReturn(resultEntity);
         // when
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
+            .variable("input", inputMap)
+            .execute();
         // then
-        graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForGalaxyAdd(input))
-            .execute()
+        response
             .path("addGalaxy")
             .entity(GalaxyDto.class)
             .isEqualTo(resultDto);
 
-        then(service).should().add(mapper.toEntity(input));
+        then(service).should().add(inputEntity);
     }
 
     @Test
     void testUpdateGalaxy() throws Exception {
         // given
-        UpdateGalaxyInput input = TestUtils.buildUpdateGalaxyInput();
-        Galaxy entity = mapper.toEntity(input);
-        GalaxyDto resultDto = mapper.toDto(entity);
-
         // language=GraphQL
-        String document = """
-                mutation updateGalaxy($input: UpdateGalaxyInput!) {
-                  updateGalaxy(input:$input) {
-                    id, name, version
-                  }
-                }
+        var document = """
+            mutation updateGalaxy($input: UpdateGalaxyInput!) {
+              updateGalaxy(input: $input) {
+                id, version, name
+              }
+            }
             """;
 
-        given(service.update(any())).willReturn(entity);
+        UpdateGalaxyInput input = TestUtils.buildUpdateGalaxyInput();
+        Map<String, Object> inputMap = TestUtils.buildUpdateGalaxyInputMap(input);
+        Galaxy inputEntity = mapper.toEntity(input);
 
+        Galaxy resultEntity = mapper.toEntity(input);
+        resultEntity.setVersion(resultEntity.getVersion() + 1);
+        GalaxyDto resultDto = mapper.toDto(resultEntity);
+
+        given(service.update(any())).willReturn(resultEntity);
         // when
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
+            .variable("input", inputMap)
+            .execute();
         // then
-        graphQlTester.document(document)
-            .variable("input", TestUtils.buildInputMapForGalaxyUpdate(input))
-            .execute()
+        response
             .path("updateGalaxy")
             .entity(GalaxyDto.class)
             .isEqualTo(resultDto);
 
-        then(service).should().update(entity);
+        then(service).should().update(inputEntity);
     }
 
     @Test
     void testDeleteGalaxy() throws Exception {
         // given
-        UUID id = UUID.randomUUID();
-
         // language=GraphQL
-        String document = """
-                mutation deleteGalaxy($id: ID!) {
-                  deleteGalaxy(id:$id)
-                }
+        var document = """
+            mutation deleteGalaxy($id: ID!) {
+              deleteGalaxy(id: $id)
+            }
             """;
 
+        UUID id = UUID.randomUUID();
         // when
-        // then
-        graphQlTester.document(document)
+        GraphQlTester.Response response = graphQlTester
+            .document(document)
             .variable("id", id)
-            .executeAndVerify();
+            .execute();
+        // then
+        response
+            .path("deleteGalaxy")
+            .entity(UUID.class)
+            .isEqualTo(id);
+
         then(service).should().delete(id);
     }
 }
