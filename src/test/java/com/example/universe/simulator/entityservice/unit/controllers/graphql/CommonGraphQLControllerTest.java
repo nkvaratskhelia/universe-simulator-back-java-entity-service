@@ -24,10 +24,10 @@ import static org.mockito.BDDMockito.then;
 class CommonGraphQLControllerTest extends AbstractGraphQLTest {
 
     @MockBean
-    private GalaxyService service;
+    private GalaxyService galaxyService;
 
     @MockBean
-    private GalaxySpecificationBuilder specificationBuilder;
+    private GalaxySpecificationBuilder galaxySpecificationBuilder;
 
     @Test
     void testPaging_defaultPageInput() {
@@ -44,14 +44,14 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
         PageInput pageInput = TestUtils.buildDefaultPageInput();
         Pageable pageable = TestUtils.buildDefaultPageable();
 
-        given(service.getList(any(), any())).willReturn(Page.empty());
+        given(galaxyService.getList(any(), any())).willReturn(Page.empty());
         // when
         graphQlTester
             .document(document)
             .execute();
         // then
         then(pageInputMapper).should().toPageable(pageInput);
-        then(service).should().getList(null, pageable);
+        then(galaxyService).should().getList(null, pageable);
     }
 
     @Test
@@ -69,7 +69,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
         PageInput pageInput = TestUtils.buildDefaultSortDirectionPageInput();
         Pageable pageable = TestUtils.buildDefaultSortDirectionPageable();
 
-        given(service.getList(any(), any())).willReturn(Page.empty());
+        given(galaxyService.getList(any(), any())).willReturn(Page.empty());
         // when
         graphQlTester
             .document(document)
@@ -77,7 +77,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
             .execute();
         // then
         then(pageInputMapper).should().toPageable(pageInput);
-        then(service).should().getList(null, pageable);
+        then(galaxyService).should().getList(null, pageable);
     }
 
     @Test
@@ -95,7 +95,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
         PageInput pageInput = TestUtils.buildSpaceEntityPageInput();
         Pageable pageable = TestUtils.buildSpaceEntityPageable();
 
-        given(service.getList(any(), any())).willReturn(Page.empty());
+        given(galaxyService.getList(any(), any())).willReturn(Page.empty());
         // when
         graphQlTester
             .document(document)
@@ -103,6 +103,6 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
             .execute();
         // then
         then(pageInputMapper).should().toPageable(pageInput);
-        then(service).should().getList(null, pageable);
+        then(galaxyService).should().getList(null, pageable);
     }
 }
