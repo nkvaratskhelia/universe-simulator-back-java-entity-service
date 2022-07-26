@@ -101,7 +101,7 @@ ext {
     set('mapstructVersion', '1.5.2.Final')
     set('springdocOpenapiVersion', '1.6.9')
     set('logstashLogbackEncoderVersion', '7.2')
-    set('springBootAdminVersion', '2.7.2')
+    set('springBootAdminVersion', '2.7.3')
 }
 
 dependencyManagement {
