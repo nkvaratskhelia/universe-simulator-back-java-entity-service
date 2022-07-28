@@ -90,7 +90,7 @@ class CommonGraphQLControllerTest extends AbstractGraphQLTest {
     }
 
     @Test
-    void testPaging() {
+    void testPaging_customPageInput() {
         // given
         // language=GraphQL
         var document = """
