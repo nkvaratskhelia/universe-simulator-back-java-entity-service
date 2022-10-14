@@ -35,7 +35,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
     protected CacheManager cacheManager;
 
     static {
-        RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.11.0-management");
+        RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.11.1-management");
         REDIS_CONTAINER = new GenericContainer<>("redis:7.0.5").withExposedPorts(6379);
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.5");
 
