@@ -1,11 +1,12 @@
 package com.example.universe.simulator.entityservice.common.abstractions;
 
-import com.example.universe.simulator.common.dtos.ErrorDto;
+import com.example.universe.simulator.entityservice.exception.RestExceptionHandler;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -52,7 +53,11 @@ public abstract class AbstractMockMvcTest {
         throws JsonProcessingException, UnsupportedEncodingException {
         assertThat(response.getStatus()).isEqualTo(errorCode.getHttpStatus().value());
 
-        ErrorDto errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorDto.class);
-        assertThat(errorResponse.errorCode()).isEqualTo(errorCode.toString());
+        ProblemDetail errorResponse = objectMapper.readValue(response.getContentAsString(), ProblemDetail.class);
+        assertThat(errorResponse.getDetail()).isEqualTo(errorCode.toString());
+        assertThat(errorResponse.getProperties())
+            .isNotNull()
+            .extractingByKey(RestExceptionHandler.TIMESTAMP_PROPERTY)
+            .isNotNull();
     }
 }

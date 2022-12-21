@@ -35,8 +35,8 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
     protected CacheManager cacheManager;
 
     static {
-        RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.11.3-management");
-        REDIS_CONTAINER = new GenericContainer<>("redis:7.0.5").withExposedPorts(6379);
+        RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.11.5-management");
+        REDIS_CONTAINER = new GenericContainer<>("redis:7.0.7").withExposedPorts(6379);
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:15.1");
 
         RABBITMQ_CONTAINER.start();
@@ -51,8 +51,8 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
         registry.add("spring.rabbitmq.username", RABBITMQ_CONTAINER::getAdminUsername);
         registry.add("spring.rabbitmq.password", RABBITMQ_CONTAINER::getAdminPassword);
 
-        registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
-        registry.add("spring.redis.port", REDIS_CONTAINER::getFirstMappedPort);
+        registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
+        registry.add("spring.data.redis.port", REDIS_CONTAINER::getFirstMappedPort);
 
         registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);

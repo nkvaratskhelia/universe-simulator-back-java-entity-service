@@ -11,6 +11,7 @@ import com.example.universe.simulator.entityservice.mappers.PageInputMapper;
 import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,6 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
 @Controller

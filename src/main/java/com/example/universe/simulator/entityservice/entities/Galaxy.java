@@ -1,12 +1,11 @@
 package com.example.universe.simulator.entityservice.entities;
 
+import jakarta.persistence.Entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import javax.persistence.Entity;
 
 @Entity
 @Getter @Setter

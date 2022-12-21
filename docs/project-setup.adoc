@@ -17,7 +17,7 @@ spring.datasource.password=password
 spring.rabbitmq.username=user
 spring.rabbitmq.password=password
 #redis
-spring.redis.password=password
+spring.data.redis.password=password
 #graphql
 spring.graphql.graphiql.enabled=true
 ----

@@ -22,7 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.PropertyReferenceException;
-import org.springframework.data.util.ClassTypeInformation;
+import org.springframework.data.util.TypeInformation;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -158,7 +158,7 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         Pageable pageable = PageRequest.of(defaultPageable.getPageNumber(), defaultPageable.getPageSize(), sort);
 
         // JUnit cannot construct a proper instance of PropertyReferenceException, so we need to create it ourselves
-        PropertyReferenceException exception = new PropertyReferenceException(property, ClassTypeInformation.from(Galaxy.class), List.of());
+        PropertyReferenceException exception = new PropertyReferenceException(property, TypeInformation.of(Galaxy.class), List.of());
         given(service.getList(any(), any())).willThrow(exception);
         // when
         MockHttpServletResponse response = performRequest(get("/galaxies")

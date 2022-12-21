@@ -9,9 +9,10 @@ import com.example.universe.simulator.entityservice.inputs.UpdatePlanetInput;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
