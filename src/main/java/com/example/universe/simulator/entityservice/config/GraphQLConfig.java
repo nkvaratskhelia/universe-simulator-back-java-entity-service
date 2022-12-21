@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class GraphQLConfig {
 
     @Bean

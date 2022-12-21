@@ -7,7 +7,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.time.Clock;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class BeanConfig {
 
     /*
