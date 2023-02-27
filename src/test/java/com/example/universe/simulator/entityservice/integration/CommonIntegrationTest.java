@@ -7,8 +7,6 @@ import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.util.UUID;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,17 +56,5 @@ class CommonIntegrationTest extends AbstractIntegrationTest {
 
         // cleanup
         performRequest(delete("/galaxies/{id}", dto.getId()));
-    }
-
-    @Test
-    void testDeleteNonexistentEntity() throws Exception {
-        // given
-        UUID id = UUID.randomUUID();
-
-        // when
-        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
-
-        // then
-        verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
     }
 }

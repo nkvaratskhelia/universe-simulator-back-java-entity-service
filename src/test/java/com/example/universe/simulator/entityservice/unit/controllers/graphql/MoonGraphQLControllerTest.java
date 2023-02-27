@@ -183,7 +183,7 @@ class MoonGraphQLControllerTest extends AbstractGraphQLTest {
     }
 
     @Test
-    void testDeleteMoon() {
+    void testDeleteMoon() throws Exception {
         // given
         // language=GraphQL
         var document = """

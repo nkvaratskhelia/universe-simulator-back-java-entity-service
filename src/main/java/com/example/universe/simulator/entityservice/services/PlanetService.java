@@ -68,11 +68,15 @@ public class PlanetService extends SpaceEntityService<Planet> {
     @Transactional
     @CacheEvict
     public void delete(UUID id) throws AppException {
+        if (!repository.existsById(id)) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
+        }
+
         if (moonRepository.existsByPlanetId(id)) {
             throw new AppException(ErrorCodeType.IN_USE);
         }
-        repository.deleteById(id);
 
+        repository.deleteById(id);
         eventPublisher.publish(EventType.PLANET_DELETE, id);
     }
 

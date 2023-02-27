@@ -88,7 +88,7 @@ public class MoonRestController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteMoon(@PathVariable UUID id) {
+    public void deleteMoon(@PathVariable UUID id) throws AppException {
         log.info("calling deleteMoon with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);

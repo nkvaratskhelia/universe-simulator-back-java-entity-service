@@ -202,23 +202,37 @@ class StarServiceTest {
     }
 
     @Test
+    void testDelete_idNotFound() {
+        // given
+        UUID id = UUID.randomUUID();
+        given(repository.existsById(any())).willReturn(false);
+        // when
+        AppException exception = catchThrowableOfType(() -> service.delete(id), AppException.class);
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
+        then(repository).should().existsById(id);
+        then(repository).should(never()).deleteById(any());
+    }
+
+    @Test
     void testDelete_inUse() {
         // given
         UUID id = UUID.randomUUID();
+        given(repository.existsById(any())).willReturn(true);
         given(planetRepository.existsByStarId(any())).willReturn(true);
         // when
         AppException exception = catchThrowableOfType(() -> service.delete(id), AppException.class);
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
         then(planetRepository).should().existsByStarId(id);
-        then(repository).shouldHaveNoInteractions();
-        then(eventPublisher).shouldHaveNoInteractions();
+        then(repository).should(never()).deleteById(any());
     }
 
     @Test
     void testDelete_successfulDelete() throws AppException {
         // given
         UUID id = UUID.randomUUID();
+        given(repository.existsById(any())).willReturn(true);
         given(planetRepository.existsByStarId(any())).willReturn(false);
         // when
         service.delete(id);

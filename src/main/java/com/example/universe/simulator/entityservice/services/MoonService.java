@@ -65,9 +65,12 @@ public class MoonService extends SpaceEntityService<Moon> {
 
     @Transactional
     @CacheEvict
-    public void delete(UUID id) {
-        repository.deleteById(id);
+    public void delete(UUID id) throws AppException {
+        if (!repository.existsById(id)) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
+        }
 
+        repository.deleteById(id);
         eventPublisher.publish(EventType.MOON_DELETE, id);
     }
 

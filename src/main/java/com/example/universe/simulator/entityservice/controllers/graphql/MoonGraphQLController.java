@@ -82,7 +82,7 @@ public class MoonGraphQLController {
     }
 
     @MutationMapping
-    public UUID deleteMoon(@Argument UUID id) {
+    public UUID deleteMoon(@Argument UUID id) throws AppException {
         log.info("calling deleteMoon with id [{}]", id);
         service.delete(id);
         log.info("deleted [{}]", id);

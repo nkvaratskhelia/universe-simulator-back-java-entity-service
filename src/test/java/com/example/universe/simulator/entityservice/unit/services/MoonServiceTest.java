@@ -198,9 +198,23 @@ class MoonServiceTest {
     }
 
     @Test
-    void testDelete_successfulDelete() {
+    void testDelete_idNotFound() {
         // given
         UUID id = UUID.randomUUID();
+        given(repository.existsById(any())).willReturn(false);
+        // when
+        AppException exception = catchThrowableOfType(() -> service.delete(id), AppException.class);
+        // then
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
+        then(repository).should().existsById(id);
+        then(repository).should(never()).deleteById(any());
+    }
+
+    @Test
+    void testDelete_successfulDelete() throws AppException {
+        // given
+        UUID id = UUID.randomUUID();
+        given(repository.existsById(any())).willReturn(true);
         // when
         service.delete(id);
         // then

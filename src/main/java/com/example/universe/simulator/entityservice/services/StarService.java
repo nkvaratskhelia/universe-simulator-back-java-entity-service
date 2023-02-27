@@ -68,11 +68,15 @@ public class StarService extends SpaceEntityService<Star> {
     @Transactional
     @CacheEvict
     public void delete(UUID id) throws AppException {
+        if (!repository.existsById(id)) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
+        }
+
         if (planetRepository.existsByStarId(id)) {
             throw new AppException(ErrorCodeType.IN_USE);
         }
-        repository.deleteById(id);
 
+        repository.deleteById(id);
         eventPublisher.publish(EventType.STAR_DELETE, id);
     }
 

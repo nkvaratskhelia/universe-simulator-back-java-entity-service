@@ -66,11 +66,15 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
     @Transactional
     @CacheEvict
     public void delete(UUID id) throws AppException {
+        if (!repository.existsById(id)) {
+            throw new AppException(ErrorCodeType.NOT_FOUND_ENTITY);
+        }
+
         if (starRepository.existsByGalaxyId(id)) {
             throw new AppException(ErrorCodeType.IN_USE);
         }
-        repository.deleteById(id);
 
+        repository.deleteById(id);
         eventPublisher.publish(EventType.GALAXY_DELETE, id);
     }
 
