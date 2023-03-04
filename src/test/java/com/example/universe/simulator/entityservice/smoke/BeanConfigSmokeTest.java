@@ -25,7 +25,6 @@ class BeanConfigSmokeTest extends AbstractSmokeTest {
     @Test
     void test() {
         // applicationTaskExecutor
-
         int numProcessors = Runtime.getRuntime().availableProcessors();
 
         assertThat(applicationTaskExecutor).isNotNull();
