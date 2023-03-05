@@ -9,7 +9,7 @@ import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 public class GraphQLConfig {
 
     @Bean
-    public RuntimeWiringConfigurer runtimeWiringConfigurer() {
+    RuntimeWiringConfigurer runtimeWiringConfigurer() {
         return builder -> builder.scalar(ExtendedScalars.GraphQLLong);
     }
 }

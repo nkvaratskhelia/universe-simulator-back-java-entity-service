@@ -8,7 +8,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.time.Clock;
 
 @Configuration(proxyBeanMethods = false)
-public class BeanConfig {
+class BeanConfig {
 
     /*
      * AsyncTaskExecutor named applicationTaskExecutor is needed for Spring MVC async processing. Check the following pages for more info:

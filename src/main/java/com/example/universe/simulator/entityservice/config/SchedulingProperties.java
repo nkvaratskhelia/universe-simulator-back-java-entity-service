@@ -10,7 +10,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @AllArgsConstructor
 @Getter
-public class SchedulingProperties {
+class SchedulingProperties {
 
     /**
      * Enables app-wide scheduling.
