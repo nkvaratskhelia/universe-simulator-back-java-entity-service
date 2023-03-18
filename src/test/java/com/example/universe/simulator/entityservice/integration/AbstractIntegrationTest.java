@@ -13,6 +13,7 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
+import org.testcontainers.lifecycle.Startables;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,9 +40,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
         REDIS_CONTAINER = new GenericContainer<>("redis:7.0.9").withExposedPorts(6379);
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:15.2");
 
-        RABBITMQ_CONTAINER.start();
-        REDIS_CONTAINER.start();
-        POSTGRESQL_CONTAINER.start();
+        Startables.deepStart(RABBITMQ_CONTAINER, REDIS_CONTAINER, POSTGRESQL_CONTAINER).join();
     }
 
     @DynamicPropertySource
