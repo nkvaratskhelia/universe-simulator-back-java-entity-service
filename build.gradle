@@ -99,7 +99,7 @@ ext {
     set('commonVersion', '2.0.5')
     set('springdocOpenapiVersion', '2.1.0')
     set('graphqlJavaExtendedScalarsVersion', '20.2')
-    set('mapstructVersion', '1.5.3.Final')
+    set('mapstructVersion', '1.5.4.Final')
     set('logstashLogbackEncoderVersion', '7.3')
     set('springBootAdminVersion', '3.0.2')
 }
