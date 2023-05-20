@@ -3,7 +3,7 @@ plugins {
     id 'idea'
     id 'jacoco'
     id 'io.spring.dependency-management' version '1.1.0'
-    id 'org.springframework.boot' version '3.0.6'
+    id 'org.springframework.boot' version '3.1.0'
     id 'org.sonarqube' version '4.0.0.2929'
     id 'org.owasp.dependencycheck' version '8.2.1'
 }
@@ -96,7 +96,7 @@ repositories {
 }
 
 ext {
-    set('commonVersion', '2.1.1')
+    set('commonVersion', '2.1.2')
     set('springdocOpenapiVersion', '2.1.0')
     set('graphqlJavaExtendedScalarsVersion', '20.2')
     set('mapstructVersion', '1.5.5.Final')
@@ -138,8 +138,6 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     // needed for smoke tests
     testRuntimeOnly 'com.h2database:h2'
-    // adds ability to mock/verify final methods
-    testRuntimeOnly 'org.mockito:mockito-inline'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen'
     annotationProcessor 'org.projectlombok:lombok'
