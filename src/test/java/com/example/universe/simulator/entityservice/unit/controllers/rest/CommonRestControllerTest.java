@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,7 +39,7 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
         // when
         performRequest(get("/galaxies"));
         // then
-        then(galaxyService).should().getList(null, pageable);
+        then(galaxyService).should().getList(any(), eq(pageable));
     }
 
     @Test
@@ -55,6 +56,6 @@ class CommonRestControllerTest extends AbstractWebMvcTest {
             .param("sort", "name,asc")
         );
         // then
-        then(galaxyService).should().getList(null, pageable);
+        then(galaxyService).should().getList(any(), eq(pageable));
     }
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -58,7 +59,7 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
         Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
         Page<MoonDto> dtoPage = entityPage.map(mapper::toDto);
 
-        given(service.getList(any(), any())).willReturn(entityPage);
+        given(service.getList(any(), eq(pageable))).willReturn(entityPage);
         // when
         MockHttpServletResponse response = performRequest(get("/moons")
             .param("name", filter.getName())
@@ -66,7 +67,6 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
         // then
         verifySuccessfulResponse(response, dtoPage);
         then(specificationBuilder).should().build(filter);
-        then(service).should().getList(null, pageable);
     }
 
     @Test

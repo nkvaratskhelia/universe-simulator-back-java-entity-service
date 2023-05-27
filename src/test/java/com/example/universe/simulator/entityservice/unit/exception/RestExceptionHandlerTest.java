@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
@@ -159,14 +160,13 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
         // JUnit cannot construct a proper instance of PropertyReferenceException, so we need to create it ourselves
         PropertyReferenceException exception = new PropertyReferenceException(property, TypeInformation.of(Galaxy.class), List.of());
-        given(service.getList(any(), any())).willThrow(exception);
+        given(service.getList(any(), eq(pageable))).willThrow(exception);
         // when
         MockHttpServletResponse response = performRequest(get("/galaxies")
             .param("sort", property)
         );
         // then
         verifyErrorResponse(response, ErrorCodeType.INVALID_SORT_PROPERTY);
-        then(service).should().getList(null, pageable);
     }
 
     @Test

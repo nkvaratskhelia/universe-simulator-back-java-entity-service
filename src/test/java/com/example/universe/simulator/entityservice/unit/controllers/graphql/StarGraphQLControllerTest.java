@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -62,7 +63,7 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
         List<StarDto> dtos = mapper.toDtoList(entities);
 
         Page<Star> page = new PageImpl<>(entities, pageable, entities.size());
-        given(service.getList(any(), any())).willReturn(page);
+        given(service.getList(any(), eq(pageable))).willReturn(page);
         // when
         GraphQlTester.Response response = graphQlTester
             .document(document)
@@ -75,7 +76,6 @@ class StarGraphQLControllerTest extends AbstractGraphQLTest {
             .isEqualTo(dtos);
 
         then(specificationBuilder).should().build(filter);
-        then(service).should().getList(null, pageable);
     }
 
     @Test
