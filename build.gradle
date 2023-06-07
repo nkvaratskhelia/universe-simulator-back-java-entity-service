@@ -30,7 +30,7 @@ repositories {
 }
 
 ext {
-    set('commonVersion', '2.1.4')
+    set('commonVersion', '2.2.2')
     set('springdocOpenapiVersion', '2.1.0')
     set('graphqlJavaExtendedScalarsVersion', '20.2')
     set('mapstructVersion', '1.5.5.Final')
