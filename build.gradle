@@ -35,7 +35,7 @@ ext {
     set('graphqlJavaExtendedScalarsVersion', '20.2')
     set('mapstructVersion', '1.5.5.Final')
     set('logstashLogbackEncoderVersion', '7.4')
-    set('springBootAdminVersion', '3.0.4')
+    set('springBootAdminVersion', '3.1.0')
 }
 
 dependencyManagement {
