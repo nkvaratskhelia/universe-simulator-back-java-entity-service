@@ -73,7 +73,6 @@ dependencies {
     testImplementation 'org.testcontainers:rabbitmq'
     // needed for smoke tests
     testRuntimeOnly 'com.h2database:h2'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 }
