@@ -114,8 +114,6 @@ bootBuildImage {
     }
 }
 
-lombok { version = dependencyManagement.importedProperties['lombok.version'] }
-
 tasks.named('test') {
     useJUnitPlatform()
 }
