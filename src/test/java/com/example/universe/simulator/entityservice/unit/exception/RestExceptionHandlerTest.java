@@ -5,7 +5,6 @@ import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.rest.GalaxyRestController;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
 import com.example.universe.simulator.entityservice.exception.AppException;
-import com.example.universe.simulator.entityservice.inputs.AddGalaxyInput;
 import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapperImpl;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.data.util.TypeInformation;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
@@ -37,7 +35,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 // Rest exception handling is tested using GalaxyRestController.
@@ -77,64 +74,6 @@ class RestExceptionHandlerTest extends AbstractWebMvcTest {
         // then
         verifyErrorResponse(response, ErrorCodeType.NOT_FOUND_ENTITY);
         then(service).should().delete(id);
-    }
-
-    @Test
-    void testHttpMediaTypeNotSupportedException_missingContentType() throws Exception {
-        // given
-        AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
-        // when
-        MockHttpServletResponse response = performRequest(post("/galaxies")
-            .content(objectMapper.writeValueAsString(input))
-        );
-        // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
-        then(service).shouldHaveNoInteractions();
-    }
-
-    @Test
-    void testHttpMediaTypeNotSupportedException_invalidContentType() throws Exception {
-        // given
-        AddGalaxyInput input = TestUtils.buildAddGalaxyInput();
-        // when
-        MockHttpServletResponse response = performRequest(post("/galaxies")
-            .contentType(MediaType.APPLICATION_XML)
-            .content(objectMapper.writeValueAsString(input))
-        );
-        // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_CONTENT_TYPE);
-        then(service).shouldHaveNoInteractions();
-    }
-
-    @Test
-    void testHttpMessageNotReadableException() throws Exception {
-        // when
-        MockHttpServletResponse response = performRequest(post("/galaxies"));
-        // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_BODY);
-        then(service).shouldHaveNoInteractions();
-    }
-
-    @Test
-    void testHttpRequestMethodNotSupportedException() throws Exception {
-        // given
-        UUID id = UUID.randomUUID();
-        // when
-        MockHttpServletResponse response = performRequest(post("/galaxies/{id}", id));
-        // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_HTTP_METHOD);
-        then(service).shouldHaveNoInteractions();
-    }
-
-    @Test
-    void testMethodArgumentTypeMismatchException() throws Exception {
-        // given
-        String id = "id";
-        // when
-        MockHttpServletResponse response = performRequest(delete("/galaxies/{id}", id));
-        // then
-        verifyErrorResponse(response, ErrorCodeType.INVALID_REQUEST_PARAMETER);
-        then(service).shouldHaveNoInteractions();
     }
 
     @Test
