@@ -13,8 +13,6 @@ import com.example.universe.simulator.entityservice.specifications.GalaxySpecifi
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +22,8 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,13 +42,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(GalaxyMapperImpl.class)
 class RestExceptionHandlerTest extends AbstractWebMvcTest {
 
-    @MockBean
+    @MockitoBean
     private GalaxyService service;
 
-    @MockBean
+    @MockitoBean
     private GalaxySpecificationBuilder specificationBuilder;
 
-    @SpyBean
+    @MockitoSpyBean
     private GalaxyMapper mapper;
 
     @Test

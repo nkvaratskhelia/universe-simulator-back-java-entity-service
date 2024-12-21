@@ -14,13 +14,13 @@ import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.specifications.StarSpecificationBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,13 +38,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import({StarMapperImpl.class})
 class StarRestControllerTest extends AbstractWebMvcTest {
 
-    @MockBean
+    @MockitoBean
     private StarService service;
 
-    @MockBean
+    @MockitoBean
     private StarSpecificationBuilder specificationBuilder;
 
-    @SpyBean
+    @MockitoSpyBean
     private StarMapper mapper;
 
     @Test

@@ -1,6 +1,6 @@
 package com.example.universe.simulator.entityservice.config;
 
-import org.springframework.boot.task.TaskExecutorBuilder;
+import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -21,7 +21,7 @@ class BeanConfig {
      * compatibility, will fallback to the default, SimpleAsyncTaskExecutor implementation."
      */
     @Bean({"applicationTaskExecutor", "taskExecutor"})
-    ThreadPoolTaskExecutor asyncTaskExecutor(TaskExecutorBuilder taskExecutorBuilder) {
+    ThreadPoolTaskExecutor asyncTaskExecutor(ThreadPoolTaskExecutorBuilder taskExecutorBuilder) {
         int numProcessors = Runtime.getRuntime().availableProcessors();
         return taskExecutorBuilder
             .corePoolSize(numProcessors)

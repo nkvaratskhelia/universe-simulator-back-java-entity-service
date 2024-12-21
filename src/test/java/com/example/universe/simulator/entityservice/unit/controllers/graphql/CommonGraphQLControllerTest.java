@@ -10,11 +10,11 @@ import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.Map;
 
@@ -28,13 +28,13 @@ import static org.mockito.BDDMockito.then;
 @Import(GalaxyMapperImpl.class)
 class CommonGraphQLControllerTest extends AbstractGraphQLTest {
 
-    @MockBean
+    @MockitoBean
     private GalaxyService galaxyService;
 
-    @MockBean
+    @MockitoBean
     private GalaxySpecificationBuilder galaxySpecificationBuilder;
 
-    @SpyBean
+    @MockitoSpyBean
     private PageInputMapper pageInputMapper;
 
     @Test

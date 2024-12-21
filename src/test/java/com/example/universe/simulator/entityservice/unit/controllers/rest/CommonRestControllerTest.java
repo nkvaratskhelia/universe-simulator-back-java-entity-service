@@ -8,10 +8,10 @@ import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,10 +24,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Import(GalaxyMapperImpl.class)
 class CommonRestControllerTest extends AbstractWebMvcTest {
 
-    @MockBean
+    @MockitoBean
     private GalaxyService galaxyService;
 
-    @MockBean
+    @MockitoBean
     private GalaxySpecificationBuilder galaxySpecificationBuilder;
 
     @Test

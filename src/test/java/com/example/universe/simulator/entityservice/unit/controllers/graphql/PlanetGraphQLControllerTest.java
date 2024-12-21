@@ -14,13 +14,13 @@ import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.List;
 import java.util.Map;
@@ -35,13 +35,13 @@ import static org.mockito.BDDMockito.then;
 @Import(PlanetMapperImpl.class)
 class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
 
-    @MockBean
+    @MockitoBean
     private PlanetService service;
 
-    @MockBean
+    @MockitoBean
     private PlanetSpecificationBuilder specificationBuilder;
 
-    @SpyBean
+    @MockitoSpyBean
     private PlanetMapper mapper;
 
     @Test
