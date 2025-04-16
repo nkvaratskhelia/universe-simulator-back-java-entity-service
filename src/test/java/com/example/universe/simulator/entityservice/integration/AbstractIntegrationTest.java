@@ -1,5 +1,7 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.example.universe.simulator.common.dtos.EventDto;
 import com.example.universe.simulator.common.test.AbstractSpringBootTest;
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractMockMvcTest;
@@ -16,8 +18,6 @@ import org.testcontainers.lifecycle.Startables;
 
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @AbstractSpringBootTest
 @AutoConfigureMockMvc
@@ -40,7 +40,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
     protected CacheManager cacheManager;
 
     static {
-        RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:4.0.7-management");
+        RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:4.0.8-management");
         REDIS_CONTAINER = new GenericContainer<>("redis:7.4.2").withExposedPorts(6379);
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:17.4");
 
