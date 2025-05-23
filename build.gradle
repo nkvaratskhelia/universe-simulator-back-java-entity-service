@@ -18,6 +18,12 @@ java {
     }
 }
 
+idea {
+    module {
+        downloadJavadoc = true
+    }
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -77,12 +83,6 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
     annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-}
-
-idea {
-    module {
-        downloadJavadoc = true
-    }
 }
 
 def coverageExclusions = [
