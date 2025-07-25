@@ -41,7 +41,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
 
     static {
         RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:4.1.2-management");
-        REDIS_CONTAINER = new GenericContainer<>("redis:8.0.2").withExposedPorts(6379);
+        REDIS_CONTAINER = new GenericContainer<>("redis:8.0.3").withExposedPorts(6379);
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:17.5");
 
         Startables.deepStart(RABBITMQ_CONTAINER, REDIS_CONTAINER, POSTGRESQL_CONTAINER).join();
