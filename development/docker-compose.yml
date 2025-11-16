@@ -1,7 +1,7 @@
 services:
   entity-service-postgres:
     container_name: universe-simulator-entity-service-postgres
-    image: postgres:18.0
+    image: postgres:18.1
     restart: always
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
