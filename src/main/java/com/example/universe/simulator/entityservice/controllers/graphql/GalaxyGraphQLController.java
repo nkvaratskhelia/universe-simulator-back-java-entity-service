@@ -14,6 +14,7 @@ import com.example.universe.simulator.entityservice.specifications.GalaxySpecifi
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,15 +36,15 @@ public class GalaxyGraphQLController {
     private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<GalaxyDto> getGalaxies(@Argument String name, @Argument @Valid PageInput pageInput) {
+    public Page<@NonNull GalaxyDto> getGalaxies(@Argument String name, @Argument @Valid PageInput pageInput) {
         var filter = GalaxyFilter.builder()
             .name(name)
             .build();
         Pageable pageable = pageInputMapper.toPageable(pageInput);
         log.info("calling getGalaxies with {} and {}", filter, pageable);
-        Specification<Galaxy> specification = specificationBuilder.build(filter);
+        Specification<@NonNull Galaxy> specification = specificationBuilder.build(filter);
 
-        Page<GalaxyDto> result = service.getList(specification, pageable)
+        Page<@NonNull GalaxyDto> result = service.getList(specification, pageable)
             .map(galaxyMapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 

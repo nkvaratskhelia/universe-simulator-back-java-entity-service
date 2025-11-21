@@ -14,6 +14,7 @@ import com.example.universe.simulator.entityservice.specifications.PlanetSpecifi
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,15 +36,15 @@ public class PlanetGraphQLController {
     private final PageInputMapper pageInputMapper;
 
     @QueryMapping
-    public Page<PlanetDto> getPlanets(@Argument String name, @Argument @Valid PageInput pageInput) {
+    public Page<@NonNull PlanetDto> getPlanets(@Argument String name, @Argument @Valid PageInput pageInput) {
         var filter = PlanetFilter.builder()
             .name(name)
             .build();
         Pageable pageable = pageInputMapper.toPageable(pageInput);
         log.info("calling getPlanets with {} and {}", filter, pageable);
-        Specification<Planet> specification = specificationBuilder.build(filter);
+        Specification<@NonNull Planet> specification = specificationBuilder.build(filter);
 
-        Page<PlanetDto> result = service.getList(specification, pageable)
+        Page<@NonNull PlanetDto> result = service.getList(specification, pageable)
             .map(planetMapper::toDto);
         log.info("fetched [{}] record(s)", result.getNumberOfElements());
 

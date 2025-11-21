@@ -1,5 +1,14 @@
 package com.example.universe.simulator.entityservice.unit.controllers.rest;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.rest.MoonRestController;
@@ -12,8 +21,9 @@ import com.example.universe.simulator.entityservice.mappers.MoonMapper;
 import com.example.universe.simulator.entityservice.mappers.MoonMapperImpl;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.specifications.MoonSpecificationBuilder;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,15 +34,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.List;
 import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(MoonRestController.class)
 @Import({MoonMapperImpl.class})
@@ -56,8 +57,8 @@ class MoonRestControllerTest extends AbstractWebMvcTest {
 
         MoonFilter filter = TestUtils.buildMoonFilter();
         Pageable pageable = TestUtils.buildDefaultPageable();
-        Page<Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<MoonDto> dtoPage = entityPage.map(mapper::toDto);
+        Page<@NonNull Moon> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<@NonNull MoonDto> dtoPage = entityPage.map(mapper::toDto);
 
         given(service.getList(any(), eq(pageable))).willReturn(entityPage);
         // when

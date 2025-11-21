@@ -1,5 +1,12 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import static com.example.universe.simulator.entityservice.services.PlanetService.CACHE_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.PlanetDto;
@@ -26,13 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.example.universe.simulator.entityservice.services.PlanetService.CACHE_NAME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 class PlanetIntegrationTest extends AbstractIntegrationTest {
 
@@ -107,11 +107,6 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
     @Test
     void testAddPlanet() throws Exception {
         // given
-        PlanetDto planetDto3 = PlanetDto.builder()
-            .name("name3")
-            .starId(star.getId())
-            .build();
-
         MockHttpServletResponse response = performRequestWithBody(post("/planets"),
             new AddPlanetInput("name3", star.getId())
         );

@@ -12,6 +12,7 @@ import com.example.universe.simulator.entityservice.specifications.PlanetSpecifi
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,15 +41,15 @@ public class PlanetRestController {
     private final PlanetMapper mapper;
 
     @GetMapping
-    public Callable<Page<PlanetDto>> getPlanets(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
+    public Callable<Page<@NonNull PlanetDto>> getPlanets(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = PlanetFilter.builder()
             .name(name)
             .build();
         log.info("calling getPlanets with {} and {}", filter, pageable);
-        Specification<Planet> specification = specificationBuilder.build(filter);
+        Specification<@NonNull Planet> specification = specificationBuilder.build(filter);
 
         return () -> {
-            Page<PlanetDto> result = service.getList(specification, pageable)
+            Page<@NonNull PlanetDto> result = service.getList(specification, pageable)
                 .map(mapper::toDto);
             log.info("fetched [{}] record(s)", result.getNumberOfElements());
 

@@ -8,6 +8,7 @@ import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -32,7 +33,7 @@ public class GalaxyService extends SpaceEntityService<Galaxy> {
     private final StarRepository starRepository;
     private final EventPublisher eventPublisher;
 
-    public Page<Galaxy> getList(Specification<Galaxy> specification, Pageable pageable) {
+    public Page<@NonNull Galaxy> getList(Specification<@NonNull Galaxy> specification, Pageable pageable) {
         return repository.findAll(specification, pageable);
     }
 

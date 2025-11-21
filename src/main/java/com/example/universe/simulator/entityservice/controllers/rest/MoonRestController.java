@@ -12,6 +12,7 @@ import com.example.universe.simulator.entityservice.specifications.MoonSpecifica
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,15 +41,15 @@ public class MoonRestController {
     private final MoonMapper mapper;
 
     @GetMapping
-    public Callable<Page<MoonDto>> getMoons(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
+    public Callable<Page<@NonNull MoonDto>> getMoons(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = MoonFilter.builder()
             .name(name)
             .build();
         log.info("calling getMoons with {} and {}", filter, pageable);
-        Specification<Moon> specification = specificationBuilder.build(filter);
+        Specification<@NonNull Moon> specification = specificationBuilder.build(filter);
 
         return () -> {
-            Page<MoonDto> result = service.getList(specification, pageable)
+            Page<@NonNull MoonDto> result = service.getList(specification, pageable)
                 .map(mapper::toDto);
             log.info("fetched [{}] record(s)", result.getNumberOfElements());
 

@@ -1,5 +1,10 @@
 package com.example.universe.simulator.entityservice.unit.controllers.graphql;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractGraphQLTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.graphql.GalaxyGraphQLController;
@@ -9,7 +14,7 @@ import com.example.universe.simulator.entityservice.mappers.PageInputMapper;
 import com.example.universe.simulator.entityservice.services.GalaxyService;
 import com.example.universe.simulator.entityservice.specifications.GalaxySpecificationBuilder;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
+import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +22,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 
 // Common graphql controller cases are tested using GalaxyGraphQLController.
 @GraphQlTest(GalaxyGraphQLController.class)

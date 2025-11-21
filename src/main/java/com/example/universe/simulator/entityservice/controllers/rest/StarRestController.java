@@ -12,6 +12,7 @@ import com.example.universe.simulator.entityservice.specifications.StarSpecifica
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,15 +41,15 @@ public class StarRestController {
     private final StarMapper mapper;
 
     @GetMapping
-    public Callable<Page<StarDto>> getStars(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
+    public Callable<Page<@NonNull StarDto>> getStars(@RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var filter = StarFilter.builder()
             .name(name)
             .build();
         log.info("calling getStars with {} and {}", filter, pageable);
-        Specification<Star> specification = specificationBuilder.build(filter);
+        Specification<@NonNull Star> specification = specificationBuilder.build(filter);
 
         return () -> {
-            Page<StarDto> result = service.getList(specification, pageable)
+            Page<@NonNull StarDto> result = service.getList(specification, pageable)
                 .map(mapper::toDto);
             log.info("fetched [{}] record(s)", result.getNumberOfElements());
 

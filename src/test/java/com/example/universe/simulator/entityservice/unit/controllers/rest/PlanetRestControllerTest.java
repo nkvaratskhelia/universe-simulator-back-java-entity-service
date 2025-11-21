@@ -1,5 +1,14 @@
 package com.example.universe.simulator.entityservice.unit.controllers.rest;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractWebMvcTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.rest.PlanetRestController;
@@ -12,8 +21,9 @@ import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapperImpl;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,15 +34,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.List;
 import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(PlanetRestController.class)
 @Import({PlanetMapperImpl.class})
@@ -56,8 +57,8 @@ class PlanetRestControllerTest extends AbstractWebMvcTest {
 
         PlanetFilter filter = TestUtils.buildPlanetFilter();
         Pageable pageable = TestUtils.buildDefaultPageable();
-        Page<Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
-        Page<PlanetDto> dtoPage = entityPage.map(mapper::toDto);
+        Page<@NonNull Planet> entityPage = new PageImpl<>(entityList, pageable, entityList.size());
+        Page<@NonNull PlanetDto> dtoPage = entityPage.map(mapper::toDto);
 
         given(service.getList(any(), eq(pageable))).willReturn(entityPage);
         // when

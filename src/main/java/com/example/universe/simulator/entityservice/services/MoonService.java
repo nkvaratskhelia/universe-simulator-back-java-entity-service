@@ -8,6 +8,7 @@ import com.example.universe.simulator.entityservice.repositories.PlanetRepositor
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -32,7 +33,7 @@ public class MoonService extends SpaceEntityService<Moon> {
     private final PlanetRepository planetRepository;
     private final EventPublisher eventPublisher;
 
-    public Page<Moon> getList(Specification<Moon> specification, Pageable pageable) {
+    public Page<@NonNull Moon> getList(Specification<@NonNull Moon> specification, Pageable pageable) {
         return repository.findAll(specification, pageable);
     }
 

@@ -1,5 +1,10 @@
 package com.example.universe.simulator.entityservice.unit.controllers.graphql;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+
 import com.example.universe.simulator.entityservice.common.abstractions.AbstractGraphQLTest;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.controllers.graphql.PlanetGraphQLController;
@@ -12,8 +17,9 @@ import com.example.universe.simulator.entityservice.mappers.PlanetMapper;
 import com.example.universe.simulator.entityservice.mappers.PlanetMapperImpl;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.specifications.PlanetSpecificationBuilder;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest;
+import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,11 +31,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 
 @GraphQlTest(PlanetGraphQLController.class)
 @Import(PlanetMapperImpl.class)
@@ -62,7 +63,7 @@ class PlanetGraphQLControllerTest extends AbstractGraphQLTest {
         List<Planet> entities = List.of(TestUtils.buildPlanet());
         List<PlanetDto> dtos = mapper.toDtoList(entities);
 
-        Page<Planet> page = new PageImpl<>(entities, pageable, entities.size());
+        Page<@NonNull Planet> page = new PageImpl<>(entities, pageable, entities.size());
         given(service.getList(any(), eq(pageable))).willReturn(page);
         // when
         GraphQlTester.Response response = graphQlTester

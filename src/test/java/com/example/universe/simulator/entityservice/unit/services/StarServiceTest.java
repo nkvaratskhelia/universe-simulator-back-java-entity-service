@@ -1,5 +1,13 @@
 package com.example.universe.simulator.entityservice.unit.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.entities.Star;
 import com.example.universe.simulator.entityservice.events.EventPublisher;
@@ -10,6 +18,7 @@ import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.StarService;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
 import com.example.universe.simulator.entityservice.types.EventType;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -24,14 +33,6 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class StarServiceTest {
@@ -58,15 +59,15 @@ class StarServiceTest {
             TestUtils.buildStar()
         );
         Pageable pageable = Pageable.unpaged();
-        Page<Star> page = new PageImpl<>(list, pageable, list.size());
+        Page<@NonNull Star> page = new PageImpl<>(list, pageable, list.size());
 
-        given(repository.findAll(ArgumentMatchers.<Specification<Star>>any(), any(Pageable.class)))
+        given(repository.findAll(ArgumentMatchers.<Specification<@NonNull Star>>any(), any(Pageable.class)))
             .willReturn(page);
         // when
-        Page<Star> result = service.getList(null, pageable);
+        Page<@NonNull Star> result = service.getList(Specification.unrestricted(), pageable);
         // then
         assertThat(result).isEqualTo(page);
-        then(repository).should().findAll((Specification<Star>) null, pageable);
+        then(repository).should().findAll(Specification.unrestricted(), pageable);
     }
 
     @Test
@@ -75,7 +76,7 @@ class StarServiceTest {
         UUID id = UUID.randomUUID();
         given(repository.findById(any())).willReturn(Optional.empty());
         // when
-        AppException exception = catchThrowableOfType(() -> service.get(id), AppException.class);
+        AppException exception = catchThrowableOfType(AppException.class, () -> service.get(id));
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().findById(id);
@@ -100,7 +101,7 @@ class StarServiceTest {
         Star entity = TestUtils.buildStar();
         given(repository.existsByName(anyString())).willReturn(true);
         // when
-        AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
+        AppException exception = catchThrowableOfType(AppException.class, () -> service.add(entity));
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
         then(repository).should().existsByName(entity.getName());
@@ -116,7 +117,7 @@ class StarServiceTest {
         given(repository.existsByName(anyString())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(false);
         // when
-        AppException exception = catchThrowableOfType(() -> service.add(entity), AppException.class);
+        AppException exception = catchThrowableOfType(AppException.class, () -> service.add(entity));
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
         then(galaxyRepository).should().existsById(entity.getGalaxyId());
@@ -145,7 +146,7 @@ class StarServiceTest {
         Star entity = TestUtils.buildStar();
         given(repository.existsById(any())).willReturn(false);
         // when
-        AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
+        AppException exception = catchThrowableOfType(AppException.class, () -> service.update(entity));
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().existsById(entity.getId());
@@ -160,7 +161,7 @@ class StarServiceTest {
         given(repository.existsById(any())).willReturn(true);
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(true);
         // when
-        AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
+        AppException exception = catchThrowableOfType(AppException.class, () -> service.update(entity));
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.EXISTS_NAME);
         then(repository).should().existsByNameAndIdNot(entity.getName(), entity.getId());
@@ -177,7 +178,7 @@ class StarServiceTest {
         given(repository.existsByNameAndIdNot(anyString(), any())).willReturn(false);
         given(galaxyRepository.existsById(any())).willReturn(false);
         // when
-        AppException exception = catchThrowableOfType(() -> service.update(entity), AppException.class);
+        AppException exception = catchThrowableOfType(AppException.class, () -> service.update(entity));
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_GALAXY);
         then(galaxyRepository).should().existsById(entity.getGalaxyId());
@@ -207,7 +208,7 @@ class StarServiceTest {
         UUID id = UUID.randomUUID();
         given(repository.existsById(any())).willReturn(false);
         // when
-        AppException exception = catchThrowableOfType(() -> service.delete(id), AppException.class);
+        AppException exception = catchThrowableOfType(AppException.class, () -> service.delete(id));
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.NOT_FOUND_ENTITY);
         then(repository).should().existsById(id);
@@ -221,7 +222,7 @@ class StarServiceTest {
         given(repository.existsById(any())).willReturn(true);
         given(planetRepository.existsByStarId(any())).willReturn(true);
         // when
-        AppException exception = catchThrowableOfType(() -> service.delete(id), AppException.class);
+        AppException exception = catchThrowableOfType(AppException.class, () -> service.delete(id));
         // then
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCodeType.IN_USE);
         then(planetRepository).should().existsByStarId(id);
