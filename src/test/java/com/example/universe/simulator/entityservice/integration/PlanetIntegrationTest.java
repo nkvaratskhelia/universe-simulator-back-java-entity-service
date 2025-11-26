@@ -21,13 +21,13 @@ import com.example.universe.simulator.entityservice.repositories.PlanetRepositor
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.PlanetService;
 import com.example.universe.simulator.entityservice.types.EventType;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.mock.web.MockHttpServletResponse;
+import tools.jackson.core.type.TypeReference;
 
 import java.util.List;
 import java.util.Map;
@@ -85,7 +85,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         );
 
         // then
-        JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<PlanetDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(planet1));
@@ -116,7 +116,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/planets"));
 
         // then
-        JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<PlanetDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(3)
             .hasSameElementsAs(List.of(planet1, planet2, planet3));
@@ -138,7 +138,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/planets"));
 
         // then
-        JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<PlanetDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(2)
             .hasSameElementsAs(List.of(dto, planet2));
@@ -157,7 +157,7 @@ class PlanetIntegrationTest extends AbstractIntegrationTest {
         MockHttpServletResponse response = performRequest(get("/planets"));
 
         // then
-        JsonPage<PlanetDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<PlanetDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(planet2));

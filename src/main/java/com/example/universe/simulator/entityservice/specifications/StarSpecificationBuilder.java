@@ -11,6 +11,6 @@ public class StarSpecificationBuilder extends SpaceEntitySpecificationBuilder<St
 
     @Override
     Specification<@NonNull Star> buildEntitySpecification(StarFilter filter) {
-        return null;
+        return Specification.unrestricted();
     }
 }

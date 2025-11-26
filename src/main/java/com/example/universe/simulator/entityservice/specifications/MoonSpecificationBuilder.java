@@ -11,6 +11,6 @@ public class MoonSpecificationBuilder extends SpaceEntitySpecificationBuilder<Mo
 
     @Override
     Specification<@NonNull Moon> buildEntitySpecification(MoonFilter filter) {
-        return null;
+        return Specification.unrestricted();
     }
 }

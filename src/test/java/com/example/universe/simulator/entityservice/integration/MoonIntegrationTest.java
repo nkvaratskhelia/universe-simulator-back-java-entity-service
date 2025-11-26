@@ -1,5 +1,12 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import static com.example.universe.simulator.entityservice.services.MoonService.CACHE_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.MoonDto;
@@ -16,25 +23,18 @@ import com.example.universe.simulator.entityservice.repositories.PlanetRepositor
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.services.MoonService;
 import com.example.universe.simulator.entityservice.types.EventType;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.mock.web.MockHttpServletResponse;
+import tools.jackson.core.type.TypeReference;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.example.universe.simulator.entityservice.services.MoonService.CACHE_NAME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 class MoonIntegrationTest extends AbstractIntegrationTest {
 
@@ -95,7 +95,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         );
 
         // then
-        JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<MoonDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(moon1));
@@ -126,7 +126,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/moons"));
 
         // then
-        JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<MoonDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(3)
             .hasSameElementsAs(List.of(moon1, moon2, moon3));
@@ -148,7 +148,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/moons"));
 
         // then
-        JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<MoonDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(2)
             .hasSameElementsAs(List.of(dto, moon2));
@@ -167,7 +167,7 @@ class MoonIntegrationTest extends AbstractIntegrationTest {
         MockHttpServletResponse response = performRequest(get("/moons"));
 
         // then
-        JsonPage<MoonDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<MoonDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(moon2));

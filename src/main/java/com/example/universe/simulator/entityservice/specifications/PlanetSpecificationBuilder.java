@@ -11,6 +11,6 @@ public class PlanetSpecificationBuilder extends SpaceEntitySpecificationBuilder<
 
     @Override
     Specification<@NonNull Planet> buildEntitySpecification(PlanetFilter filter) {
-        return null;
+        return Specification.unrestricted();
     }
 }

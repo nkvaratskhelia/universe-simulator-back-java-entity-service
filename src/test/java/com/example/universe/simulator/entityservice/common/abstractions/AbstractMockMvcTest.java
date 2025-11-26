@@ -1,9 +1,10 @@
 package com.example.universe.simulator.entityservice.common.abstractions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
+
 import com.example.universe.simulator.entityservice.exception.RestExceptionHandler;
 import com.example.universe.simulator.entityservice.types.ErrorCodeType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -11,11 +12,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.UnsupportedEncodingException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 
 public abstract class AbstractMockMvcTest {
 
@@ -23,7 +22,7 @@ public abstract class AbstractMockMvcTest {
     private MockMvc mockMvc;
 
     @Autowired
-    protected ObjectMapper objectMapper;
+    protected JsonMapper jsonMapper;
 
     /*
      * Handles sync and async requests. For async requests, see
@@ -40,20 +39,18 @@ public abstract class AbstractMockMvcTest {
         return performRequest(
             requestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(body))
+                .content(jsonMapper.writeValueAsString(body))
         );
     }
 
-    protected final <T> T readResponse(MockHttpServletResponse response, Class<T> responseClass)
-        throws JsonProcessingException, UnsupportedEncodingException {
-        return objectMapper.readValue(response.getContentAsString(), responseClass);
+    protected final <T> T readResponse(MockHttpServletResponse response, Class<T> responseClass) throws UnsupportedEncodingException {
+        return jsonMapper.readValue(response.getContentAsString(), responseClass);
     }
 
-    protected final void verifyErrorResponse(MockHttpServletResponse response, ErrorCodeType errorCode)
-        throws JsonProcessingException, UnsupportedEncodingException {
+    protected final void verifyErrorResponse(MockHttpServletResponse response, ErrorCodeType errorCode) throws UnsupportedEncodingException {
         assertThat(response.getStatus()).isEqualTo(errorCode.getHttpStatus().value());
 
-        ProblemDetail errorResponse = objectMapper.readValue(response.getContentAsString(), ProblemDetail.class);
+        ProblemDetail errorResponse = jsonMapper.readValue(response.getContentAsString(), ProblemDetail.class);
         assertThat(errorResponse.getDetail()).isEqualTo(errorCode.toString());
         assertThat(errorResponse.getProperties())
             .isNotNull()

@@ -1,5 +1,12 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import static com.example.universe.simulator.entityservice.services.StarService.CACHE_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.common.utils.TestUtils;
 import com.example.universe.simulator.entityservice.dtos.StarDto;
@@ -11,25 +18,18 @@ import com.example.universe.simulator.entityservice.mappers.StarMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.repositories.StarRepository;
 import com.example.universe.simulator.entityservice.types.EventType;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.mock.web.MockHttpServletResponse;
+import tools.jackson.core.type.TypeReference;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.example.universe.simulator.entityservice.services.StarService.CACHE_NAME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 class StarIntegrationTest extends AbstractIntegrationTest {
 
@@ -74,7 +74,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         );
 
         // then
-        JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<StarDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(star1));
@@ -105,7 +105,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/stars"));
 
         // then
-        JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<StarDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(3)
             .hasSameElementsAs(List.of(star1, star2, star3));
@@ -127,7 +127,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/stars"));
 
         // then
-        JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<StarDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(2)
             .hasSameElementsAs(List.of(dto, star2));
@@ -146,7 +146,7 @@ class StarIntegrationTest extends AbstractIntegrationTest {
         MockHttpServletResponse response = performRequest(get("/stars"));
 
         // then
-        JsonPage<StarDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<StarDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(star2));

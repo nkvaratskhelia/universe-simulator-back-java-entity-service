@@ -11,6 +11,6 @@ public class GalaxySpecificationBuilder extends SpaceEntitySpecificationBuilder<
 
     @Override
     Specification<@NonNull Galaxy> buildEntitySpecification(GalaxyFilter filter) {
-        return null;
+        return Specification.unrestricted();
     }
 }

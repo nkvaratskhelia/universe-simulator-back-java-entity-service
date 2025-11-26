@@ -1,5 +1,12 @@
 package com.example.universe.simulator.entityservice.integration;
 
+import static com.example.universe.simulator.entityservice.services.GalaxyService.CACHE_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import com.example.universe.simulator.entityservice.common.utils.JsonPage;
 import com.example.universe.simulator.entityservice.dtos.GalaxyDto;
 import com.example.universe.simulator.entityservice.entities.Galaxy;
@@ -8,25 +15,18 @@ import com.example.universe.simulator.entityservice.inputs.UpdateGalaxyInput;
 import com.example.universe.simulator.entityservice.mappers.GalaxyMapper;
 import com.example.universe.simulator.entityservice.repositories.GalaxyRepository;
 import com.example.universe.simulator.entityservice.types.EventType;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.mock.web.MockHttpServletResponse;
+import tools.jackson.core.type.TypeReference;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.example.universe.simulator.entityservice.services.GalaxyService.CACHE_NAME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 class GalaxyIntegrationTest extends AbstractIntegrationTest {
 
@@ -64,7 +64,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         );
 
         // then
-        JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<GalaxyDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(galaxy1));
@@ -95,7 +95,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/galaxies"));
 
         // then
-        JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<GalaxyDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(3)
             .hasSameElementsAs(List.of(galaxy1, galaxy2, galaxy3));
@@ -117,7 +117,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         response = performRequest(get("/galaxies"));
 
         // then
-        JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<GalaxyDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(2)
             .hasSameElementsAs(List.of(dto, galaxy2));
@@ -136,7 +136,7 @@ class GalaxyIntegrationTest extends AbstractIntegrationTest {
         MockHttpServletResponse response = performRequest(get("/galaxies"));
 
         // then
-        JsonPage<GalaxyDto> result = objectMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
+        JsonPage<GalaxyDto> result = jsonMapper.readValue(response.getContentAsString(), new TypeReference<>() {});
         assertThat(result.getContent())
             .hasSize(1)
             .hasSameElementsAs(List.of(galaxy2));
