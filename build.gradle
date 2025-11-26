@@ -41,7 +41,7 @@ repositories {
 }
 
 ext {
-    set('commonVersion', '3.3.9')
+    set('commonVersion', '3.4.0')
     set('springBootAdminVersion', '3.5.6')
     set('logstashLogbackEncoderVersion', '9.0')
     set('springdocOpenapiVersion', '3.0.0')
@@ -61,12 +61,12 @@ dependencies {
     implementation "com.example.universe.simulator:common:${commonVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenapiVersion}"
     implementation "com.graphql-java:graphql-java-extended-scalars:${graphqlJavaExtendedScalarsVersion}"
     compileOnly "org.mapstruct:mapstruct:${mapstructVersion}"
-    runtimeOnly 'org.springframework.boot:spring-boot-starter-data-redis'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-liquibase'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-config'
     runtimeOnly 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
