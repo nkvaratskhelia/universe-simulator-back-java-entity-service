@@ -15,7 +15,6 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.lifecycle.Startables;
-import org.testcontainers.utility.DockerImageName;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,7 +41,7 @@ abstract class AbstractIntegrationTest extends AbstractMockMvcTest {
 
     static {
         RABBITMQ_CONTAINER = new RabbitMQContainer("rabbitmq:4.2.1-management");
-        REDIS_CONTAINER = new RedisContainer(DockerImageName.parse("redis:8.4.0")).withExposedPorts(6379);
+        REDIS_CONTAINER = new RedisContainer("redis:8.4.0");
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:18.1");
 
         Startables.deepStart(RABBITMQ_CONTAINER, REDIS_CONTAINER, POSTGRESQL_CONTAINER).join();
